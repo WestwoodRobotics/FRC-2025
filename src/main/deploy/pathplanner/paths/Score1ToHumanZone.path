@@ -1,0 +1,75 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.9115347629123254,
+        "y": 5.141788098370586
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.9632087679262502,
+        "y": 4.212102793940789
+      },
+      "isLocked": false,
+      "linkedName": "Score1"
+    },
+    {
+      "anchor": {
+        "x": 1.2171921581692156,
+        "y": 0.9795233041268796
+      },
+      "prevControl": {
+        "x": 3.6473713910138166,
+        "y": 3.092330757423683
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "HumanZone"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.8742428296232883,
+      "maxWaypointRelativePos": 0.914999598672944,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Relocalize2",
+      "waypointRelativePos": 0.8999200690282535,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -125.85275724292617
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 122.1860484374505
+  },
+  "useDefaultConstraints": true
+}

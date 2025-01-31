@@ -1,0 +1,29 @@
+name: Build & Simulate
+
+on: [push, pull_request]  # Trigger the workflow on push events
+
+jobs:
+  Simulate:
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    container: wpilib/roborio-cross-ubuntu:2025-24.04
+    steps:
+
+      - uses: actions/checkout@v4
+      - name: Grant execute permission # just in case
+        run: chmod +x gradlew
+
+      - name: Build Robot Code
+        run: ./gradlew build
+
+      - name: Test Robot Code
+        run: ./gradlew test
+    
+      - name: Simulate Robot Code
+        run: |
+          timeout 60s ./gradlew simulateJava || exit_code=$?
+          if [ $exit_code -eq 124 ]; then
+            echo "Command exited with code 124, ignoring"
+            exit 0
+          else
+            exit $exit_code
+          fi

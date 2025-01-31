@@ -1,0 +1,21 @@
+{
+    "name": "WPILib",
+    "remoteUser": "vscode",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+    "postCreateCommand": "/workspaces/2025KiwiBeta/.devcontainer/post_create.sh",
+    "overrideCommand": true,
+    "privileged": true,
+    "features": {
+        "ghcr.io/devcontainers/features/desktop-lite:1": {
+            "version": "latest"
+        }
+    },
+    "forwardPorts": [6080],
+    "extensions": [
+      "GitHub.copilot"
+    ],
+    "tasks": {
+      "build": "./gradlew build",
+      "test": "./gradlew test"
+    }
+}
