@@ -4,7 +4,7 @@ on: [push, pull_request]  # Trigger the workflow on push events
 
 jobs:
   Simulate:
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu:latest
     container: wpilib/roborio-cross-ubuntu:2025-24.04
     steps:
 
