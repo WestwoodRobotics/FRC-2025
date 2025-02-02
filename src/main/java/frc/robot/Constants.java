@@ -53,10 +53,10 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
-    public static final double kFrontLeftChassisAngularOffset = Math.PI+(Math.PI/2);
+    public static final double kFrontLeftChassisAngularOffset = 0;
     public static final double kFrontRightChassisAngularOffset = 0; 
     public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = Math.PI/2;
+    public static final double kRearRightChassisAngularOffset = Math.PI;
 
 
 
@@ -93,8 +93,10 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
     public static int kElevatorMotor1Port = 50;
+    public static int kElevatorMotor2Port = 34;
 
     public static int outtakeMotorPort = 59;
+    
 
   }
 
@@ -246,6 +248,14 @@ public final class Constants {
     // figure these out
     public static final double kAxeDownPosition = 31;
     public static final double kAxeUpPosition = 0;
+  }
+
+  public static final class ElevatorConstants{
+    public static final double kElevatorHomePosition = 0;
+    public static final double kElevatorL2Position = 1;
+    public static final double kElevatorL3Position = 2;
+    public static final double kElevatorL4Position = 3;
+
   }
   
   

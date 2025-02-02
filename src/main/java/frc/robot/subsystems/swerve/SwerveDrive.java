@@ -224,6 +224,7 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putData(fieldVisualization);
     SmartDashboard.putNumber("X Pose",getPose().getX());
     SmartDashboard.putNumber("Y Vaue", getPose().getY());
+    
   }
 
 

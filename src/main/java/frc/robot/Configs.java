@@ -5,6 +5,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.PortConstants;
 
 public final class Configs {
     public static final class MAXSwerveModule {
@@ -53,4 +54,40 @@ public final class Configs {
                     .positionWrappingInputRange(0, turningFactor);
         }
     }
+
+        public static final class Elevator {
+                public static final SparkMaxConfig elevator1Config = new SparkMaxConfig();
+                public static final SparkMaxConfig elevator2Config = new SparkMaxConfig();
+        
+                static {
+                        elevator1Config
+                                .idleMode(IdleMode.kBrake)
+                                .smartCurrentLimit(60);
+                        elevator1Config.closedLoop
+                                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                                .pid(0.1, 0.0, 0.0)
+                                .outputRange(-1, 1);
+                        elevator1Config.softLimit.reverseSoftLimitEnabled(true);
+                        elevator1Config.softLimit.forwardSoftLimitEnabled(true);
+                        elevator1Config.softLimit.reverseSoftLimit(-71);
+                        elevator1Config.softLimit.forwardSoftLimit(0);
+                }
+
+                static {
+                        elevator2Config
+                                .idleMode(IdleMode.kBrake)
+                                .smartCurrentLimit(60);
+                                
+                        elevator2Config.closedLoop
+                                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                                .pid(0.1, 0.0, 0.0)
+                                .outputRange(-1, 1);
+                        elevator2Config.follow(PortConstants.kElevatorMotor1Port, true);
+                        
+                }
+
+                
+        }
+
+
 }

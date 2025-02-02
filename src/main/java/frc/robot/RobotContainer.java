@@ -27,13 +27,16 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AxeConstants;
 import frc.robot.Constants.PortConstants;
+import frc.robot.commands.elevator.elevatorSetPosition;
 import frc.robot.commands.shooter.shooterPIDCommand;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.preRoller;
 
 import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.utils.elevator.elevatorPositions;
 import frc.robot.commands.swerve.*;
 
 
@@ -48,8 +51,9 @@ import frc.robot.commands.swerve.*;
 public class RobotContainer {
 
   protected final SwerveDrive m_robotDrive = new SwerveDrive();
-  protected final elevator m_elevator = new elevator(PortConstants.kElevatorMotor1Port);
+  protected final elevator m_elevator = new elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
   protected final Intake m_intake = new Intake();
+  protected final Outtake m_outtake = new Outtake();
   
   //private final Intake m_intake = new Intake();
   //private final preRoller m_preRoller = new preRoller();
@@ -112,7 +116,7 @@ public class RobotContainer {
   private SendableChooser<Command> m_chooser = new SendableChooser<>();
   //protected ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_preRoller, m_shooter);
 
-
+    
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -142,6 +146,7 @@ public class RobotContainer {
     // m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
+    
 
     autoChooser = AutoBuilder.buildAutoChooser();
     
@@ -168,47 +173,58 @@ public class RobotContainer {
   
 
 
-private void configureButtonBindings() {
-    /*
-     * DRIVER BUTTON MAPPINGS
-     */
+    private void configureButtonBindings() {
+        /*
+        * DRIVER BUTTON MAPPINGS
+        */
 
-    DriverGyroButton.whileTrue(new InstantCommand(
-        () -> m_robotDrive.resetGyro(),
-        m_robotDrive));
+        DriverGyroButton.whileTrue(new InstantCommand(
+            () -> m_robotDrive.resetGyro(),
+            m_robotDrive));
 
-    //driverLeftTrigger.onTrue(ODCommandFactory.intakeSenseCommand());
-    //driverLeftTrigger.onFalse(ODCommandFactory.stopIntakeSenseCommand());
+        //driverLeftTrigger.onTrue(ODCommandFactory.intakeSenseCommand());
+        //driverLeftTrigger.onFalse(ODCommandFactory.stopIntakeSenseCommand());
 
-    // driverRightTrigger.onTrue(ODCommandFactory.revUpShooter());
-    // driverRightTrigger.onFalse(ODCommandFactory.stopShooterCommand());
+        // driverRightTrigger.onTrue(ODCommandFactory.revUpShooter());
+        // driverRightTrigger.onFalse(ODCommandFactory.stopShooterCommand());
 
-    // DriverRightBumper.onTrue(ODCommandFactory.revUpAndShootCommand(0.75, 4000));
-    // DriverRightBumper.onFalse(ODCommandFactory.stopShooterCommand());
+        // DriverRightBumper.onTrue(ODCommandFactory.revUpAndShootCommand(0.75, 4000));
+        // DriverRightBumper.onFalse(ODCommandFactory.stopShooterCommand());
 
 
-    // DriverDPadDown.onTrue(new InstantCommand(() -> m_shooter.setShooterPower(-0.85), m_shooter));
+        // DriverDPadDown.onTrue(new InstantCommand(() -> m_shooter.setShooterPower(-0.85), m_shooter));
 
-    // // DriverBButton.onTrue(new InstantCommand(() -> m_preRoller.setPreRollerPower(1), m_preRoller));
-    // // DriverBButton.onFalse(new InstantCommand(() -> m_preRoller.setPreRollerPower(0), m_preRoller));
-    // DriverBButton.onTrue(ODCommandFactory.intakeSenseCommand());
-    // DriverBButton.onFalse(ODCommandFactory.stopPreRollerCommand().alongWith(ODCommandFactory.stopIntakeCommand()));
-    driverLeftTrigger.onTrue(new InstantCommand(() -> m_robotDrive.toggleSlowMode()));
-    driverLeftTrigger.onFalse(new InstantCommand(() -> m_robotDrive.toggleSlowMode()));
+        // // DriverBButton.onTrue(new InstantCommand(() -> m_preRoller.setPreRollerPower(1), m_preRoller));
+        // // DriverBButton.onFalse(new InstantCommand(() -> m_preRoller.setPreRollerPower(0), m_preRoller));
+        // DriverBButton.onTrue(ODCommandFactory.intakeSenseCommand());
+        // DriverBButton.onFalse(ODCommandFactory.stopPreRollerCommand().alongWith(ODCommandFactory.stopIntakeCommand()));
+        driverLeftTrigger.onTrue(new InstantCommand(() -> m_robotDrive.toggleSlowMode()));
+        driverLeftTrigger.onFalse(new InstantCommand(() -> m_robotDrive.toggleSlowMode()));
+
+        
+
+        DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.3)));
+        DriverRightBumper.onFalse(new InstantCommand(()-> m_intake.setIntakePower(0)));
+
+        DriverDPadDown.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25)));
+        DriverDPadDown.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
+
+        DriverDPadUp.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25)));
+        DriverDPadUp.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
+
+        DriverLeftBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.3)));
+        DriverLeftBumper.onFalse(new InstantCommand(()-> m_intake.setIntakePower(0)));
+
+        DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
+        DriverBButton.onTrue(new InstantCommand(() -> m_elevator.stopElevator()));
+
+        driverLeftTrigger.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(m_driverController.getLeftTriggerAxis())));
+        driverLeftTrigger.onFalse(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0)));
+        driverRightTrigger.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-m_driverController.getRightTriggerAxis())));
+        driverRightTrigger.onFalse(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0)));
 
     
-
-    DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.5)));
-    DriverRightBumper.onFalse(new InstantCommand(()-> m_intake.setIntakePower(0)));
-
-    DriverDPadDown.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.5)));
-    DriverDPadDown.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
-
-    DriverDPadUp.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.5)));
-    DriverDPadUp.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
-
-    DriverLeftBumper.whileTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.5)));
-    DriverLeftBumper.onFalse(new InstantCommand(()-> m_intake.setIntakePower(0)));
+    }
 
     // AutoBuilder.resetOdom();
     // AutoBuilder.pathfindToPose(null, null);
@@ -232,7 +248,7 @@ private void configureButtonBindings() {
 
      * OPERATOR BUTTON MAPPING
      */
-  }
+
 
 //------------------------------------------- autonom555555ous modes -------------------------------------------
     
