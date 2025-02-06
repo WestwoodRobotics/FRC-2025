@@ -58,6 +58,8 @@ public final class Constants {
     public static final double kRearLeftChassisAngularOffset = Math.PI;
     public static final double kRearRightChassisAngularOffset = Math.PI;
 
+    
+
 
 
 
@@ -255,6 +257,11 @@ public final class Constants {
     public static final double kElevatorL2Position = 1;
     public static final double kElevatorL3Position = 2;
     public static final double kElevatorL4Position = 3;
+
+    public static final double kP = 0.1;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    
 
   }
   

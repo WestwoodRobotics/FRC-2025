@@ -16,11 +16,17 @@ public class elevatorSetPosition extends Command{
 
     @Override
     public void initialize() {
-        elevator.setElevatorPosition(targetPosition);
+        elevator.getPIDController().setSetpoint(targetPosition);
+    }
+
+    @Override
+    public void execute() {
+        elevator.setElevatorSpeed(elevator.getPIDController().calculate(elevator.getElevatorPosition()));
     }
 
     @Override
     public void end(boolean isInterrupted) {
+
     }
 
 

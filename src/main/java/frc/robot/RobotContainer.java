@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AxeConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorSetPosition;
-import frc.robot.commands.shooter.shooterPIDCommand;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.preRoller;
 
