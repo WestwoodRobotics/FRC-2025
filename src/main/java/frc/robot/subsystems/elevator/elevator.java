@@ -47,7 +47,7 @@ public class elevator extends SubsystemBase {
     }
 
     public void periodic(){
-        // System.out.println(elevatorMotor1.getEncoder().getPosition());
+        System.out.println(elevatorMotor1.getEncoder().getPosition());
     }
 
     public PIDController getPIDController() {

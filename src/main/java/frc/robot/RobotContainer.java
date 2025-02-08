@@ -1,3 +1,4 @@
+
 package frc.robot;
 import java.sql.Driver;
 import java.io.File;
@@ -219,20 +220,24 @@ public class RobotContainer {
 
         
 
-        DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.3)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3))));
+        DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.8)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.8))));
         DriverRightBumper.onFalse(new InstantCommand(()-> m_intake.stopIntake()).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0))));
 
-        DriverDPadDown.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25)));
+        DriverDPadDown.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25))); 
         DriverDPadDown.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
 
         DriverDPadUp.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25)));
         DriverDPadUp.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
 
-        DriverLeftBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.3)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.3))));
+        DriverLeftBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.8)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.8))));
         DriverLeftBumper.onFalse(new InstantCommand(()-> m_intake.stopIntake()).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0))));
 
         DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
-        DriverBButton.onTrue(new InstantCommand(() -> m_elevator.stopElevator()));
+        DriverBButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.HOME));
+        
+        
+
+        //DriverBButton.onTrue(new InstantCommand(() -> m_elevator.stopElevator()));
 
         
     

@@ -26,6 +26,7 @@ public class elevatorSetPosition extends Command{
 
     @Override
     public void end(boolean isInterrupted) {
+        elevator.setElevatorSpeed(0);
 
     }
 
