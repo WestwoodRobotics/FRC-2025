@@ -203,6 +203,7 @@ public final class Constants {
   }
   public static final class IntakeConstants {
     public static final int kIntakeMotorPort = 58; //TODO: Change this value
+    public static final int kIntakeMotorTopPort = 57;
     public static final double kRPMConversionFactor = 1.0;
 
 

@@ -9,10 +9,13 @@ import java.text.ParseException;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +39,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
+import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.commands.swerve.*;
 
 
@@ -49,10 +53,11 @@ import frc.robot.commands.swerve.*;
  */
 public class RobotContainer {
 
-  protected final SwerveDrive m_robotDrive = new SwerveDrive();
+  protected final SwerveDrive m_robotDrive;
   protected final elevator m_elevator = new elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
   protected final Intake m_intake = new Intake();
   protected final Outtake m_outtake = new Outtake();
+  protected PhotonVisionCameras m_cameras;
   
   //private final Intake m_intake = new Intake();
   //private final preRoller m_preRoller = new preRoller();
@@ -121,7 +126,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    configureButtonBindings();
     // NamedCommands.registerCommand("SpinSensePreRoller", ODCommandFactory.intakeSenseCommand());
     // NamedCommands.registerCommand("Intake", ODCommandFactory.intakeSenseCommand());
     // NamedCommands.registerCommand("StopIntake", ODCommandFactory.stopIntakeSenseCommand());
@@ -138,7 +142,22 @@ public class RobotContainer {
     // NamedCommands.registerCommand("LLAlignAndRange", new AlignAndRangeAprilTag(m_robotDrive, "limelight"));
     // NamedCommands.registerCommand("LLAlignHorizontally", new AprilTagFollowGeneral(m_robotDrive, "limelight"));
      
+    
 
+
+
+    try {
+        m_cameras = new PhotonVisionCameras(new AprilTagFieldLayout(
+            "/home/lvuser/deploy/2025-reefscape.json"
+        ));
+    }
+    catch(IOException exc) {
+        System.out.println("Failed to load field layout!");
+        m_cameras = null;
+    }
+    m_robotDrive = new SwerveDrive(m_cameras);
+
+    
     DriverStation.silenceJoystickConnectionWarning(true);
     
     // Configure default commands 
@@ -148,15 +167,13 @@ public class RobotContainer {
     
 
     autoChooser = AutoBuilder.buildAutoChooser();
-    
-
 
     //if in auto set the default command of the shooter subsystem to be the shooterPIDCommand
 
 
 
+    configureButtonBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
     
   }
 
@@ -202,8 +219,8 @@ public class RobotContainer {
 
         
 
-        DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.3)));
-        DriverRightBumper.onFalse(new InstantCommand(()-> m_intake.setIntakePower(0)));
+        DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.3)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3))));
+        DriverRightBumper.onFalse(new InstantCommand(()-> m_intake.stopIntake()).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0))));
 
         DriverDPadDown.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25)));
         DriverDPadDown.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
@@ -211,17 +228,13 @@ public class RobotContainer {
         DriverDPadUp.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25)));
         DriverDPadUp.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
 
-        DriverLeftBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.3)));
-        DriverLeftBumper.onFalse(new InstantCommand(()-> m_intake.setIntakePower(0)));
+        DriverLeftBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.3)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.3))));
+        DriverLeftBumper.onFalse(new InstantCommand(()-> m_intake.stopIntake()).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0))));
 
         DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
         DriverBButton.onTrue(new InstantCommand(() -> m_elevator.stopElevator()));
 
-        driverLeftTrigger.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(m_driverController.getLeftTriggerAxis())));
-        driverLeftTrigger.onFalse(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0)));
-        driverRightTrigger.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-m_driverController.getRightTriggerAxis())));
-        driverRightTrigger.onFalse(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0)));
-
+        
     
     }
 

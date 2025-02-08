@@ -26,7 +26,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
  * stop the motor, and get the motor's RPM.
  */
 public class Intake extends SubsystemBase {
-    private SparkBase intakeMotor;
+    private SparkMax intakeMotor;
+    private SparkMax intakeMotorTop;
     private PIDController PIDController;
 
     /**
@@ -34,7 +35,8 @@ public class Intake extends SubsystemBase {
      * Initializes the intake motor and PID controller.
      */
     public Intake() {
-        intakeMotor = new NeoSparkMax(IntakeConstants.kIntakeMotorPort, MotorType.kBrushless); 
+        intakeMotor = new SparkMax(IntakeConstants.kIntakeMotorPort, MotorType.kBrushless); 
+        intakeMotorTop = new SparkMax(IntakeConstants.kIntakeMotorTopPort, MotorType.kBrushless); 
         this.PIDController = new PIDController(IntakeConstants.kP, 
                                                IntakeConstants.kI, 
                                                IntakeConstants.kD);
@@ -47,6 +49,8 @@ public class Intake extends SubsystemBase {
      */
     public void setIntakePower(double power) {
         intakeMotor.set(power);
+        intakeMotorTop.set(power);
+        // System.out.println(power);
     }
 
     /**
@@ -54,6 +58,7 @@ public class Intake extends SubsystemBase {
      */
     public void stopIntake(){
         intakeMotor.set(0);
+        intakeMotorTop.set(0);
     }
 
     /**

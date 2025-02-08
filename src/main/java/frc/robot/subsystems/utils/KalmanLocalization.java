@@ -17,7 +17,7 @@ public class KalmanLocalization {
     public Matrix<N7, N1> state;
     public Matrix<N7, N7> cov;
 
-    public KalmanFilter<N7, N8, N1> filter;
+    public KalmanFilter<N7, N8, N4> filter;
 
     public double curr_time;
 
@@ -55,7 +55,7 @@ public class KalmanLocalization {
             0, 0, 0, 0, 0, 0.0001, 0,
             0, 0, 0, 0, 0, 0, 100
         ));
-        filter = new KalmanFilter<N7, N8, N1>(state, cov);
+        filter = new KalmanFilter<N7, N8, N4>(state, cov);
 
         curr_time = Timer.getFPGATimestamp();
     }
@@ -94,17 +94,36 @@ public class KalmanLocalization {
         return new Matrix<N7, N8>(out_matrix);
     }
 
-    private Matrix<N1, N7> getSensorMatrix(double dt) {
-        return new Matrix<N1, N7>(new SimpleMatrix(1, 7, true,
-            0, 0, 0, 0, 0, 1, 1
+    private Matrix<N4, N7> getSensorMatrix(double dt, boolean has_target) {
+        double flag_target = 0.0;
+        if(has_target) {
+            flag_target = 1.0;
+        }
+        return new Matrix<N4, N7>(new SimpleMatrix(4, 7, true,
+            0, 0, 0, 0, 0, 1, 1,
+                    flag_target, 0, 0, 0, 0, 0, 0,
+                    0, flag_target, 0, 0, 0, 0, 0,
+                    0, 0, flag_target, 0, 0, 0, 0
         ));
     }
 
-    private Matrix<N1, N1> getSensorCovariance(double dt) {
+    private Matrix<N4, N4> getSensorCovariance(double dt, double camera_area, boolean has_target) {
         final double ANG_RAND_WALK_RAD_PER_SEC = 0.1;
+        final double AREA_CART_VAR_FACTOR = 0.01;
+        final double AREA_ANG_VAR_FACTOR = 0.01;
 
-        return new Matrix<N1, N1>(new SimpleMatrix(1, 1, true,
-            Math.pow(ANG_RAND_WALK_RAD_PER_SEC*dt, 2)
+        double cart_var = 10;
+        double ang_var = 10;
+        if(has_target && camera_area > 0) {
+            cart_var = AREA_CART_VAR_FACTOR/camera_area;
+            ang_var = AREA_ANG_VAR_FACTOR/camera_area;
+        }
+
+        return new Matrix<N4, N4>(new SimpleMatrix(4, 4, true,
+            Math.pow(ANG_RAND_WALK_RAD_PER_SEC*dt, 2), 0, 0, 0,
+            0, cart_var, 0, 0,
+            0, 0, cart_var, 0,
+            0, 0, 0, ang_var
         ));
     }
 
@@ -141,7 +160,10 @@ public class KalmanLocalization {
     public void update(
         ArrayList<Translation2d> wheel_vel,
         ArrayList<Translation2d> wheel_pos,
-        double gyro_dtheta
+        Pose2d camera_pose,
+        double gyro_dtheta,
+        double camera_area,
+        boolean camera_has_target
     ) {
         Pose2d robot_frame_vel = new Pose2d(
             new Translation2d(
@@ -169,13 +191,26 @@ public class KalmanLocalization {
             getUpdateMatrix(dt),
             getControlMatrix(wheel_pos, getTheta(), dt)
         );
-        Matrix <N1, N1> sensor_input = new Matrix<N1, N1>(
-            new SimpleMatrix(1, 1, true, gyro_dtheta)
+        double camera_x = 0;
+        double camera_y = 0;
+        double camera_theta = 0;
+        if(camera_has_target && camera_pose != null) {
+            camera_x = camera_pose.getX();
+            camera_y = camera_pose.getY();
+            camera_theta = camera_pose.getRotation().getRadians();
+        }
+        Matrix <N4, N1> sensor_input = new Matrix<N4, N1>(
+            new SimpleMatrix(4, 1, true,
+                gyro_dtheta,
+                camera_x,
+                camera_y,
+                camera_theta
+            )
         );
         filter.aPosteriorUpdate(
             sensor_input,
-            getSensorCovariance(dt),
-            getSensorMatrix(dt),
+            getSensorCovariance(dt, camera_area, camera_has_target && camera_pose != null),
+            getSensorMatrix(dt, camera_has_target && camera_pose != null),
             N7.instance
         );
         state = filter.getState();

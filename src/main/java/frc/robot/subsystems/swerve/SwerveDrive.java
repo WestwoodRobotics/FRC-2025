@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PortConstants;
+import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.subsystems.utils.KalmanLocalization;
 //import frc.robot.subsystems.utils.KalmanLocalization;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -88,14 +89,16 @@ public class SwerveDrive extends SubsystemBase {
     private boolean isTestMode = false;
     private RobotConfig config;
     public Field2d fieldVisualization;
+    private PhotonVisionCameras m_cameras;
 
   /** Creates a new DriveSubsystem. */
-  public SwerveDrive() {
+  public SwerveDrive(PhotonVisionCameras cameras) {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
     this.config = config;
     this.isTestMode = isTestMode;
     fieldVisualization = new Field2d();
+    m_cameras = cameras;
 
     try{
       config = RobotConfig.fromGUISettings();
@@ -131,7 +134,7 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
-  public SwerveDrive(Gyro gyro, MAXSwerveModule frontLeft, MAXSwerveModule frontRight, MAXSwerveModule rearLeft, MAXSwerveModule rearRight, RobotConfig config, boolean isTestMode){
+  public SwerveDrive(PhotonVisionCameras cameras, Gyro gyro, MAXSwerveModule frontLeft, MAXSwerveModule frontRight, MAXSwerveModule rearLeft, MAXSwerveModule rearRight, RobotConfig config, boolean isTestMode){
     m_gyro = gyro;
     m_frontLeft = frontLeft;
     m_frontRight = frontRight;
@@ -140,6 +143,7 @@ public class SwerveDrive extends SubsystemBase {
     this.config = config;
     this.isTestMode = isTestMode;
     fieldVisualization = new Field2d();
+    m_cameras = cameras;
 
     try{
       config = RobotConfig.fromGUISettings();
@@ -199,7 +203,20 @@ public class SwerveDrive extends SubsystemBase {
 
     double gyro_rate = m_gyro.getZRate()*Math.PI/180;
 
-    kalmanLocalization.update(wheel_vel, wheel_pos, gyro_rate + 2*Math.PI/180);
+    Pose2d camera_pose = m_cameras.getPose();
+    double camera_area = m_cameras.getArea();
+
+    SmartDashboard.putNumber("Camera area", camera_area);
+    SmartDashboard.putBoolean("Has target", m_cameras.hasTarget());
+
+    kalmanLocalization.update(
+      wheel_vel,
+      wheel_pos,
+      camera_pose,
+      gyro_rate,
+      camera_area,
+      m_cameras.hasTarget()
+    );
 
     SmartDashboard.putNumber("Gyro rate", gyro_rate);
     SmartDashboard.putNumber("pose_x", kalmanLocalization.getX());
@@ -212,8 +229,6 @@ public class SwerveDrive extends SubsystemBase {
 
     fieldVisualization.setRobotPose(kalmanLocalization.getPoseMeters());
 
-    //
-    //kalmanLocalization.update();
     publisher.set(new SwerveModuleState[]{
       m_frontLeft.getState(),
       m_frontRight.getState(),
