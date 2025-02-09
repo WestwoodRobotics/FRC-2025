@@ -94,10 +94,12 @@ public final class Constants {
 
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
-    public static int kElevatorMotor1Port = 50;
-    public static int kElevatorMotor2Port = 34;
-
-    public static int outtakeMotorPort = 59;
+    public static final int kElevatorMotor1Port = 50;
+    public static final int kElevatorMotor2Port = 34;
+    public static final int kIntakeMotorSidePort = 58; //TODO: Change this value
+    public static final int kIntakeMotorTopPort = 57;
+    public static final int outtakeMotorPort = 59;
+    public static final int kCANdiPort = 20;
     
 
   }
@@ -202,56 +204,38 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 6784;
   }
   public static final class IntakeConstants {
-    public static final int kIntakeMotorPort = 58; //TODO: Change this value
-    public static final int kIntakeMotorTopPort = 57;
+
     public static final double kRPMConversionFactor = 1.0;
 
 
     public static final double kP = 0.0002;
     public static final double kI = 0;
     public static final double kD = 0;
+
+
+    public static final double kSideI = 0;
+
+
+    public static final double kSideP = 0;
+
+
+    public static final double kSideD = 0;
+
+
+    public static final double kTopP = 0;
+
+
+    public static final double kTopI = 0;
+
+
+    public static final double kTopD = 0;
   } 
 
-  public static final class ShooterConstants {
-    public static final int kTopRollerPort = 21 ; //TODO: Change this value
-    public static final int kBottomRollerPort = 50; //TODO: Change this value
-    public static final int kPreRollerPort = 22; //TODO: Change this value
-    public static final double kTopRollerRPMConversionFactor = 1.0;
-    public static final double kBottomRollerRPMConversionFactor = 1.0;
-    public static final double kPreRollerRPMConversionFactor = 1.0;
-
-
-    public static final double kTopRollerP = 1;
-    public static final double kTopRollerI = 0;
-    public static final double kTopRollerD = 0;
-
-    public static final double kBottomRollerP = 1;
-    public static final double kBottomRollerI = 0;
-    public static final double kBottomRollerD = 0;
-
-    public static final double kPreRollerP = 0.0002;
-    public static final double kPreRollerI = 0;
-    public static final double kPreRollerD = 0;
-  }
-
+  
   public static final class UtilityConstants {
     public static final boolean debugMode = true;
   }
-  
-  public static final class AxeConstants {
-    public static final int kAxeMotorPort = 20;
 
-    public static final double kP = .15;
-    public static final double kI = 0;
-    public static final double kD = 0;
-
-    public static final double kMAXMotionMaxAcceleration = 1000;
-    public static final double kMAXMotionMaxVelocity = 1000;
-
-    // figure these out
-    public static final double kAxeDownPosition = 31;
-    public static final double kAxeUpPosition = 0;
-  }
 
   public static final class ElevatorConstants{
     public static final double kElevatorHomePosition = 0;
@@ -262,9 +246,16 @@ public final class Constants {
     public static final double kP = 0.07;
     public static final double kI = 0;
     public static final double kD = 0;
-
-
   }
+
+  public static final class OuttakeConstants{
+    //PID
+    public static final double kP = 0.07;
+    public static final double kI = 0;
+    public static final double kD = 0;
+  }
+
+
   
   
 }

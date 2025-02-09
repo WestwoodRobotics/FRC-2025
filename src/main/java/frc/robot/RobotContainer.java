@@ -29,12 +29,10 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.AxeConstants;
+
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorSetPosition;
-import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.preRoller;
-
+import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
 import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
@@ -215,25 +213,35 @@ public class RobotContainer {
         // // DriverBButton.onFalse(new InstantCommand(() -> m_preRoller.setPreRollerPower(0), m_preRoller));
         // DriverBButton.onTrue(ODCommandFactory.intakeSenseCommand());
         // DriverBButton.onFalse(ODCommandFactory.stopPreRollerCommand().alongWith(ODCommandFactory.stopIntakeCommand()));
-        driverLeftTrigger.onTrue(new InstantCommand(() -> m_robotDrive.toggleSlowMode()));
-        driverLeftTrigger.onFalse(new InstantCommand(() -> m_robotDrive.toggleSlowMode()));
 
         
 
-        DriverRightBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.8)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.8))));
-        DriverRightBumper.onFalse(new InstantCommand(()-> m_intake.stopIntake()).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0))));
 
-        DriverDPadDown.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25))); 
-        DriverDPadDown.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
 
-        DriverDPadUp.onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25)));
-        DriverDPadUp.onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0)));
+        DriverDPadUp
+        .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25), m_elevator))
+        .onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0), m_elevator));
 
-        DriverLeftBumper.onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.8)).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.8))));
-        DriverLeftBumper.onFalse(new InstantCommand(()-> m_intake.stopIntake()).andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0))));
+        DriverDPadDown
+        .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
+        .onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0), m_elevator));
 
-        DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
-        DriverBButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.HOME));
+        DriverRightBumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.8), m_intake)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, 0.8)))
+        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+        
+        DriverLeftBumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.8), m_intake)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, 0.8)))
+        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+
+        DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.HOME));
+        DriverBButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
+        DriverXButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L3));
+        DriverYButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L2));
         
         
 

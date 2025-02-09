@@ -15,7 +15,7 @@ import CustomLibs.QualityOfLife.NeoSparkMax;
 
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import frc.robot.Constants.*;
 
 
 
@@ -26,20 +26,24 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
  * stop the motor, and get the motor's RPM.
  */
 public class Intake extends SubsystemBase {
-    private SparkMax intakeMotor;
+    private SparkMax intakeMotorSide;
     private SparkMax intakeMotorTop;
-    private PIDController PIDController;
+    private PIDController sidePIDController;
+    private PIDController topPIDController;
 
     /**
      * Constructs a new Intake subsystem.
      * Initializes the intake motor and PID controller.
      */
     public Intake() {
-        intakeMotor = new SparkMax(IntakeConstants.kIntakeMotorPort, MotorType.kBrushless); 
-        intakeMotorTop = new SparkMax(IntakeConstants.kIntakeMotorTopPort, MotorType.kBrushless); 
-        this.PIDController = new PIDController(IntakeConstants.kP, 
-                                               IntakeConstants.kI, 
-                                               IntakeConstants.kD);
+        intakeMotorSide = new SparkMax(PortConstants.kIntakeMotorSidePort, MotorType.kBrushless); 
+        intakeMotorTop = new SparkMax(PortConstants.kIntakeMotorTopPort, MotorType.kBrushless); 
+        this.sidePIDController = new PIDController(IntakeConstants.kSideP, 
+                                               IntakeConstants.kSideI, 
+                                               IntakeConstants.kSideD);
+        this.topPIDController = new PIDController(IntakeConstants.kTopP, 
+                                               IntakeConstants.kTopI, 
+                                               IntakeConstants.kTopD);
     }
 
     /**
@@ -48,7 +52,7 @@ public class Intake extends SubsystemBase {
      * @param power The power to set for the intake motor.
      */
     public void setIntakePower(double power) {
-        intakeMotor.set(power);
+        intakeMotorSide.set(power);
         intakeMotorTop.set(power/2);
         // System.out.println(power);
     }
@@ -57,7 +61,7 @@ public class Intake extends SubsystemBase {
      * Stops the intake motor.
      */
     public void stopIntake(){
-        intakeMotor.set(0);
+        intakeMotorSide.set(0);
         intakeMotorTop.set(0);
     }
 
@@ -67,7 +71,7 @@ public class Intake extends SubsystemBase {
      * @return The raw RPM of the intake motor.
      */
     public double getRawMotorRPM(){
-        return intakeMotor.getEncoder().getVelocity();
+        return intakeMotorSide.getEncoder().getVelocity();
     }
 
     /**
@@ -80,14 +84,58 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Gets the PID controller for the intake motor.
+     * Gets the PID controller for the side intake motor.
      * 
-     * @return The PID controller for the intake motor.
+     * @return The PID controller for the side intake motor.
      */
-    public PIDController getPIDController(){
-        return PIDController;
+    public PIDController getSidePIDController(){
+        return sidePIDController;
     }
 
+    /**
+     * Gets the PID controller for the top intake motor.
+     * 
+     * @return The PID controller for the top intake motor.
+     */
+    public PIDController getTopPIDController(){
+        return topPIDController;
+    }
+
+    /**
+     * Sets the power of the side intake motor.
+     * 
+     * @param power The power to set for the side intake motor.
+     */
+    public void setSideIntakePower(double power) {
+        intakeMotorSide.set(power);
+    }
+
+    /**
+     * Sets the power of the top intake motor.
+     * 
+     * @param power The power to set for the top intake motor.
+     */
+    public void setTopIntakePower(double power) {
+        intakeMotorTop.set(power);
+    }
+
+    /**
+     * Gets the raw RPM of the side intake motor.
+     * 
+     * @return The raw RPM of the side intake motor.
+     */
+    public double getSideMotorRPM() {
+        return intakeMotorSide.getEncoder().getVelocity();
+    }
+
+    /**
+     * Gets the raw RPM of the top intake motor.
+     * 
+     * @return The raw RPM of the top intake motor.
+     */
+    public double getTopMotorRPM() {
+        return intakeMotorTop.getEncoder().getVelocity();
+    }
     /**
      * Periodically updates the SmartDashboard with the intake motor's RPM and current.
      * This method is called automatically to update sensor status on the dashboard.
@@ -96,7 +144,7 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         if (UtilityConstants.debugMode){
             SmartDashboard.putNumber("Intake RPM", getRPM());
-            SmartDashboard.putNumber("Intake Current", intakeMotor.getOutputCurrent());
+            SmartDashboard.putNumber("Intake Current", intakeMotorSide.getOutputCurrent());
         }
     }
 
