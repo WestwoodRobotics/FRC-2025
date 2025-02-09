@@ -8,6 +8,9 @@ package frc.robot;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -253,6 +256,22 @@ public final class Constants {
     public static final double kP = 0.07;
     public static final double kI = 0;
     public static final double kD = 0;
+  }
+
+  public static final class CameraConstants{
+    public static final double kReefCameraToRobotX = 0.24765;
+    public static final double kReefCameraToRobotY = 0;
+    public static final double kReefCameraToRobotZ = 0.305;
+
+    public static final double kReefCameraToRobotPitch = 0;
+    public static final double kReefCameraToRobotYaw = 0;
+    public static final double kReefCameraToRobotRoll = 0;
+
+    public static final Transform3d kCameraToRobotTransform = new Transform3d(
+      new Translation3d(kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
+      new Rotation3d(kReefCameraToRobotPitch, kReefCameraToRobotYaw, kReefCameraToRobotRoll)
+    );
+
   }
 
 

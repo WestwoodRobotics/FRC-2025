@@ -202,12 +202,37 @@ public class SwerveDrive extends SubsystemBase {
     wheel_vel.add(m_rearRight.getVelocityVector());
 
     double gyro_rate = m_gyro.getZRate()*Math.PI/180;
+    Pose2d camera_pose = null;
+    double camera_area = 0;
+    boolean has_target = false;
+    if (m_cameras == null){
+      has_target = false;
+    }
+    else{
+      has_target = m_cameras.hasTarget();
+    }
 
-    Pose2d camera_pose = m_cameras.getPose();
-    double camera_area = m_cameras.getArea();
+    try{
+      camera_pose = m_cameras.getPose();
+    } catch (Exception e){
+      camera_pose = kalmanLocalization.getPoseMeters();
+    }
+    
+    try{
+      camera_area = m_cameras.getArea();
+    } catch (Exception e){
+      camera_area = -1;
 
-    SmartDashboard.putNumber("Camera area", camera_area);
-    SmartDashboard.putBoolean("Has target", m_cameras.hasTarget());
+    }
+    try{
+      SmartDashboard.putNumber("Camera area", camera_area);
+      SmartDashboard.putBoolean("Has target", m_cameras.hasTarget());
+    }
+    catch (Exception e){
+      SmartDashboard.putNumber("Camera area", -1);
+      SmartDashboard.putBoolean("Has target", false);
+    }
+
 
     kalmanLocalization.update(
       wheel_vel,
@@ -215,7 +240,7 @@ public class SwerveDrive extends SubsystemBase {
       camera_pose,
       gyro_rate,
       camera_area,
-      m_cameras.hasTarget()
+      has_target
     );
 
     SmartDashboard.putNumber("Gyro rate", gyro_rate);

@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CameraConstants;
 
 public class PhotonVisionCameras extends SubsystemBase {
     PhotonCamera camera;
@@ -27,17 +28,15 @@ public class PhotonVisionCameras extends SubsystemBase {
         camera = new PhotonCamera("reef_camera");
 
         //TODO: put this in robot constants
-        cameraToRobot = new Transform3d(
-            new Translation3d(0.24765, 0, 0.305),
-            new Rotation3d(0, 0, 0)
-        );
+        cameraToRobot = CameraConstants.kCameraToRobotTransform;
         camera_result = null;
         this.layout = layout;
     }
 
     public void periodic() {
         // This method will be called once per scheduler run
-        camera_result = camera.getLatestResult();
+        
+        camera_result = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
     }
 
     public boolean hasTarget() {
