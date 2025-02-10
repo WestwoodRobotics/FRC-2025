@@ -14,13 +14,13 @@ public class OuttakePIDBeamBreakCommand extends Command {
   }
 
   private final Outtake outtake;
-  private final PIDController pid;
+  private final PIDController outtakePIDController;
   private final double targetRpm;
   private CoralState state;
 
   public OuttakePIDBeamBreakCommand(Outtake outtake, double targetRpm) {
     this.outtake = outtake;
-    this.pid = outtake.getOuttakePIDController();
+    this.outtakePIDController = outtake.getOuttakePIDController();
     this.targetRpm = targetRpm;
     addRequirements(outtake);
   }
@@ -28,7 +28,7 @@ public class OuttakePIDBeamBreakCommand extends Command {
   @Override
   public void initialize() {
     state = CoralState.WAITING_FOR_FRONT_CORAL;
-    pid.setSetpoint(targetRpm);
+    outtakePIDController.setSetpoint(targetRpm);
   }
 
   @Override
@@ -36,7 +36,7 @@ public class OuttakePIDBeamBreakCommand extends Command {
     switch (state) {
       case WAITING_FOR_FRONT_CORAL:
         // Spin forward until the beam breaks (we detect coral)
-        outtake.setOuttakeSpeed(pid.calculate(outtake.getOuttakeRPM()));
+        outtake.setOuttakeSpeed(outtakePIDController.calculate(outtake.getOuttakeRPM()));
         if (outtake.isCoralDetected()) {
           // The front of the coral just passed
           state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
@@ -45,17 +45,17 @@ public class OuttakePIDBeamBreakCommand extends Command {
 
       case WAITING_FOR_NO_CORAL_AFTER_FRONT:
         // Still spin forward until coral has fully passed -> beam unbroken
-        outtake.setOuttakeSpeed(pid.calculate(outtake.getOuttakeRPM()));
+        outtake.setOuttakeSpeed(outtakePIDController.calculate(outtake.getOuttakeRPM()));
         if (outtake.isCoralNotDetected()) {
           // Entire coral just passed the sensor; reverse direction
-          pid.setSetpoint(-targetRpm);
+          outtakePIDController.setSetpoint(-targetRpm);
           state = CoralState.WAITING_FOR_BACK_CORAL;
         }
         break;
 
       case WAITING_FOR_BACK_CORAL:
         // Spin in reverse until the beam breaks again (back of coral)
-        outtake.setOuttakeSpeed(pid.calculate(outtake.getOuttakeRPM()));
+        outtake.setOuttakeSpeed(outtakePIDController.calculate(outtake.getOuttakeRPM()));
         if (outtake.isCoralDetected()) {
           // We just detected the back of the coral
           outtake.setOuttakeSpeed(0);
