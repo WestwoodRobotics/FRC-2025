@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.OuttakeConstants;
 import frc.robot.Constants.PortConstants;
@@ -18,6 +19,7 @@ public class Outtake extends SubsystemBase {
     private PIDController outtakePIDController;
     
     public Outtake() {
+        
         outtakeMotor = new SparkMax(PortConstants.outtakeMotorPort, MotorType.kBrushless);
         outtakePIDController = new PIDController(OuttakeConstants.kP, OuttakeConstants.kI, OuttakeConstants.kD);
         coralDetector = new CANdiBeamBreak(PortConstants.kCANdiPort);   
@@ -50,6 +52,11 @@ public class Outtake extends SubsystemBase {
 
     public boolean doesCoralDetectorExist(){
         return coralDetector.doesBeamBreakExist();
+    }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Outtake RPM", outtakeMotor.getEncoder().getVelocity());
     }
     
 }

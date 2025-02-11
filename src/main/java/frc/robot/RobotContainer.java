@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorSetPosition;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
+import frc.robot.commands.outtake.OuttakePIDCommand;
 import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
@@ -226,6 +227,9 @@ public class RobotContainer {
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
         .onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0), m_elevator));
 
+        DriverDPadLeft.onTrue(new OuttakePIDCommand(m_outtake, 1000)).onFalse(new InstantCommand(() -> m_outtake.stopOuttake(), m_outtake));
+
+
         DriverRightBumper
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.8), m_intake)
         .andThen(new OuttakeBeamBreakCommand(m_outtake, 0.8)))
@@ -242,6 +246,8 @@ public class RobotContainer {
         DriverBButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
         DriverXButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L3));
         DriverYButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L2));
+
+
         
         
 

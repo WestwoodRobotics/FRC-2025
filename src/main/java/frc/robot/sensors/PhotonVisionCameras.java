@@ -35,8 +35,11 @@ public class PhotonVisionCameras extends SubsystemBase {
 
     public void periodic() {
         // This method will be called once per scheduler run
-        
-        camera_result = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
+        try{
+            camera_result = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
+        } catch (Exception e){
+            camera_result = camera.getLatestResult();
+        }
     }
 
     public boolean hasTarget() {

@@ -243,17 +243,17 @@ public final class Constants {
   public static final class ElevatorConstants{
     public static final double kElevatorHomePosition = 0;
     public static final double kElevatorL2Position = 1;
-    public static final double kElevatorL3Position = 2;
-    public static final double kElevatorL4Position = -34;
+    public static final double kElevatorL3Position = -23;
+    public static final double kElevatorL4Position = -70;
 
-    public static final double kP = 0.07;
+    public static final double kP = 0.8;
     public static final double kI = 0;
     public static final double kD = 0;
   }
 
   public static final class OuttakeConstants{
     //PID
-    public static final double kP = 0.07;
+    public static final double kP = 100;
     public static final double kI = 0;
     public static final double kD = 0;
   }
