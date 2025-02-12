@@ -54,9 +54,14 @@ public class Outtake extends SubsystemBase {
         return coralDetector.doesBeamBreakExist();
     }
 
+    public double getOuttakeCurrent(){
+        return outtakeMotor.getOutputCurrent();
+    }
+
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Outtake RPM", outtakeMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Outtake Current", outtakeMotor.getOutputCurrent());
     }
     
 }
