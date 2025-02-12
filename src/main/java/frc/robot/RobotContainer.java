@@ -231,14 +231,14 @@ public class RobotContainer {
 
 
         DriverRightBumper
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.8), m_intake)
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, 0.8)))
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
         
         DriverLeftBumper
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.8), m_intake)
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, 0.8)))
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, 0.3)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
 

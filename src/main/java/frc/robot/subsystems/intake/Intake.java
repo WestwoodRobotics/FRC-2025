@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
      */
     public Intake() {
         intakeMotorLeftSide = new SparkFlex(45, MotorType.kBrushless);
-        intakeMotorRightSide = new SparkFlex(36, MotorType.kBrushless);
+        intakeMotorRightSide = new SparkFlex(33, MotorType.kBrushless);
         intakeMotorTop = new SparkMax(PortConstants.kIntakeMotorTopPort, MotorType.kBrushless); 
         this.sidePIDController = new PIDController(IntakeConstants.kSideP, 
                                                IntakeConstants.kSideI, 
@@ -56,9 +56,9 @@ public class Intake extends SubsystemBase {
      */
     public void setIntakePower(double power) {
 
-        intakeMotorLeftSide.set(power);
-        intakeMotorRightSide.set(power);
-        intakeMotorTop.set(power/2);
+        intakeMotorLeftSide.set(-power*0.9);
+        intakeMotorRightSide.set(-power*0.9);
+        intakeMotorTop.set(power/4);
         // System.out.println(power);
 
     }
