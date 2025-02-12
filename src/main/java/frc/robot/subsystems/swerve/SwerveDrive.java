@@ -371,7 +371,8 @@ public class SwerveDrive extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return m_gyro.getProcessedRot2dYaw().getDegrees();
+    //return m_gyro.getProcessedRot2dYaw().getDegrees();
+    return kalmanLocalization.getTheta();
   }
 
   /**
@@ -380,7 +381,8 @@ public class SwerveDrive extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return m_gyro.getZRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    //return m_gyro.getZRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return kalmanLocalization.getThetaVel();
   }
   
   public void resetGyro(){
