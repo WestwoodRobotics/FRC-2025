@@ -34,7 +34,7 @@ import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorHoldCommand;
 import frc.robot.commands.elevator.elevatorSetPosition;
 import frc.robot.commands.elevator.elevatorSetPositionWithCurrentLimit;
-import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
+import frc.robot.commands.outtake.OuttakeBeamBreakTimeCommand;
 import frc.robot.commands.outtake.OuttakeCurrentTimeCommand;
 import frc.robot.commands.outtake.OuttakePIDCommand;
 import frc.robot.commands.outtake.OuttakePIDCurrentTimeCommand;
@@ -239,7 +239,7 @@ public class RobotContainer {
 
         DriverRightBumper
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3, 0.2)))
+        .andThen(new OuttakeBeamBreakTimeCommand(m_outtake, -0.3, 0.2)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
         

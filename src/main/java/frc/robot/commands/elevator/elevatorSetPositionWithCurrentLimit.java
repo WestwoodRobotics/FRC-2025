@@ -82,6 +82,7 @@ public class elevatorSetPositionWithCurrentLimit extends Command {
         elevator.setElevatorSpeed(elevator.getPIDController().calculate(elevator.getElevatorPosition()));
         SmartDashboard.putNumber("Elevator Current Avg", runningAvg);
     }
+    
 
     @Override
     public void end(boolean interrupted) {

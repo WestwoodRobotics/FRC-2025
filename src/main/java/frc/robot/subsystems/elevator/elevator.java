@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
+import frc.robot.sensors.DIO.LimitSwitch;
 
 public class elevator extends SubsystemBase {
 
@@ -20,6 +21,8 @@ public class elevator extends SubsystemBase {
     private SparkFlex elevatorMotor2;
     private PIDController elevatorPIDController;
     private double elevatorEncoderOffset = 0;
+    private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
+    private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(1);
     
     
 
@@ -58,6 +61,7 @@ public class elevator extends SubsystemBase {
 
     public double getElevatorPosition() {
         return elevatorMotor1.getEncoder().getPosition() + elevatorEncoderOffset;
+        
     }
 
     public double getElevatorCurrent() {
@@ -72,4 +76,16 @@ public class elevator extends SubsystemBase {
         elevatorEncoderOffset = offset;
     }
 
+    public void setElevatorEncoderPosition(double position) {
+        elevatorEncoderOffset = position - elevatorMotor1.getEncoder().getPosition();
+    }
+
+    public LimitSwitch getElevatorTopLimitSwitch() {
+        return elevatorTopLimitSwitch;
+    }
+    
+    public LimitSwitch getElevatorBottomLimitSwitch() {
+        return elevatorBottomLimitSwitch;
+    }
+    
 }
