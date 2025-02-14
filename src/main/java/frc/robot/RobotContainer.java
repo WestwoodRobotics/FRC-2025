@@ -234,8 +234,7 @@ public class RobotContainer {
 
         
 
-        OperatorDPadLeft.onTrue(new GoToFieldPose(m_robotDrive, 12.2, 4.19, 0));
-        OperatorAButton.onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator));
+
 
 
         DriverRightBumper
@@ -263,14 +262,20 @@ public class RobotContainer {
         //DriverRightBumper.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3)));
 
 
+        /*
+         * OPERATOR BUTTON MAPPINGS
+         */
 
+        OperatorDPadLeft.onTrue(new GoToFieldPose(m_robotDrive, 12.2, 4.19, 0));
+        OperatorAButton
+        .onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator))
+        .onFalse(new elevatorHoldCommand(m_elevator));
         
         
 
         //DriverBButton.onTrue(new InstantCommand(() -> m_elevator.stopElevator()));
 
         
-    
     }
 
     // AutoBuilder.resetOdom();
