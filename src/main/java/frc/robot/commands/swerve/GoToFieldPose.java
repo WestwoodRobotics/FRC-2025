@@ -6,6 +6,75 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class GoToFieldPose extends Command{
 
+    /*
+     * BLUE REEF CLOCKWISE STARTING AT 18 
+     * 18:
+     * x: 3.7
+     * y: 4.0
+     * angle: 0
+     * 
+     * 19:
+     * x: 4.0
+     * y: 4.75
+     * angle: -60
+     * 
+     * 20:
+     * x: 4.9
+     * y: 4.75
+     * angle: -120
+     * 
+     * 21:
+     * x: 5.3
+     * y: 4.0
+     * angle: -180
+     * 
+     * 22:
+     * x: 4.9
+     * y: 3.3
+     * angle: 120
+     * 
+     * 17:
+     * x: 4.1
+     * y: 3.3
+     * angle: 60
+     * 
+     */
+
+    /*
+     * RED REEF CLOCKWISE STARTING AT 10
+     * 10:
+     * x: 12.2
+     * y: 4.19
+     * angle: 0
+     * 
+     * 9:
+     * x: 12.6
+     * y: 4.8
+     * angle: -60
+     * 
+     * 8:
+     * x:13.5
+     * y: 4.8
+     * angle: -120
+     * 
+     * 7:
+     * x: 13.9
+     * y: 4.1
+     * angle: -180
+     * 
+     * 6:
+     * x: 13.5
+     * y: 3.4
+     * angle: 120
+     * 
+     * 11:
+     * x: 12.6
+     * y: 3.4
+     * angle: 60
+     *
+     */
+
+
     private SwerveDrive swerve;
 
     private double targetX;

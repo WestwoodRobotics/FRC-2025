@@ -31,7 +31,9 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.PortConstants;
+import frc.robot.commands.elevator.elevatorHoldCommand;
 import frc.robot.commands.elevator.elevatorSetPosition;
+import frc.robot.commands.elevator.elevatorSetPositionWithCurrentLimit;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
 import frc.robot.commands.outtake.OuttakeCurrentTimeCommand;
 import frc.robot.commands.outtake.OuttakePIDCommand;
@@ -224,13 +226,16 @@ public class RobotContainer {
 
         DriverDPadUp
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25), m_elevator))
-        .onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0), m_elevator));
+        .onFalse(new elevatorHoldCommand(m_elevator));
 
         DriverDPadDown
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
-        .onFalse(new InstantCommand(()-> m_elevator.setElevatorSpeed(0), m_elevator));
+        .onFalse(new elevatorHoldCommand(m_elevator));
+
+        
 
         OperatorDPadLeft.onTrue(new GoToFieldPose(m_robotDrive, 12.2, 4.19, 0));
+        OperatorAButton.onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator));
 
 
         DriverRightBumper
@@ -244,6 +249,11 @@ public class RobotContainer {
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+
+        // DriverAButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.HOME, 50, 30, 4));
+        // DriverBButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L1, 50, 30, 4));
+        // DriverXButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L2, 50, 30, 4));
+        // DriverYButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L3, 50, 30, 4));
 
         DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.HOME));
         DriverBButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));

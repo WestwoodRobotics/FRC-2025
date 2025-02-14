@@ -19,6 +19,7 @@ public class elevator extends SubsystemBase {
     private SparkFlex elevatorMotor1;
     private SparkFlex elevatorMotor2;
     private PIDController elevatorPIDController;
+    private double elevatorEncoderOffset = 0;
     
     
 
@@ -48,6 +49,7 @@ public class elevator extends SubsystemBase {
 
     public void periodic(){
         //System.out.println(elevatorMotor1.getEncoder().getPosition());
+        //System.out.println(elevatorMotor1.getOutputCurrent());
     }
 
     public PIDController getPIDController() {
@@ -55,8 +57,19 @@ public class elevator extends SubsystemBase {
     }
 
     public double getElevatorPosition() {
-        return elevatorMotor1.getEncoder().getPosition();
+        return elevatorMotor1.getEncoder().getPosition() + elevatorEncoderOffset;
     }
 
+    public double getElevatorCurrent() {
+        return elevatorMotor1.getOutputCurrent();
+    }
+
+    public double getElevatorSecondCurrent() {
+        return elevatorMotor2.getOutputCurrent();
+    }
+
+    public void setElevatorEncoderOffset(double offset) {
+        elevatorEncoderOffset = offset;
+    }
 
 }

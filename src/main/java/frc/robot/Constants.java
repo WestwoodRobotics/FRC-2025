@@ -249,6 +249,11 @@ public final class Constants {
     public static final double kP = 0.06;
     public static final double kI = 0;
     public static final double kD = 0;
+
+    // Current detection constants
+    public static final double kCurrentDetectionThreshold = 30.0; // Threshold for detecting a current spike
+    public static final int kCurrentWarmupSamples = 30; // Number of initial samples to ignore
+    public static final int kCurrentWindowSize = 5; // Size of the rolling average window
   }
 
   public static final class OuttakeConstants{
