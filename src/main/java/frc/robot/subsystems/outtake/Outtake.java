@@ -19,7 +19,7 @@ public class Outtake extends SubsystemBase {
     private PIDController outtakePIDController;
     
     public Outtake() {
-        
+
         outtakeMotor = new SparkMax(PortConstants.outtakeMotorPort, MotorType.kBrushless);
         outtakePIDController = new PIDController(OuttakeConstants.kP, OuttakeConstants.kI, OuttakeConstants.kD);
         coralDetector = new CANdiBeamBreak(PortConstants.kCANdiPort);   
@@ -43,15 +43,11 @@ public class Outtake extends SubsystemBase {
     }
 
     public boolean isCoralDetected(){
-        return coralDetector.isBeamBroken();
+        return coralDetector.getBeamBreakStatus();
     }
 
     public boolean isCoralNotDetected(){
-        return coralDetector.isBeamIntact();
-    }
-
-    public boolean doesCoralDetectorExist(){
-        return coralDetector.doesBeamBreakExist();
+        return !coralDetector.getBeamBreakStatus();
     }
 
     public double getOuttakeCurrent(){
@@ -60,8 +56,9 @@ public class Outtake extends SubsystemBase {
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Outtake RPM", outtakeMotor.getEncoder().getVelocity());
+        //System.out.println( outtakeMotor.getEncoder().getVelocity()); //-1700
         SmartDashboard.putNumber("Outtake Current", outtakeMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Outtake RPM", outtakeMotor.getEncoder().getVelocity());
     }
     
 }

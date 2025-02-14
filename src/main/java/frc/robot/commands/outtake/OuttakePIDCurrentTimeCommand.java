@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.outtake.Outtake;
 
-public class OuttakeCurrentTimeCommand extends Command {
+public class OuttakePIDCurrentTimeCommand extends Command {
 
   private enum CoralStates{
     WAITING_FOR_CORAL,
@@ -19,7 +19,11 @@ public class OuttakeCurrentTimeCommand extends Command {
 
   private final Outtake outtake;
 
-  private double power;
+  private PIDController pidController;
+
+  private double targetRPM;
+
+  private double currentRPM;
 
   private LinkedList<Double> recentCurrents = new LinkedList<Double>();
 
@@ -35,9 +39,11 @@ public class OuttakeCurrentTimeCommand extends Command {
 
   private double running_avg;
 
-  public OuttakeCurrentTimeCommand(Outtake outtake, double power, double currentDetectionThreshold, double timeOffset) {
+  public OuttakePIDCurrentTimeCommand(Outtake outtake, double targetRPM, double currentDetectionThreshold, double timeOffset) {
     this.outtake = outtake;
-    this.power = power;
+    this.pidController = new PIDController(0.0001, 0.0001, 0);
+    this.targetRPM = targetRPM;
+    this.currentRPM = outtake.getOuttakeRPM();
     this.currentDetectionThreshold = currentDetectionThreshold;
     this.timeOffset = timeOffset;
     addRequirements(outtake);
@@ -49,18 +55,20 @@ public class OuttakeCurrentTimeCommand extends Command {
     running_avg = 0;
     recentCurrents.clear();
     timer.reset();
+    pidController.setSetpoint(targetRPM);
+
 
     recentCurrents.add(outtake.getOuttakeCurrent());
     current_state = CoralStates.WAITING_FOR_CORAL;
   }
 
-  // Language: Java
+  
   @Override
   public void execute() {
       switch (current_state) {
           case WAITING_FOR_CORAL:
-              outtake.setOuttakeSpeed(power);
-              if (first_twenty < 30) {
+              outtake.setOuttakeSpeed(pidController.calculate(outtake.getOuttakeRPM()));
+              if (first_twenty < 50) {
                   // Warming up: increment counter and ignore current sample.
                   first_twenty++;
               } else {

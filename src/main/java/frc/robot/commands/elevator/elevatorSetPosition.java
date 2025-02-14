@@ -11,10 +11,14 @@ public class elevatorSetPosition extends Command{
 
     public elevatorSetPosition(elevator elevator, elevatorPositions position) {
         this.targetPosition = position.getPosition();
-        this.elevator = elevator;
-        
+        this.elevator = elevator;        
         addRequirements(elevator);
+    }
 
+    public elevatorSetPosition(elevator elevator, double position){
+        this.targetPosition = position;
+        this.elevator = elevator;
+        addRequirements(elevator);
     }
 
     @Override
