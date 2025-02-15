@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartToScore1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToScorePose"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToElevatorL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToElevatorHome"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score1ToHumanZone"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanZoneToScore2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToScorePose"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
