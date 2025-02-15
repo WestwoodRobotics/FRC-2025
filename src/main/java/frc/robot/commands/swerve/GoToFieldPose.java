@@ -131,7 +131,7 @@ public class GoToFieldPose extends Command{
 
     private boolean isFinished;
 
-    private PhotonVisionCameras m_cameras;
+
     private int visibleFiducialID = 0;
 
     private Pose2d targetPose;
@@ -143,7 +143,7 @@ public class GoToFieldPose extends Command{
     public GoToFieldPose(SwerveDrive swerve, ReefAlignSide side){ 
 
         this.swerve = swerve;
-        this.m_cameras = swerve.m_cameras;
+
 
         this.xTolerance = 0.01;
         this.yTolerance = 0.01;
@@ -196,6 +196,11 @@ public class GoToFieldPose extends Command{
         targetPose = (this.side == ReefAlignSide.LEFT) 
                         ? reefLeftPoseToFiducialID.get(visibleFiducialID).getPose2d() 
                         : reefRightPoseToFiducialID.get(visibleFiducialID).getPose2d();
+
+        targetX = targetPose.getTranslation().getX();
+        targetY = targetPose.getTranslation().getY();
+        targetAngle = targetPose.getRotation().getRadians();
+
 
 
 
