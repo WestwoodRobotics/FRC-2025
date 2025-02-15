@@ -1,4 +1,6 @@
 
+
+
 package frc.robot;
 import java.sql.Driver;
 import java.io.File;
@@ -34,6 +36,8 @@ import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorHoldCommand;
 import frc.robot.commands.elevator.elevatorSetPosition;
 import frc.robot.commands.elevator.elevatorSetPositionWithCurrentLimit;
+import frc.robot.commands.elevator.elevatorSetPositionWithLimitSwitch;
+import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
 import frc.robot.commands.outtake.OuttakeBeamBreakTimeCommand;
 import frc.robot.commands.outtake.OuttakeCurrentTimeCommand;
 import frc.robot.commands.outtake.OuttakePIDCommand;
@@ -62,6 +66,7 @@ public class RobotContainer {
   protected final Intake m_intake = new Intake();
   protected final Outtake m_outtake = new Outtake();
   protected PhotonVisionCameras m_cameras;
+  protected AprilTagFieldLayout m_layout;
   
   //private final Intake m_intake = new Intake();
   //private final preRoller m_preRoller = new preRoller();
@@ -151,9 +156,10 @@ public class RobotContainer {
 
 
     try {
-        m_cameras = new PhotonVisionCameras(new AprilTagFieldLayout(
+        m_layout = new AprilTagFieldLayout(
             "/home/lvuser/deploy/2025-reefscape.json"
-        ));
+        );  
+        m_cameras = new PhotonVisionCameras(m_layout);
     }
     catch(IOException exc) {
         System.out.println("Failed to load field layout!");
@@ -237,9 +243,21 @@ public class RobotContainer {
 
 
 
+        driverLeftTrigger
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake)
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed( 0.3))))
+        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+        
         DriverRightBumper
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
-        .andThen(new OuttakeBeamBreakTimeCommand(m_outtake, -0.3, 0.2)))
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))))
+        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+
+        driverRightTrigger
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
         
@@ -254,10 +272,10 @@ public class RobotContainer {
         // DriverXButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L2, 50, 30, 4));
         // DriverYButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L3, 50, 30, 4));
 
-        DriverAButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.HOME));
-        DriverBButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L4));
-        DriverXButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L3));
-        DriverYButton.onTrue(new elevatorSetPosition(m_elevator, elevatorPositions.L2));
+        DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
+        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
+        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
+        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
 
         //DriverRightBumper.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3)));
 
@@ -265,8 +283,9 @@ public class RobotContainer {
         /*
          * OPERATOR BUTTON MAPPINGS
          */
-
-        OperatorDPadLeft.onTrue(new GoToFieldPose(m_robotDrive, 12.2, 4.19, 0));
+        
+        OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02+0.165, 0));
+        OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02-0.165, 0));
         OperatorAButton
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));

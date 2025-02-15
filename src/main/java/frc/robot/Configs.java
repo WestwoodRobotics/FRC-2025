@@ -67,10 +67,10 @@ public final class Configs {
                                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                                 .pid(0.1, 0.0, 0.0)
                                 .outputRange(-1, 1);
-                        elevator1Config.softLimit.reverseSoftLimitEnabled(true);
-                        elevator1Config.softLimit.forwardSoftLimitEnabled(true);
-                        elevator1Config.softLimit.reverseSoftLimit(-71);
-                        elevator1Config.softLimit.forwardSoftLimit(0);
+                        //elevator1Config.softLimit.reverseSoftLimitEnabled(true);
+                        //elevator1Config.softLimit.forwardSoftLimitEnabled(true);
+                        //elevator1Config.softLimit.reverseSoftLimit(-71);
+                        //elevator1Config.softLimit.forwardSoftLimit(0);
                 }
 
                 static {

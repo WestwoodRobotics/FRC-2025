@@ -31,12 +31,12 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     @Override
     public void execute() {
         
-        if (elevator.getElevatorTopLimitSwitch().getStatus()) {
-            elevator.setElevatorSpeed(0);
-            elevator.setElevatorEncoderPosition(elevatorPositions.L4.getPosition());
-        }
+        // if (elevator.getElevatorTopLimitSwitch().getStatus()) {
+        //     elevator.setElevatorSpeed(0);
+        //     elevator.setElevatorEncoderPosition(elevatorPositions.L4.getPosition());
+        // }
 
-        if (elevator.getElevatorBottomLimitSwitch().getStatus()) {
+        if (elevator.getElevatorBottomLimitSwitch().isTriggered()) {
             elevator.setElevatorSpeed(0);
             elevator.setElevatorEncoderPosition(elevatorPositions.HOME.getPosition());
         }

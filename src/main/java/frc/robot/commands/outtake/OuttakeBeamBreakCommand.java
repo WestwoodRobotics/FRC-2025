@@ -44,17 +44,16 @@ public class OuttakeBeamBreakCommand extends Command {
 
       case WAITING_FOR_NO_CORAL_AFTER_FRONT:
         // Still spin forward until coral has fully passed -> beam unbroken
-        outtake.setOuttakeSpeed(power);
+        outtake.setOuttakeSpeed(0.3*power);
         if (outtake.isCoralNotDetected()) {
           // Entire coral just passed the sensor; reverse direction
-          this.power = -this.power;
           state = CoralState.WAITING_FOR_BACK_CORAL;
         }
         break;
 
       case WAITING_FOR_BACK_CORAL:
         // Spin in reverse until the beam breaks again (back of coral)
-        outtake.setOuttakeSpeed(power);
+        outtake.setOuttakeSpeed(-0.2*power);
         if (outtake.isCoralDetected()) {
           // We just detected the back of the coral
           outtake.setOuttakeSpeed(0);

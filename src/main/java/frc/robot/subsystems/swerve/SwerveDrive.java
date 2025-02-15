@@ -89,7 +89,7 @@ public class SwerveDrive extends SubsystemBase {
     private boolean isTestMode = false;
     private RobotConfig config;
     public Field2d fieldVisualization;
-    private PhotonVisionCameras m_cameras;
+    public PhotonVisionCameras m_cameras;
 
   /** Creates a new DriveSubsystem. */
   public SwerveDrive(PhotonVisionCameras cameras) {
@@ -308,7 +308,7 @@ public class SwerveDrive extends SubsystemBase {
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                m_gyro.getProcessedRot2dYaw())
+                new Rotation2d(kalmanLocalization.getTheta()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);

@@ -17,7 +17,7 @@ public class LimitSwitch extends GenericDigitalPinObject {
      * @return True if the switch is triggered, false if it is not.
      */
     public boolean isTriggered() {
-        return getStatus();
+        return !getStatus();
     }
     
 }

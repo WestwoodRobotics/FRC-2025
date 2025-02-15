@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ElevatorConstants;
@@ -21,8 +22,8 @@ public class elevator extends SubsystemBase {
     private SparkFlex elevatorMotor2;
     private PIDController elevatorPIDController;
     private double elevatorEncoderOffset = 0;
-    private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
-    private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(1);
+    //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
+    private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
     
     
 
@@ -49,10 +50,12 @@ public class elevator extends SubsystemBase {
     public void stopElevator() {
         elevatorMotor1.set(0);
     }
-
+    @Override
     public void periodic(){
         //System.out.println(elevatorMotor1.getEncoder().getPosition());
         //System.out.println(elevatorMotor1.getOutputCurrent());
+        // SmartDashboard.putBoolean("Detected Limit Switch", elevatorBottomLimitSwitch.isTriggered());
+        // SmartDashboard.putNumber("Elevator 1 Encoder", this.getElevatorPosition());
     }
 
     public PIDController getPIDController() {
@@ -80,9 +83,9 @@ public class elevator extends SubsystemBase {
         elevatorEncoderOffset = position - elevatorMotor1.getEncoder().getPosition();
     }
 
-    public LimitSwitch getElevatorTopLimitSwitch() {
-        return elevatorTopLimitSwitch;
-    }
+    // public LimitSwitch getElevatorTopLimitSwitch() {
+    //     return elevatorTopLimitSwitch;
+    // }
     
     public LimitSwitch getElevatorBottomLimitSwitch() {
         return elevatorBottomLimitSwitch;

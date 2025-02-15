@@ -273,7 +273,7 @@ public final class Constants {
     public static final double kReefCameraToRobotRoll = 0;
 
     public static final Transform3d kCameraToRobotTransform = new Transform3d(
-      new Translation3d(kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
+      new Translation3d(-kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
       new Rotation3d(kReefCameraToRobotPitch, kReefCameraToRobotYaw, kReefCameraToRobotRoll)
     );
 

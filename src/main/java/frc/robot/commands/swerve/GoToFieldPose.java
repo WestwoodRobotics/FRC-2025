@@ -2,6 +2,7 @@ package frc.robot.commands.swerve;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class GoToFieldPose extends Command{
@@ -92,48 +93,41 @@ public class GoToFieldPose extends Command{
     private PIDController xController;
     private PIDController yController;
     private PIDController angleController;
+
+    private boolean isFinished;
+
+    private PhotonVisionCameras m_cameras;
     //11.8 
     public GoToFieldPose(SwerveDrive swerve, double targetX, double targetY, double targetAngle){
         this.targetX = targetX;
         this.targetY = targetY;
         this.targetAngle = targetAngle;
         this.swerve = swerve;
+        this.m_cameras = swerve.m_cameras;
 
-        this.xTolerance = 0.02;
-        this.yTolerance = 0.02;
-        this.angleTolerance = 0.02;
+        this.xTolerance = 0.01;
+        this.yTolerance = 0.01;
+        this.angleTolerance = 0.01;
 
-        xController = new PIDController(1.5, 0, 0);
-        yController = new PIDController(1.5, 0, 0);
-        angleController = new PIDController(1.5, 0, 0);
-
-        addRequirements(swerve);
-    }
-
-    public GoToFieldPose(SwerveDrive swerve, double targetX, double targetY, double targetAngle, double xTolerance, double yTolerance, double angleTolerance){
-        this.targetX = targetX;
-        this.targetY = targetY;
-        this.targetAngle = targetAngle;
-        this.swerve = swerve;
-
-        this.xTolerance = xTolerance;
-        this.yTolerance = yTolerance;
-        this.angleTolerance = angleTolerance;
+        xController = new PIDController(2, 0.0, 0.005);
+        xController.setIntegratorRange(-0.2, 0.2);
+        yController = new PIDController(2, 0.0, 0.005);
+        yController.setIntegratorRange(-0.2, 0.2);
+        angleController = new PIDController(2, 0.0, 0.005);
+        angleController.setIntegratorRange(-0.2, 0.2);
 
 
 
 
-
-        xController = new PIDController(1.5, 0, 0);
-        yController = new PIDController(1.5, 0, 0);
-        angleController = new PIDController(1.5, 0, 0);
 
         addRequirements(swerve);
     }
 
     @Override
     public void initialize(){
-
+        if (!swerve.m_cameras.hasTarget()){
+            isFinished = true;
+        }
     }
 
     @Override
@@ -145,15 +139,15 @@ public class GoToFieldPose extends Command{
         double xOutput = xController.calculate(currentX, targetX);
         double yOutput = yController.calculate(currentY, targetY);
         double angleOutput = angleController.calculate(currentAngle, targetAngle);
-        xOutput = Math.min(1, Math.max(-1, xOutput));
-        yOutput = Math.min(1, Math.max(-1, yOutput));
-        angleOutput = Math.min(1, Math.max(-1, angleOutput));
+        xOutput = Math.min(0.3, Math.max(-0.3, xOutput));
+        yOutput = Math.min(0.3, Math.max(-0.3, yOutput));
+        angleOutput = Math.min(0.3, Math.max(-0.3, angleOutput));
         swerve.drive(xOutput, yOutput, angleOutput, true);
     }
 
     @Override
     public boolean isFinished(){
-        return Math.abs(currentX - targetX) < xTolerance && Math.abs(currentY - targetY) < yTolerance && Math.abs(currentAngle - targetAngle) < angleTolerance;
+        return (Math.abs(currentX - targetX) < xTolerance && Math.abs(currentY - targetY) < yTolerance && Math.abs(currentAngle - targetAngle) < angleTolerance) || isFinished;
     }
 
     @Override
