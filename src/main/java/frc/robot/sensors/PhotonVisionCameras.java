@@ -71,4 +71,11 @@ public class PhotonVisionCameras extends SubsystemBase {
         }
         return null;
     }
+
+    public int getFiducialId() {
+        if(!hasTarget() || camera_result == null) {
+            return -1;
+        }
+        return camera_result.getBestTarget().getFiducialId();
+    }
 }

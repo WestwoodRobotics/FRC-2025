@@ -47,6 +47,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
+import frc.robot.subsystems.utils.swerve.ReefAlignSide;
 import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.commands.swerve.*;
 
@@ -284,8 +285,10 @@ public class RobotContainer {
          * OPERATOR BUTTON MAPPINGS
          */
         
-        OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02+0.165, 0));
-        OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02-0.165, 0));
+        // OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02+0.165, 0));
+        // OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02-0.165, 0));
+        OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, ReefAlignSide.LEFT));
+        OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, ReefAlignSide.RIGHT));
         OperatorAButton
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
@@ -336,8 +339,9 @@ public class RobotContainer {
     //   while (0 == 0){
     //     System.out.println("Yaw Offset: " + m_robotDrive.gyroSubsystem.getProcessedRot2dYaw().getDegrees());
     //   }
-      this.m_robotDrive.m_gyro.setGyroYawOffset(m_robotDrive.m_gyro.getGyroHeadingFromPathPlannerAuto(autoChooser.getSelected().getName()));
+      //this.m_robotDrive.m_gyro.setGyroYawOffset(m_robotDrive.m_gyro.getGyroHeadingFromPathPlannerAuto(autoChooser.getSelected().getName()));
 
-      return autoChooser.getSelected();
+    //   return autoChooser.getSelected();
+        return new GoToFieldPose(m_robotDrive, ReefAlignSide.LEFT);
     }
 }
