@@ -1,11 +1,41 @@
 package frc.robot.commands.swerve;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class GoToFieldPose extends Command{
+
+    private enum ReefPose{
+        BLUE_18(new Pose2d(new Translation2d(3.7, 4.0), new Rotation2d(0.0))),
+        BLUE_19(new Pose2d(new Translation2d(4.0, 4.75), new Rotation2d(-60.0))),
+        BLUE_20(new Pose2d(new Translation2d(4.9, 4.75), new Rotation2d(-120.0))),
+        BLUE_21(new Pose2d(new Translation2d(5.3, 4.0), new Rotation2d(-180.0))),
+        BLUE_22(new Pose2d(new Translation2d(4.9, 3.3), new Rotation2d(120.0))),
+        BLUE_17(new Pose2d(new Translation2d(4.1, 3.3), new Rotation2d(60.0))),
+        RED_10(new Pose2d(new Translation2d(12.2, 4.19), new Rotation2d(0.0))),
+        RED_9(new Pose2d(new Translation2d(12.6, 4.8), new Rotation2d(-60.0))),
+        RED_8(new Pose2d(new Translation2d(13.5, 4.8), new Rotation2d(-120.0))),
+        RED_7(new Pose2d(new Translation2d(13.9, 4.1), new Rotation2d(-180.0))),
+        RED_6(new Pose2d(new Translation2d(13.5, 3.4), new Rotation2d(120.0))),
+        RED_11(new Pose2d(new Translation2d(12.6, 3.4), new Rotation2d(60.0)));
+
+        private Pose2d pose2d;
+        
+        ReefPose(Pose2d pose2d) {
+            this.pose2d = pose2d;
+        }
+
+        public Pose2d getPose2d() {
+            return pose2d;
+        }
+
+        
+    }
 
     /*
      * BLUE REEF CLOCKWISE STARTING AT 18 
