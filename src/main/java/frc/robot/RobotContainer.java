@@ -162,6 +162,7 @@ public class RobotContainer {
             "/home/lvuser/deploy/2025-reefscape.json"
         );  
         m_cameras = new PhotonVisionCameras(m_layout);
+        
     }
     catch(IOException exc) {
         System.out.println("Failed to load field layout!");
@@ -240,9 +241,9 @@ public class RobotContainer {
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
 
-        DriverDPadLeft.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, ReefAlignSide.LEFT));
+        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
 
-        DriverDPadRight.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, ReefAlignSide.RIGHT));
+        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
 
         
 
@@ -250,25 +251,27 @@ public class RobotContainer {
 
 
         driverLeftTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake)
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed( 0.3))))
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)//right trigger
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+       
         
-        DriverRightBumper
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
+        driverRightTrigger
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
 
-        driverRightTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)))
+        OperatorLeftBumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake) //left trigger
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed( 0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+
         
-        DriverLeftBumper
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake)
+        operatorLeftTrigger
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake) //left bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));

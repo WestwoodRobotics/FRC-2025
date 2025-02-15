@@ -157,6 +157,15 @@ public class KalmanLocalization {
         ));
     }
 
+    private double posMod(double x, double y) {
+        double mod = x % y;
+        if (mod < 0)
+        {
+            mod += y;
+        }
+        return mod;
+    }
+
     public void update(
         ArrayList<Translation2d> wheel_vel,
         ArrayList<Translation2d> wheel_pos,
@@ -194,10 +203,19 @@ public class KalmanLocalization {
         double camera_x = 0;
         double camera_y = 0;
         double camera_theta = 0;
+
         if(camera_has_target && camera_pose != null) {
+            double zeroed_camera = camera_pose.getRotation().getRadians() + Math.PI;
+            double zeroed_pose = state.get(2, 0) + Math.PI;
+            double angle_offset = Math.floor(zeroed_pose/(2*Math.PI))*2*Math.PI;
+            System.out.println("Current angle: " + zeroed_pose);
+            System.out.println("Angle offset: " + angle_offset);
+            System.out.println("Camera angle: " + zeroed_camera);
             camera_x = camera_pose.getX();
             camera_y = camera_pose.getY();
-            camera_theta = camera_pose.getRotation().getRadians();
+            System.out.println("Camera mod: " + posMod(zeroed_camera, 2*Math.PI));
+            camera_theta = posMod(zeroed_camera, 2*Math.PI)+angle_offset - Math.PI;
+            System.out.println("Camera corrected: " + camera_theta);
         }
         Matrix <N4, N1> sensor_input = new Matrix<N4, N1>(
             new SimpleMatrix(4, 1, true,
@@ -224,7 +242,7 @@ public class KalmanLocalization {
         return state.get(1, 0);
     }
     public double getTheta(){
-        return state.get(2, 0);
+        return posMod(state.get(2, 0) + Math.PI, 2*Math.PI) - Math.PI;
     }
     public double getXVel(){
         return state.get(3, 0);
