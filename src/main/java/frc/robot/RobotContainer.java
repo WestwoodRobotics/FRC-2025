@@ -50,6 +50,7 @@ import frc.robot.subsystems.utils.elevator.elevatorPositions;
 import frc.robot.subsystems.utils.swerve.ReefAlignSide;
 import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.commands.swerve.*;
+import frc.robot.commands.swerve.GoToNearestScoringPoseCommand;
 
 
 
@@ -239,6 +240,10 @@ public class RobotContainer {
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
 
+        DriverDPadLeft.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, ReefAlignSide.LEFT));
+
+        DriverDPadRight.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, ReefAlignSide.RIGHT));
+
         
 
 
@@ -287,8 +292,7 @@ public class RobotContainer {
         
         // OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02+0.165, 0));
         // OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02-0.165, 0));
-        OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, ReefAlignSide.LEFT));
-        OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, ReefAlignSide.RIGHT));
+
         OperatorAButton
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
@@ -341,7 +345,7 @@ public class RobotContainer {
     //   }
       //this.m_robotDrive.m_gyro.setGyroYawOffset(m_robotDrive.m_gyro.getGyroHeadingFromPathPlannerAuto(autoChooser.getSelected().getName()));
 
-    //   return autoChooser.getSelected();
-        return new GoToFieldPose(m_robotDrive, ReefAlignSide.LEFT);
+        return autoChooser.getSelected();
+        //return new GoToNearestScoringPoseCommand(m_robotDrive, ReefAlignSide.LEFT);
     }
 }
