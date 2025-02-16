@@ -91,37 +91,27 @@ public class KalmanLocalization {
         SimpleMatrix world_forward_kinematics = (swerve_forward_kinematics.transpose().mult(rotation_matrix.transpose())).transpose();
         SimpleMatrix out_matrix = new SimpleMatrix(7, 8);
         out_matrix.insertIntoThis(3, 0, world_forward_kinematics);
+
         return new Matrix<N7, N8>(out_matrix);
     }
 
-    private Matrix<N7, N7> getSensorMatrix(double dt, boolean reefCameraHasTarget, boolean humanPlayerCameraHasTarget) {
-        double reef_flag_target = 0.0;
-        if(reefCameraHasTarget) {
-            reef_flag_target = 1.0;
-        }
+    private Matrix<N7, N7> getSensorMatrix(
+        double dt,
+        boolean reefCameraHasTarget,
+        boolean humanPlayerCameraHasTarget
+    ) {
+        double reef_flag_target = reefCameraHasTarget ? 1.0 : 0.0;
+        double human_flag_target = humanPlayerCameraHasTarget ? 1.0 : 0.0;
 
-        double human_flag_target = 0.0;
-        if(humanPlayerCameraHasTarget) {
-            human_flag_target = 1.0;
-        }
-
-
-        // return new Matrix<N4, N7>(new SimpleMatrix(4, 7, true,
-        //     0, 0, 0, 0, 0, 1, 1,
-        //             reef_flag_target, 0, 0, 0, 0, 0, 0,
-        //             0, reef_flag_target, 0, 0, 0, 0, 0,
-        //             0, 0, reef_flag_target, 0, 0, 0, 0
-        // ));
-
-        return new Matrix<N7, N7> (new SimpleMatrix(7,7,true,
-        0, 0, 0, 0, 0, 1, 1,
-            reef_flag_target, 0, 0, 0, 0, 0, 0,
-            0, reef_flag_target, 0, 0, 0, 0, 0,
-            0, 0, reef_flag_target, 0, 0, 0, 0,
-            human_flag_target, 0, 0, 0, 0, 0, 0,
-            0, human_flag_target, 0, 0, 0, 0, 0,
-            0, 0, human_flag_target, 0, 0, 0, 0
-            ));
+        return new Matrix<N7, N7>(new SimpleMatrix(7, 7, true,
+            0,             0,             0,             0, 0, 1, 1,
+            reef_flag_target, 0,          0,             0, 0, 0, 0,
+            0,             reef_flag_target,0,            0, 0, 0, 0,
+            0,             0,             reef_flag_target,0, 0, 0, 0,
+            human_flag_target,0,          0,             0, 0, 0, 0,
+            0,             human_flag_target,0,          0, 0, 0, 0,
+            0,             0,             human_flag_target,0,0, 0, 0
+        ));
     }
 
     private Matrix<N7, N7> getSensorCovariance(double dt, double camera_area, boolean has_target) {
@@ -180,11 +170,27 @@ public class KalmanLocalization {
 
     private double posMod(double x, double y) {
         double mod = x % y;
-        if (mod < 0)
-        {
+        if (mod < 0) {
             mod += y;
         }
         return mod;
+    }
+
+    // CHANGED: New helper to unwrap camera angles near the filter’s predicted angle
+    private double unwrapAngle(double measuredAngle, double referenceAngle) {
+        // referenceAngle can be anything (could be bigger than ±π).
+        double twopi = 2.0 * Math.PI;
+
+        // difference in [-2π, +2π]
+        double diff = measuredAngle - (referenceAngle % twopi);
+
+        // shift measuredAngle by an integer multiple of 2π so the difference is in [-π, +π]
+        if (diff > Math.PI) {
+            measuredAngle -= twopi;
+        } else if (diff < -Math.PI) {
+            measuredAngle += twopi;
+        }
+        return measuredAngle;
     }
 
     public void update(
@@ -232,32 +238,20 @@ public class KalmanLocalization {
         double human_camera_y = 0;
         double human_camera_theta = 0;
 
-        if(reef_camera_has_target && reef_camera_robot_pose != null) {
-            double zeroed_camera = reef_camera_robot_pose.getRotation().getRadians() + Math.PI;
-            double zeroed_pose = state.get(2, 0) + Math.PI;
-            double angle_offset = Math.floor(zeroed_pose/(2*Math.PI))*2*Math.PI;
-            System.out.println("Current angle: " + zeroed_pose);
-            System.out.println("Angle offset: " + angle_offset);
-            System.out.println("Camera angle: " + zeroed_camera);
+        // CHANGED: Removed the old angle_offset lines and replaced with unwrapping
+        if (reef_camera_has_target && reef_camera_robot_pose != null) {
             reef_camera_x = reef_camera_robot_pose.getX();
             reef_camera_y = reef_camera_robot_pose.getY();
-            System.out.println("Camera mod: " + posMod(zeroed_camera, 2*Math.PI));
-            reef_camera_theta = posMod(zeroed_camera, 2*Math.PI)+angle_offset - Math.PI;
-            System.out.println("Camera corrected: " + reef_camera_theta);
+            // unwrap camera angle around filter’s predicted angle
+            double cameraAngle = reef_camera_robot_pose.getRotation().getRadians();
+            reef_camera_theta = unwrapAngle(cameraAngle, state.get(2, 0)); // CHANGED
         }
 
         if (human_camera_has_target && human_camera_robot_pose != null) {
-            double zeroed_camera = human_camera_robot_pose.getRotation().getRadians() + Math.PI;
-            double zeroed_pose = state.get(2, 0) + Math.PI;
-            double angle_offset = Math.floor(zeroed_pose/(2*Math.PI))*2*Math.PI;
-            System.out.println("Current angle: " + zeroed_pose);
-            System.out.println("Angle offset: " + angle_offset);
-            System.out.println("Camera angle: " + zeroed_camera);
             human_camera_x = human_camera_robot_pose.getX();
             human_camera_y = human_camera_robot_pose.getY();
-            System.out.println("Camera mod: " + posMod(zeroed_camera, 2*Math.PI));
-            human_camera_theta = posMod(zeroed_camera, 2*Math.PI)+angle_offset - Math.PI;
-            System.out.println("Camera corrected: " + human_camera_theta);
+            double cameraAngle = human_camera_robot_pose.getRotation().getRadians();
+            human_camera_theta = unwrapAngle(cameraAngle, state.get(2, 0)); // CHANGED
         }
         
         Matrix <N7, N1> sensor_input = new Matrix<N7, N1>(
@@ -269,7 +263,6 @@ public class KalmanLocalization {
                 human_camera_x,
                 human_camera_y,
                 human_camera_theta
-
             )
         );
         filter.aPosteriorUpdate(
