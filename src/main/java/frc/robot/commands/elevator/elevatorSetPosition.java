@@ -1,21 +1,21 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.elevator;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 
 public class elevatorSetPosition extends Command{
 
     private double targetPosition;
-    private elevator elevator;
+    private Elevator elevator;
 
-    public elevatorSetPosition(elevator elevator, elevatorPositions position) {
+    public elevatorSetPosition(Elevator elevator, elevatorPositions position) {
         this.targetPosition = position.getPosition();
         this.elevator = elevator;        
         addRequirements(elevator);
     }
 
-    public elevatorSetPosition(elevator elevator, double position){
+    public elevatorSetPosition(Elevator elevator, double position){
         this.targetPosition = position;
         this.elevator = elevator;
         addRequirements(elevator);

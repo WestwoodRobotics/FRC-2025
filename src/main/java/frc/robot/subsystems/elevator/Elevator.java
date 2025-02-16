@@ -15,7 +15,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 import frc.robot.sensors.DIO.LimitSwitch;
 
-public class elevator extends SubsystemBase {
+public class Elevator extends SubsystemBase {
 
 
     private SparkFlex elevatorMotor1;
@@ -27,7 +27,7 @@ public class elevator extends SubsystemBase {
     
     
 
-    public elevator(int elevatorMotor1Port, int elevatorMotor2Port) {
+    public Elevator(int elevatorMotor1Port, int elevatorMotor2Port) {
         this.elevatorMotor1 = new SparkFlex(elevatorMotor1Port, MotorType.kBrushless);
         this.elevatorMotor2 = new SparkFlex(elevatorMotor2Port, MotorType.kBrushless);
         elevatorMotor1.configure(Configs.Elevator.elevator1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

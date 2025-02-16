@@ -1,14 +1,14 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.elevator;
+import frc.robot.subsystems.elevator.Elevator;
 
 
 public class elevatorHoldCommand extends Command {
-    private final elevator elevator;
+    private final Elevator elevator;
     private double holdPosition;
 
-    public elevatorHoldCommand(elevator elevator) {
+    public elevatorHoldCommand(Elevator elevator) {
         this.elevator = elevator;
         addRequirements(elevator);
     }

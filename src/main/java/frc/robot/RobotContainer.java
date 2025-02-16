@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.PortConstants;
+import frc.robot.commands.ODCommandFactory;
 import frc.robot.commands.elevator.elevatorHoldCommand;
 import frc.robot.commands.elevator.elevatorSetPosition;
 import frc.robot.commands.elevator.elevatorSetPositionWithCurrentLimit;
@@ -42,7 +43,7 @@ import frc.robot.commands.outtake.OuttakeBeamBreakTimeCommand;
 import frc.robot.commands.outtake.OuttakeCurrentTimeCommand;
 import frc.robot.commands.outtake.OuttakePIDCommand;
 import frc.robot.commands.outtake.OuttakePIDCurrentTimeCommand;
-import frc.robot.subsystems.elevator.elevator;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -64,7 +65,7 @@ import frc.robot.commands.swerve.GoToNearestScoringPoseCommand;
 public class RobotContainer {
 
   protected final SwerveDrive m_robotDrive;
-  protected final elevator m_elevator = new elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
+  protected final Elevator m_elevator = new Elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
   protected final Intake m_intake = new Intake();
   protected final Outtake m_outtake = new Outtake();
   protected PhotonVisionCameras m_cameras;
@@ -136,6 +137,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator);
     // Configure the button bindings
     // NamedCommands.registerCommand("SpinSensePreRoller", ODCommandFactory.intakeSenseCommand());
     // NamedCommands.registerCommand("Intake", ODCommandFactory.intakeSenseCommand());
@@ -152,6 +154,8 @@ public class RobotContainer {
     // NamedCommands.registerCommand("LLSeekAndRotateOnly", new SeekAndTrackRotOnly(m_robotDrive, "limelight"));
     // NamedCommands.registerCommand("LLAlignAndRange", new AlignAndRangeAprilTag(m_robotDrive, "limelight"));
     // NamedCommands.registerCommand("LLAlignHorizontally", new AprilTagFollowGeneral(m_robotDrive, "limelight"));
+
+
      
     
 
@@ -172,6 +176,18 @@ public class RobotContainer {
 
     
     DriverStation.silenceJoystickConnectionWarning(true);
+
+
+
+    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
+    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
+    NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
+    NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
+    NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
+    NamedCommands.registerCommand("GoToElevatorHome", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
+    NamedCommands.registerCommand("Intake", ODCommandFactory.IntakeToOuttakeBeamBreakCommand());
+    NamedCommands.registerCommand("ScoreCoral", ODCommandFactory.scoreCoral());
+
     
     // Configure default commands 
     // m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
@@ -180,11 +196,15 @@ public class RobotContainer {
     //m_elevator.setDefaultCommand(new elevatorSetPosition(m_elevator, m_elevator.getElevatorPosition()));
     
 
+
+
+
+
     autoChooser = AutoBuilder.buildAutoChooser();
 
     //if in auto set the default command of the shooter subsystem to be the shooterPIDCommand
 
-
+    
 
     configureButtonBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);

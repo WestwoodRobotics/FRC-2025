@@ -4,12 +4,12 @@ import java.util.LinkedList;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.subsystems.elevator.elevator;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 
 public class elevatorSetPositionWithCurrentLimit extends Command {
     private double targetPosition;
-    private elevator elevator;
+    private Elevator elevator;
     private LinkedList<Double> recentCurrents = new LinkedList<Double>();
     private int samplesProcessed = 0;
     private double currentThreshold;
@@ -17,7 +17,7 @@ public class elevatorSetPositionWithCurrentLimit extends Command {
     private int windowSize;
     private double runningAvg = 0;
 
-    public elevatorSetPositionWithCurrentLimit(elevator elevator, elevatorPositions position, 
+    public elevatorSetPositionWithCurrentLimit(Elevator elevator, elevatorPositions position, 
                                              double currentThreshold, int warmupSamples, int windowSize) {
         this.targetPosition = position.getPosition();
         this.elevator = elevator;
@@ -27,7 +27,7 @@ public class elevatorSetPositionWithCurrentLimit extends Command {
         addRequirements(elevator);
     }
 
-    public elevatorSetPositionWithCurrentLimit(elevator elevator, double position,
+    public elevatorSetPositionWithCurrentLimit(Elevator elevator, double position,
                                              double currentThreshold, int warmupSamples, int windowSize) {
         this.targetPosition = position;
         this.elevator = elevator;
@@ -37,14 +37,14 @@ public class elevatorSetPositionWithCurrentLimit extends Command {
         addRequirements(elevator);
     }
 
-    public elevatorSetPositionWithCurrentLimit(elevator elevator, elevatorPositions position) {
+    public elevatorSetPositionWithCurrentLimit(Elevator elevator, elevatorPositions position) {
         this(elevator, position, 
              ElevatorConstants.kCurrentDetectionThreshold,
              ElevatorConstants.kCurrentWarmupSamples,
              ElevatorConstants.kCurrentWindowSize);
     }
 
-    public elevatorSetPositionWithCurrentLimit(elevator elevator, double position) {
+    public elevatorSetPositionWithCurrentLimit(Elevator elevator, double position) {
         this(elevator, position,
              ElevatorConstants.kCurrentDetectionThreshold,
              ElevatorConstants.kCurrentWarmupSamples,
