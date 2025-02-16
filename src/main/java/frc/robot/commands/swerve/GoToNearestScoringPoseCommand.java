@@ -68,8 +68,8 @@ public class GoToNearestScoringPoseCommand extends Command{
         xController.setIntegratorRange(-0.2, 0.2);
         yController = new PIDController(1.5, 0.0, 0.00);
         yController.setIntegratorRange(-0.2, 0.2);
-        angleController = new PIDController(1
-        , 0.0, 0.00);
+        angleController = new PIDController(1, 0.0, 0.00);
+        angleController.enableContinuousInput(-Math.PI, Math.PI);
         angleController.setIntegratorRange(-0.2, 0.2);
 
         addRequirements(swerve);
@@ -79,8 +79,8 @@ public class GoToNearestScoringPoseCommand extends Command{
     public void initialize(){
         finished = false;
         try{
-            swerve.m_cameras.hasTarget();
-            swerve.m_cameras.getFiducialId();
+            swerve.m_cameras.reefCameraHasTarget();
+            swerve.m_cameras.getBestReefCameraFiducialId();
         }
         catch (Exception e){
             System.out.println("Crashed!");
@@ -88,13 +88,13 @@ public class GoToNearestScoringPoseCommand extends Command{
             return;
         }
 
-        if (!swerve.m_cameras.hasTarget()){
+        if (!swerve.m_cameras.reefCameraHasTarget()){
             System.out.println("No target!");
             finished = true;
             return;
         }
 
-        visibleFiducialID = swerve.m_cameras.getFiducialId();
+        visibleFiducialID = swerve.m_cameras.getBestReefCameraFiducialId();
         Optional<Pose3d> maybeTagPose = layout.getTagPose(visibleFiducialID);
         if(maybeTagPose.isEmpty()) {
             System.out.println("No pose!");
@@ -155,7 +155,7 @@ public class GoToNearestScoringPoseCommand extends Command{
             Math.pow(currentY - targetY, 2)) + 1)+0.1
         );
         
-        double angleOutput = angleController.calculate(new Rotation2d(currentAngle).minus(new Rotation2d(targetAngle)).getRadians(), 0);
+        double angleOutput = angleController.calculate(currentAngle, targetAngle);
         xOutput = Math.min(speedBound, Math.max(-speedBound, xOutput));
         yOutput = Math.min(speedBound, Math.max(-speedBound, yOutput));
         angleOutput = Math.min(0.3, Math.max(-0.3, angleOutput));

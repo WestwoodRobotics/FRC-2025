@@ -18,64 +18,104 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CameraConstants;
 
 public class PhotonVisionCameras extends SubsystemBase {
-    PhotonCamera camera;
-    PhotonPipelineResult camera_result;
+    PhotonCamera reefCamera;
+    PhotonCamera humanPlayerCamera;
+    PhotonPipelineResult reef_camera_result;
+    PhotonPipelineResult human_camera_result;
+
     AprilTagFieldLayout layout;
-    Transform3d cameraToRobot;
+    Transform3d reefCameraToRobot;
+    Transform3d humanCameraToRobot;
 
     public PhotonVisionCameras(AprilTagFieldLayout layout) {
         // TODO: gracefully handle camera not being found
-        camera = new PhotonCamera("reef_camera");
-
+        reefCamera = new PhotonCamera("reef_camera");
+        humanPlayerCamera = new PhotonCamera("human_camera");
         //TODO: put this in robot constants
-        cameraToRobot = CameraConstants.kCameraToRobotTransform;
-        camera_result = null;
+        reefCameraToRobot = CameraConstants.kReefCameraToRobotTransform;
+        humanCameraToRobot = CameraConstants.kHumanPlayerCameraToRobotTransform;
+
+        reef_camera_result = null;
         this.layout = layout;
     }
 
     public void periodic() {
         // This method will be called once per scheduler run
-        try{
-            camera_result = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
-        } catch (Exception e){
-            camera_result = camera.getLatestResult();
-        }
+        reefCamera.getLatestResult();
+        humanPlayerCamera.getLatestResult();
     }
 
-    public boolean hasTarget() {
-        if(camera_result == null) {
+    public boolean reefCameraHasTarget() {
+        if(reef_camera_result == null) {
             return false;
         }
-        return camera_result.hasTargets();
+        return reef_camera_result.hasTargets();
     }
 
-    public double getArea() {
-        if(!hasTarget() || camera_result == null) {
+    public boolean humanPlayerCameraHasTarget() {
+        if(human_camera_result == null) {
+            return false;
+        }
+        return human_camera_result.hasTargets();
+    }
+
+    public double getReefCameraArea() {
+        if(!reefCameraHasTarget() || reef_camera_result == null) {
             return 0;
         }
-        return camera_result.getBestTarget().getArea();
+        return reef_camera_result.getBestTarget().getArea();
     }
 
-    public Pose2d getPose() {
-        if(!hasTarget() || camera_result == null) {
+    public double getHumanPlayerCameraArea() {
+        if(!humanPlayerCameraHasTarget() || human_camera_result == null) {
+            return 0;
+        }
+        return human_camera_result.getBestTarget().getArea();
+    }
+
+    public Pose2d getPoseRelativeReefCamera() {
+        if(!reefCameraHasTarget() || reef_camera_result == null) {
             return null;
         }
-        PhotonTrackedTarget target = camera_result.getBestTarget();
+        PhotonTrackedTarget target = reef_camera_result.getBestTarget();
         if(layout.getTagPose(target.getFiducialId()).isPresent()) {
             Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
                 target.getBestCameraToTarget(),
                 layout.getTagPose(target.getFiducialId()).get(), 
-                cameraToRobot
+                reefCameraToRobot
             );
             return robotPose.toPose2d();
         }
         return null;
     }
 
-    public int getFiducialId() {
-        if(!hasTarget() || camera_result == null) {
+    public Pose2d getPoseRelativeHumanPlayerCamera() {
+        if(!humanPlayerCameraHasTarget() || human_camera_result == null) {
+            return null;
+        }
+        PhotonTrackedTarget target = human_camera_result.getBestTarget();
+        if(layout.getTagPose(target.getFiducialId()).isPresent()) {
+            Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
+                target.getBestCameraToTarget(),
+                layout.getTagPose(target.getFiducialId()).get(), 
+                humanCameraToRobot
+            );
+            return robotPose.toPose2d();
+        }
+        return null;
+    }
+
+    public int getBestReefCameraFiducialId() {
+        if(!reefCameraHasTarget() || reef_camera_result == null) {
             return -1;
         }
-        return camera_result.getBestTarget().getFiducialId();
+        return reef_camera_result.getBestTarget().getFiducialId();
+    }
+
+    public int getBestHumanPlayerCameraFiducialId() {
+        if(!humanPlayerCameraHasTarget() || human_camera_result == null) {
+            return -1;
+        }
+        return human_camera_result.getBestTarget().getFiducialId();
     }
 }

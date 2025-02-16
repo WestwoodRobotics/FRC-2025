@@ -17,7 +17,7 @@ public class KalmanLocalization {
     public Matrix<N7, N1> state;
     public Matrix<N7, N7> cov;
 
-    public KalmanFilter<N7, N8, N4> filter;
+    public KalmanFilter<N7, N8, N7> filter;
 
     public double curr_time;
 
@@ -55,7 +55,7 @@ public class KalmanLocalization {
             0, 0, 0, 0, 0, 0.0001, 0,
             0, 0, 0, 0, 0, 0, 100
         ));
-        filter = new KalmanFilter<N7, N8, N4>(state, cov);
+        filter = new KalmanFilter<N7, N8, N7>(state, cov);
 
         curr_time = Timer.getFPGATimestamp();
     }
@@ -94,21 +94,39 @@ public class KalmanLocalization {
         return new Matrix<N7, N8>(out_matrix);
     }
 
-    private Matrix<N4, N7> getSensorMatrix(double dt, boolean has_target) {
-        double flag_target = 0.0;
-        if(has_target) {
-            flag_target = 1.0;
+    private Matrix<N7, N7> getSensorMatrix(double dt, boolean reefCameraHasTarget, boolean humanPlayerCameraHasTarget) {
+        double reef_flag_target = 0.0;
+        if(reefCameraHasTarget) {
+            reef_flag_target = 1.0;
         }
-        return new Matrix<N4, N7>(new SimpleMatrix(4, 7, true,
-            0, 0, 0, 0, 0, 1, 1,
-                    flag_target, 0, 0, 0, 0, 0, 0,
-                    0, flag_target, 0, 0, 0, 0, 0,
-                    0, 0, flag_target, 0, 0, 0, 0
-        ));
+
+        double human_flag_target = 0.0;
+        if(humanPlayerCameraHasTarget) {
+            human_flag_target = 1.0;
+        }
+
+
+        // return new Matrix<N4, N7>(new SimpleMatrix(4, 7, true,
+        //     0, 0, 0, 0, 0, 1, 1,
+        //             reef_flag_target, 0, 0, 0, 0, 0, 0,
+        //             0, reef_flag_target, 0, 0, 0, 0, 0,
+        //             0, 0, reef_flag_target, 0, 0, 0, 0
+        // ));
+
+        return new Matrix<N7, N7> (new SimpleMatrix(7,7,true,
+        0, 0, 0, 0, 0, 1, 1,
+            reef_flag_target, 0, 0, 0, 0, 0, 0,
+            0, reef_flag_target, 0, 0, 0, 0, 0,
+            0, 0, reef_flag_target, 0, 0, 0, 0,
+            human_flag_target, 0, 0, 0, 0, 0, 0,
+            0, human_flag_target, 0, 0, 0, 0, 0,
+            0, 0, human_flag_target, 0, 0, 0, 0
+            ));
     }
 
-    private Matrix<N4, N4> getSensorCovariance(double dt, double camera_area, boolean has_target) {
+    private Matrix<N7, N7> getSensorCovariance(double dt, double camera_area, boolean has_target) {
         final double ANG_RAND_WALK_RAD_PER_SEC = 0.1;
+
         final double AREA_CART_VAR_FACTOR = 0.01;
         final double AREA_ANG_VAR_FACTOR = 0.01;
 
@@ -119,11 +137,14 @@ public class KalmanLocalization {
             ang_var = AREA_ANG_VAR_FACTOR/camera_area;
         }
 
-        return new Matrix<N4, N4>(new SimpleMatrix(4, 4, true,
-            Math.pow(ANG_RAND_WALK_RAD_PER_SEC*dt, 2), 0, 0, 0,
-            0, cart_var, 0, 0,
-            0, 0, cart_var, 0,
-            0, 0, 0, ang_var
+        return new Matrix<N7, N7>(new SimpleMatrix(7, 7, true,
+            Math.pow(ANG_RAND_WALK_RAD_PER_SEC*dt, 2), 0, 0, 0, 0, 0 , 0,
+            0, cart_var, 0, 0, 0, 0, 0,
+            0, 0, cart_var, 0, 0, 0, 0,
+            0, 0, 0, ang_var, 0, 0, 0,
+            0, 0, 0, 0, cart_var, 0, 0,
+            0, 0, 0, 0, 0, cart_var, 0,
+            0, 0, 0, 0, 0, 0, ang_var
         ));
     }
 
@@ -169,10 +190,13 @@ public class KalmanLocalization {
     public void update(
         ArrayList<Translation2d> wheel_vel,
         ArrayList<Translation2d> wheel_pos,
-        Pose2d camera_pose,
+        Pose2d reef_camera_robot_pose,
+        Pose2d human_camera_robot_pose,
         double gyro_dtheta,
-        double camera_area,
-        boolean camera_has_target
+        double reef_camera_area,
+        double human_camera_area,
+        boolean reef_camera_has_target,
+        boolean human_camera_has_target
     ) {
         Pose2d robot_frame_vel = new Pose2d(
             new Translation2d(
@@ -200,35 +224,58 @@ public class KalmanLocalization {
             getUpdateMatrix(dt),
             getControlMatrix(wheel_pos, getTheta(), dt)
         );
-        double camera_x = 0;
-        double camera_y = 0;
-        double camera_theta = 0;
+        double reef_camera_x = 0;
+        double reef_camera_y = 0;
+        double reef_camera_theta = 0;
 
-        if(camera_has_target && camera_pose != null) {
-            double zeroed_camera = camera_pose.getRotation().getRadians() + Math.PI;
+        double human_camera_x = 0;
+        double human_camera_y = 0;
+        double human_camera_theta = 0;
+
+        if(reef_camera_has_target && reef_camera_robot_pose != null) {
+            double zeroed_camera = reef_camera_robot_pose.getRotation().getRadians() + Math.PI;
             double zeroed_pose = state.get(2, 0) + Math.PI;
             double angle_offset = Math.floor(zeroed_pose/(2*Math.PI))*2*Math.PI;
             System.out.println("Current angle: " + zeroed_pose);
             System.out.println("Angle offset: " + angle_offset);
             System.out.println("Camera angle: " + zeroed_camera);
-            camera_x = camera_pose.getX();
-            camera_y = camera_pose.getY();
+            reef_camera_x = reef_camera_robot_pose.getX();
+            reef_camera_y = reef_camera_robot_pose.getY();
             System.out.println("Camera mod: " + posMod(zeroed_camera, 2*Math.PI));
-            camera_theta = posMod(zeroed_camera, 2*Math.PI)+angle_offset - Math.PI;
-            System.out.println("Camera corrected: " + camera_theta);
+            reef_camera_theta = posMod(zeroed_camera, 2*Math.PI)+angle_offset - Math.PI;
+            System.out.println("Camera corrected: " + reef_camera_theta);
         }
-        Matrix <N4, N1> sensor_input = new Matrix<N4, N1>(
-            new SimpleMatrix(4, 1, true,
+
+        if (human_camera_has_target && human_camera_robot_pose != null) {
+            double zeroed_camera = human_camera_robot_pose.getRotation().getRadians() + Math.PI;
+            double zeroed_pose = state.get(2, 0) + Math.PI;
+            double angle_offset = Math.floor(zeroed_pose/(2*Math.PI))*2*Math.PI;
+            System.out.println("Current angle: " + zeroed_pose);
+            System.out.println("Angle offset: " + angle_offset);
+            System.out.println("Camera angle: " + zeroed_camera);
+            human_camera_x = human_camera_robot_pose.getX();
+            human_camera_y = human_camera_robot_pose.getY();
+            System.out.println("Camera mod: " + posMod(zeroed_camera, 2*Math.PI));
+            human_camera_theta = posMod(zeroed_camera, 2*Math.PI)+angle_offset - Math.PI;
+            System.out.println("Camera corrected: " + human_camera_theta);
+        }
+        
+        Matrix <N7, N1> sensor_input = new Matrix<N7, N1>(
+            new SimpleMatrix(7, 1, true,
                 gyro_dtheta,
-                camera_x,
-                camera_y,
-                camera_theta
+                reef_camera_x,
+                reef_camera_y,
+                reef_camera_theta,
+                human_camera_x,
+                human_camera_y,
+                human_camera_theta
+
             )
         );
         filter.aPosteriorUpdate(
             sensor_input,
-            getSensorCovariance(dt, camera_area, camera_has_target && camera_pose != null),
-            getSensorMatrix(dt, camera_has_target && camera_pose != null),
+            getSensorCovariance(dt, reef_camera_area, reef_camera_has_target && reef_camera_robot_pose != null),
+            getSensorMatrix(dt, reef_camera_has_target && reef_camera_robot_pose != null, human_camera_has_target && human_camera_robot_pose != null),
             N7.instance
         );
         state = filter.getState();

@@ -202,31 +202,31 @@ public class SwerveDrive extends SubsystemBase {
     wheel_vel.add(m_rearRight.getVelocityVector());
 
     double gyro_rate = m_gyro.getZRate()*Math.PI/180;
-    Pose2d camera_pose = null;
-    double camera_area = 0;
-    boolean has_target = false;
+    Pose2d reef_camera_pose = null;
+    double reef_camera_area = 0;
+    boolean reef_has_target = false;
     if (m_cameras == null){
-      has_target = false;
+      reef_has_target = false;
     }
     else{
-      has_target = m_cameras.hasTarget();
+      reef_has_target = m_cameras.reefCameraHasTarget();
     }
 
     try{
-      camera_pose = m_cameras.getPose();
+      reef_camera_pose = m_cameras.getPoseRelativeReefCamera();
     } catch (Exception e){
-      camera_pose = kalmanLocalization.getPoseMeters();
+      reef_camera_pose = kalmanLocalization.getPoseMeters();
     }
     
     try{
-      camera_area = m_cameras.getArea();
+      reef_camera_area = m_cameras.getReefCameraArea();
     } catch (Exception e){
-      camera_area = -1;
+      reef_camera_area = -1;
 
     }
     try{
-      SmartDashboard.putNumber("Camera area", camera_area);
-      SmartDashboard.putBoolean("Has target", m_cameras.hasTarget());
+      SmartDashboard.putNumber("Camera area", reef_camera_area);
+      SmartDashboard.putBoolean("Has target", m_cameras.reefCameraHasTarget());
     }
     catch (Exception e){
       SmartDashboard.putNumber("Camera area", -1);
@@ -234,13 +234,48 @@ public class SwerveDrive extends SubsystemBase {
     }
 
 
+    Pose2d human_camera_pose = null;
+    double human_camera_area = 0;
+    boolean human_has_target = false;
+    if (m_cameras == null){
+      human_has_target = false;
+    }
+    else{
+      human_has_target = m_cameras.humanPlayerCameraHasTarget();
+    }
+
+    try{
+      human_camera_pose = m_cameras.getPoseRelativeHumanPlayerCamera();
+    } catch (Exception e){
+      human_camera_pose = kalmanLocalization.getPoseMeters();
+    }
+
+    try{
+      human_camera_area = m_cameras.getHumanPlayerCameraArea();
+    } catch (Exception e){
+      human_camera_area = -1;
+    }
+
+    try{
+      SmartDashboard.putNumber("Human Camera area", human_camera_area);
+      SmartDashboard.putBoolean("Human Has target", m_cameras.humanPlayerCameraHasTarget());
+    }
+    catch (Exception e){
+      SmartDashboard.putNumber("Human Camera area", -1);
+      SmartDashboard.putBoolean("Human Has target", false);
+    }
+
+
     kalmanLocalization.update(
       wheel_vel,
       wheel_pos,
-      camera_pose,
+      reef_camera_pose,
+      human_camera_pose,
       gyro_rate,
-      camera_area,
-      has_target
+      reef_camera_area,
+      human_camera_area,
+      reef_has_target,
+      human_has_target
     );
 
     SmartDashboard.putNumber("Gyro rate", gyro_rate);

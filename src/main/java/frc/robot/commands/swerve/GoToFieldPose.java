@@ -155,7 +155,7 @@ public class GoToFieldPose extends Command{
 
     @Override
     public void initialize(){
-        if (!swerve.m_cameras.hasTarget()){
+        if (!swerve.m_cameras.reefCameraHasTarget()){
             isFinished = true;
         }
     }
