@@ -6,8 +6,9 @@ import edu.wpi.first.math.Num;
 import edu.wpi.first.math.Nat;
 
 public class KalmanFilter<N extends Num, C extends Num, S extends Num> {
-    private Matrix<N, N1> state;
-    private Matrix<N, N> state_covariance;
+    protected Matrix<N, N1> state;
+    protected Matrix<N, N> state_covariance;
+
     public KalmanFilter(Matrix<N, N1> initial_state, Matrix<N, N> initial_covariance) {
         state = initial_state;
         state_covariance = initial_covariance;
@@ -26,6 +27,14 @@ public class KalmanFilter<N extends Num, C extends Num, S extends Num> {
         state = a_priori_state;
         state_covariance = a_priori_cov;
     }
+    
+    public Matrix<S, N1> innovation(
+        Matrix<S, N1> sensor_input,
+        Matrix<S, N> sensor_matrix,
+        Matrix<N, N1> state
+    ) {
+        return sensor_input.minus(sensor_matrix.times(state));
+    }
 
     public void aPosteriorUpdate(
         Matrix<S, N1> sensor_input,
@@ -33,7 +42,7 @@ public class KalmanFilter<N extends Num, C extends Num, S extends Num> {
         Matrix <S, N> sensor_matrix,
         Nat<N> n_dim
     ) {
-        Matrix<S, N1> pre_fit_res = sensor_input.minus(sensor_matrix.times(state));
+        Matrix<S, N1> pre_fit_res = innovation(sensor_input, sensor_matrix, state);
         Matrix<S, S> pre_fit_cov = sensor_matrix.times(state_covariance).times(sensor_matrix.transpose()).plus(sensor_cov);
 
         Matrix<N,S> kalman_gain = state_covariance.times(sensor_matrix.transpose().times(pre_fit_cov.inv()));

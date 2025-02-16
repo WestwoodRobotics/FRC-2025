@@ -205,8 +205,9 @@ public class SwerveDrive extends SubsystemBase {
     Pose2d reef_camera_pose = null;
     double reef_camera_area = 0;
     boolean reef_has_target = false;
+
     if (m_cameras == null){
-      reef_has_target = false;
+      System.out.println("Null!");
     }
     else{
       reef_has_target = m_cameras.reefCameraHasTarget();
@@ -270,12 +271,12 @@ public class SwerveDrive extends SubsystemBase {
       wheel_vel,
       wheel_pos,
       reef_camera_pose,
-      human_camera_pose,
+      null,
       gyro_rate,
       reef_camera_area,
-      human_camera_area,
+      0,
       reef_has_target,
-      human_has_target
+      false
     );
 
     SmartDashboard.putNumber("Gyro rate", gyro_rate);

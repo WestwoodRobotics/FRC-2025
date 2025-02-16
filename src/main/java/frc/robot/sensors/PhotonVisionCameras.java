@@ -41,8 +41,8 @@ public class PhotonVisionCameras extends SubsystemBase {
 
     public void periodic() {
         // This method will be called once per scheduler run
-        reefCamera.getLatestResult();
-        humanPlayerCamera.getLatestResult();
+        reef_camera_result = reefCamera.getLatestResult();
+        human_camera_result = humanPlayerCamera.getLatestResult();
     }
 
     public boolean reefCameraHasTarget() {

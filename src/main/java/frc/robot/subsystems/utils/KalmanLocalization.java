@@ -17,7 +17,7 @@ public class KalmanLocalization {
     public Matrix<N7, N1> state;
     public Matrix<N7, N7> cov;
 
-    public KalmanFilter<N7, N8, N7> filter;
+    public DriveTrainKalmanFilter filter;
 
     public double curr_time;
 
@@ -55,7 +55,7 @@ public class KalmanLocalization {
             0, 0, 0, 0, 0, 0.0001, 0,
             0, 0, 0, 0, 0, 0, 100
         ));
-        filter = new KalmanFilter<N7, N8, N7>(state, cov);
+        filter = new DriveTrainKalmanFilter(state, cov);
 
         curr_time = Timer.getFPGATimestamp();
     }
@@ -114,27 +114,40 @@ public class KalmanLocalization {
         ));
     }
 
-    private Matrix<N7, N7> getSensorCovariance(double dt, double camera_area, boolean has_target) {
+    private Matrix<N7, N7> getSensorCovariance(
+        double dt,
+        double reefCameraTargetArea,
+        boolean reefHasTarget,
+        double humanCameraTargetArea,
+        boolean humanHasTarget
+    ) {
         final double ANG_RAND_WALK_RAD_PER_SEC = 0.1;
 
         final double AREA_CART_VAR_FACTOR = 0.01;
         final double AREA_ANG_VAR_FACTOR = 0.01;
 
-        double cart_var = 10;
-        double ang_var = 10;
-        if(has_target && camera_area > 0) {
-            cart_var = AREA_CART_VAR_FACTOR/camera_area;
-            ang_var = AREA_ANG_VAR_FACTOR/camera_area;
+        double reef_cart_var = 10;
+        double reef_ang_var = 10;
+        if(reefHasTarget && reefCameraTargetArea > 0) {
+            reef_cart_var = AREA_CART_VAR_FACTOR/reefCameraTargetArea;
+            reef_ang_var = AREA_ANG_VAR_FACTOR/reefCameraTargetArea;
+        }
+
+        double human_cart_var = 10;
+        double human_ang_var = 10;
+        if(humanHasTarget && humanCameraTargetArea > 0) {
+            human_cart_var = AREA_CART_VAR_FACTOR/humanCameraTargetArea;
+            human_ang_var = AREA_ANG_VAR_FACTOR/humanCameraTargetArea;
         }
 
         return new Matrix<N7, N7>(new SimpleMatrix(7, 7, true,
             Math.pow(ANG_RAND_WALK_RAD_PER_SEC*dt, 2), 0, 0, 0, 0, 0 , 0,
-            0, cart_var, 0, 0, 0, 0, 0,
-            0, 0, cart_var, 0, 0, 0, 0,
-            0, 0, 0, ang_var, 0, 0, 0,
-            0, 0, 0, 0, cart_var, 0, 0,
-            0, 0, 0, 0, 0, cart_var, 0,
-            0, 0, 0, 0, 0, 0, ang_var
+            0, reef_cart_var, 0, 0, 0, 0, 0,
+            0, 0, reef_cart_var, 0, 0, 0, 0,
+            0, 0, 0, reef_ang_var, 0, 0, 0,
+            0, 0, 0, 0, human_cart_var, 0, 0,
+            0, 0, 0, 0, 0, human_cart_var, 0,
+            0, 0, 0, 0, 0, 0, human_ang_var
         ));
     }
 
@@ -166,31 +179,6 @@ public class KalmanLocalization {
                 {0, 0, 0, 0, 0, 0, bias_stability_var},
             }
         ));
-    }
-
-    private double posMod(double x, double y) {
-        double mod = x % y;
-        if (mod < 0) {
-            mod += y;
-        }
-        return mod;
-    }
-
-    // CHANGED: New helper to unwrap camera angles near the filter’s predicted angle
-    private double unwrapAngle(double measuredAngle, double referenceAngle) {
-        // referenceAngle can be anything (could be bigger than ±π).
-        double twopi = 2.0 * Math.PI;
-
-        // difference in [-2π, +2π]
-        double diff = measuredAngle - (referenceAngle % twopi);
-
-        // shift measuredAngle by an integer multiple of 2π so the difference is in [-π, +π]
-        if (diff > Math.PI) {
-            measuredAngle -= twopi;
-        } else if (diff < -Math.PI) {
-            measuredAngle += twopi;
-        }
-        return measuredAngle;
     }
 
     public void update(
@@ -230,6 +218,7 @@ public class KalmanLocalization {
             getUpdateMatrix(dt),
             getControlMatrix(wheel_pos, getTheta(), dt)
         );
+        
         double reef_camera_x = 0;
         double reef_camera_y = 0;
         double reef_camera_theta = 0;
@@ -238,20 +227,17 @@ public class KalmanLocalization {
         double human_camera_y = 0;
         double human_camera_theta = 0;
 
-        // CHANGED: Removed the old angle_offset lines and replaced with unwrapping
         if (reef_camera_has_target && reef_camera_robot_pose != null) {
             reef_camera_x = reef_camera_robot_pose.getX();
             reef_camera_y = reef_camera_robot_pose.getY();
             // unwrap camera angle around filter’s predicted angle
-            double cameraAngle = reef_camera_robot_pose.getRotation().getRadians();
-            reef_camera_theta = unwrapAngle(cameraAngle, state.get(2, 0)); // CHANGED
+            reef_camera_theta = reef_camera_robot_pose.getRotation().getRadians();
         }
 
         if (human_camera_has_target && human_camera_robot_pose != null) {
             human_camera_x = human_camera_robot_pose.getX();
             human_camera_y = human_camera_robot_pose.getY();
-            double cameraAngle = human_camera_robot_pose.getRotation().getRadians();
-            human_camera_theta = unwrapAngle(cameraAngle, state.get(2, 0)); // CHANGED
+            human_camera_theta = human_camera_robot_pose.getRotation().getRadians();
         }
         
         Matrix <N7, N1> sensor_input = new Matrix<N7, N1>(
@@ -267,8 +253,18 @@ public class KalmanLocalization {
         );
         filter.aPosteriorUpdate(
             sensor_input,
-            getSensorCovariance(dt, reef_camera_area, reef_camera_has_target && reef_camera_robot_pose != null),
-            getSensorMatrix(dt, reef_camera_has_target && reef_camera_robot_pose != null, human_camera_has_target && human_camera_robot_pose != null),
+            getSensorCovariance(
+                dt,
+                reef_camera_area,
+                reef_camera_has_target && reef_camera_robot_pose != null,
+                human_camera_area,
+                human_camera_has_target && human_camera_robot_pose != null
+            ),
+            getSensorMatrix(
+                dt,
+                reef_camera_has_target && reef_camera_robot_pose != null,
+                human_camera_has_target && human_camera_robot_pose != null
+            ),
             N7.instance
         );
         state = filter.getState();
@@ -282,7 +278,7 @@ public class KalmanLocalization {
         return state.get(1, 0);
     }
     public double getTheta(){
-        return posMod(state.get(2, 0) + Math.PI, 2*Math.PI) - Math.PI;
+        return state.get(2, 0);
     }
     public double getXVel(){
         return state.get(3, 0);
