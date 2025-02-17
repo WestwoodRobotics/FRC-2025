@@ -8,6 +8,9 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
@@ -24,7 +27,13 @@ public class Elevator extends SubsystemBase {
     private double elevatorEncoderOffset = 0;
     //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
     private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
-    
+    private TrapezoidProfile profile;
+    private double elevatorPosSetpoint;
+    private double elevatorPower;
+    private Timer elevatorProfileTimer;
+    private boolean elevatorManual;
+    private State startState;
+    private State currentState;
     
 
     public Elevator(int elevatorMotor1Port, int elevatorMotor2Port) {
@@ -33,22 +42,39 @@ public class Elevator extends SubsystemBase {
         elevatorMotor1.configure(Configs.Elevator.elevator1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(120, 200));
+        elevatorPosSetpoint = 0;
+        elevatorPower = 0;
+        elevatorProfileTimer = new Timer();
+        elevatorManual = true;
+        startState = new State(0, 0);
+        currentState = new State(0, 0);
     }
 
     public void setElevatorSpeed(double speed) {
-        elevatorMotor1.set(speed);   
+        elevatorPower = speed;
+        elevatorManual = true;
     }
 
     public void setElevatorPosition(double position) {
-        elevatorMotor1.getClosedLoopController().setReference(position, ControlType.kPosition);
+        if(elevatorManual) {
+            startState = new State(elevatorMotor1.getEncoder().getPosition(), elevatorMotor1.getEncoder().getVelocity()/60);
+        }
+        else {
+            startState = new State(currentState.position, currentState.velocity);
+        }
+        elevatorPosSetpoint = position;
+        elevatorManual = false;
+        elevatorProfileTimer.restart();
     }
 
     public void setElevatorPosition(elevatorPositions position) {
-        elevatorMotor1.getClosedLoopController().setReference(position.getPosition(), ControlType.kPosition);
+        setElevatorPosition(position.getPosition());
     }
 
     public void stopElevator() {
-        elevatorMotor1.set(0);
+        elevatorPower = 0;
+        elevatorManual = true;
     }
     @Override
     public void periodic(){
@@ -56,6 +82,22 @@ public class Elevator extends SubsystemBase {
         //System.out.println(elevatorMotor1.getOutputCurrent());
         // SmartDashboard.putBoolean("Detected Limit Switch", elevatorBottomLimitSwitch.isTriggered());
         // SmartDashboard.putNumber("Elevator 1 Encoder", this.getElevatorPosition());
+        if(elevatorManual) {
+            System.out.println("Manual");
+            elevatorMotor1.set(elevatorPower);
+        }
+        else {
+            currentState = profile.calculate(
+                elevatorProfileTimer.get(),
+                startState,
+                new State(elevatorPosSetpoint, 0)
+            );
+            SmartDashboard.putNumber("Elevator current", getElevatorPosition());
+            SmartDashboard.putNumber("Elevator calc", currentState.position);
+            SmartDashboard.putNumber("Elevator vel", elevatorMotor1.getEncoder().getVelocity()/60);
+            SmartDashboard.putNumber("Elevator vel calc", currentState.velocity);
+            elevatorMotor1.set(elevatorPIDController.calculate(getElevatorPosition(), currentState.position));
+        }
     }
 
     public PIDController getPIDController() {

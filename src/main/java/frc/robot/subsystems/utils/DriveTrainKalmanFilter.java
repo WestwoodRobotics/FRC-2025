@@ -21,15 +21,10 @@ public class DriveTrainKalmanFilter extends KalmanFilter<N7, N8, N7>{
         Matrix<N7, N1> state
     ) {
         Matrix<N7, N1> calc_sensor = sensor_matrix.times(state);
-        SmartDashboard.putNumber("sensor theta", sensor_input.get(3, 0));
-        SmartDashboard.putNumber("calc theta", calc_sensor.get(3, 0));
         sensor_input.set(3, 0, posMod(sensor_input.get(3, 0) + Math.PI, 2*Math.PI)-Math.PI);
         sensor_input.set(6, 0, posMod(sensor_input.get(6, 0) + Math.PI, 2*Math.PI)-Math.PI);
         calc_sensor.set(3, 0, posMod(calc_sensor.get(3, 0) + Math.PI, 2*Math.PI)-Math.PI);
         calc_sensor.set(6, 0, posMod(calc_sensor.get(6, 0) + Math.PI, 2*Math.PI)-Math.PI);
-        SmartDashboard.putNumber("new sensor theta", sensor_input.get(3, 0));
-        SmartDashboard.putNumber("new calc theta", calc_sensor.get(3, 0));
-        SmartDashboard.putNumber("sensor diff", angDiff(sensor_input.get(3, 0), calc_sensor.get(3, 0)));
         Matrix<N7, N1> ret_val = new Matrix<N7, N1>(
             new SimpleMatrix(7, 1, true,
             sensor_input.get(0, 0) - calc_sensor.get(0, 0),

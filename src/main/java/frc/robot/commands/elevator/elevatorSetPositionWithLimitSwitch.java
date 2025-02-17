@@ -25,7 +25,7 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     
     @Override
     public void initialize() {
-        elevator.getPIDController().setSetpoint(targetPosition);
+        elevator.setElevatorPosition(targetPosition);
     }
     
     @Override
@@ -37,12 +37,9 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
         // }
 
         if (elevator.getElevatorBottomLimitSwitch().isTriggered()) {
-            elevator.setElevatorSpeed(0);
+            // elevator.stopElevator();
             elevator.setElevatorEncoderPosition(elevatorPositions.HOME.getPosition());
         }
-        
-        double output = elevator.getPIDController().calculate(elevator.getElevatorPosition(), targetPosition);
-        elevator.setElevatorSpeed(output);
     }
     
     @Override
@@ -52,7 +49,7 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     
     @Override
     public void end(boolean interrupted) {
-        elevator.setElevatorSpeed(0);
+        // elevator.setElevatorSpeed(0);
     }
 }
 
