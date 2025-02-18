@@ -15,13 +15,13 @@ public class Blinkin extends SubsystemBase {
     public void setPower(double power){
 
 
-        blinkin.setVoltage(null);
+        blinkin.setVoltage(power);
 
     }
 
     @Override
     public void periodic(){
-        this.setPower(-0.81);
+        //this.setPower(-0.81);
     }
     
 }

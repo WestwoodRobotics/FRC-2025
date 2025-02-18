@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.sensors.DIO.Blinkin;
 import edu.wpi.first.epilogue.*;
 
 import javax.xml.crypto.Data;
@@ -28,6 +29,7 @@ import edu.wpi.first.util.datalog.DataLog;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Timer m_timer;
+  private Blinkin blinkin;
 
   private RobotContainer m_robotContainer;
   
@@ -42,6 +44,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.m_robotDrive.resetGyro();
+    blinkin = new Blinkin();
     DataLogManager.start();
     //Epilogue.bind(this);
     DriverStation.startDataLog(DataLogManager.getLog());
@@ -69,7 +72,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -113,18 +118,25 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    //blinkin.setPower(-0.19); (Certified cool color)
+    blinkin.setPower(0.07   );
+    
     //m_robotContainer.m_robotDrive.resetGyro();
 
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    
+  }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    
   }
 
   /** This function is called periodically during test mode. */
