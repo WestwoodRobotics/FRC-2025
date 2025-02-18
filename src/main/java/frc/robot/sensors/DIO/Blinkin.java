@@ -15,7 +15,7 @@ public class Blinkin extends SubsystemBase {
     public void setPower(double power){
 
 
-        blinkin.setVoltage(power);
+        blinkin.set(power);
 
     }
 

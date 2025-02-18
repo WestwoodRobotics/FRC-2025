@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     //blinkin.setPower(-0.19); (Certified cool color)
-    blinkin.setPower(0.07   );
+    blinkin.setPower(-0.85);
     
     //m_robotContainer.m_robotDrive.resetGyro();
 
