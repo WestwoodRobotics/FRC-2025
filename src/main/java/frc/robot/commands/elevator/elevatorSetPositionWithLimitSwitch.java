@@ -1,5 +1,6 @@
 package frc.robot.commands.elevator;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
@@ -10,9 +11,11 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     private final Elevator elevator;
     private final double tolerance = 0.5;
     private boolean finished = false;
+    private Timer timer;
     
     public elevatorSetPositionWithLimitSwitch(Elevator elevator, elevatorPositions position) {
         this.targetPosition = position.getPosition();
+        timer = new Timer();
         this.elevator = elevator;
         addRequirements(elevator);
     }
@@ -26,6 +29,8 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     @Override
     public void initialize() {
         elevator.setElevatorPosition(targetPosition);
+        timer.reset();
+        timer.start();
     }
     
     @Override
@@ -44,7 +49,7 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     
     @Override
     public boolean isFinished() {
-        return false;
+        return timer.hasElapsed(2);
     }
     
     @Override

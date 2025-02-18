@@ -37,13 +37,8 @@ public class ODCommandFactory {
         );  
     }
 
-    public Command scoreCoral(){
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> m_intake.setIntakePower(0.8), m_intake),
-            new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3), m_outtake),
-            new WaitCommand(0.75),
-            new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake),
-            new InstantCommand(() -> m_intake.setIntakePower(0), m_intake));
+    public InstantCommand scoreCoral(){
+       return new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.5));
     }
 
 
