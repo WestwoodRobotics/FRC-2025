@@ -99,7 +99,7 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
     public static final int kElevatorMotor1Port = 50;
     public static final int kElevatorMotor2Port = 34;
-    public static final int kIntakeMotorSidePort = 58; //TODO: Change this value
+    public static final int kIntakeMotorSidePort = 33; //TODO: Change this value
     public static final int kIntakeMotorTopPort = 57;
     public static final int outtakeMotorPort = 59;
     public static final int kCANdiPort = 20;
@@ -292,6 +292,21 @@ public final class Constants {
       new Rotation3d(kHumanPlayerCameraToRobotPitch, kHumanPlayerCameraToRobotYaw, kHumanPlayerCameraToRobotRoll)
     );
 
+  }
+
+  public class TuskConstants{
+    public static final int kTuskPivotMotorId = 39;
+    public static final int kTuskRollerMotorId = 38;
+    public static final double kOutPosition = 0.685;
+    public static final double kInPosition = 0;
+
+    public static final double kRollerP = 0.05;
+    public static final double kRollerI = 0;
+    public static final double kRollerD = 0;
+
+    public static final double kPivotP = 0.7;
+    public static final double kPivotI = 0.0;
+    public static final double kPivotD = 0.0;
   }
 
 

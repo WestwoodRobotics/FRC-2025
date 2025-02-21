@@ -47,11 +47,13 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.tusks.Tusks;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 import frc.robot.subsystems.utils.swerve.ReefAlignSide;
+import frc.robot.subsystems.utils.tusks.tuskPositions;
 import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.commands.swerve.*;
-import frc.robot.commands.swerve.GoToNearestScoringPoseCommand;
+import frc.robot.commands.tusks.tuskSetPositionCommand;
 
 
 
@@ -68,6 +70,7 @@ public class RobotContainer {
   protected final Elevator m_elevator = new Elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
   protected final Intake m_intake = new Intake();
   protected final Outtake m_outtake = new Outtake();
+  protected final Tusks m_tusks = new Tusks();
   protected PhotonVisionCameras m_cameras;
   protected AprilTagFieldLayout m_layout;
   
@@ -261,27 +264,31 @@ public class RobotContainer {
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
 
+
         DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
 
         DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
 
-        
+        DriverDPadRight.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT));
+        //DriverDPadLeft.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
+        DriverDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.stopPivot()));
+        //DriverDpadRight.onTrue(new InstantCommand(()-> m_tusks.setPivotPower(0.2), m_tusks));
 
 
 
 
         driverLeftTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)//right trigger
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)))
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
        
         
         driverRightTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))))
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
         OperatorLeftBumper
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake) //left trigger
@@ -292,9 +299,15 @@ public class RobotContainer {
         
         operatorLeftTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake) //left bumper
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))))
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(() -> m_tusks.stopRoller())));
+
+        operatorRightTrigger
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //left bumper
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3))))
+        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(() -> m_tusks.stopRoller())));
 
         // DriverAButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.HOME, 50, 30, 4));
         // DriverBButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L1, 50, 30, 4));

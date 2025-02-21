@@ -83,7 +83,7 @@ public class Elevator extends SubsystemBase {
         // SmartDashboard.putBoolean("Detected Limit Switch", elevatorBottomLimitSwitch.isTriggered());
         // SmartDashboard.putNumber("Elevator 1 Encoder", this.getElevatorPosition());
         if(elevatorManual) {
-            System.out.println("Manual");
+            //System.out.println("Manual");
             elevatorMotor1.set(elevatorPower);
         }
         else {

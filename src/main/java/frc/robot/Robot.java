@@ -69,7 +69,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    blinkin.setPower(0.93); 
+  }
 
   @Override
   public void disabledPeriodic() {
@@ -118,8 +120,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //blinkin.setPower(-0.19); (Certified cool color)
-    blinkin.setPower(-0.85);
+    blinkin.setPower(0.93); 
+    //blinkin.setPower(0.93 );
     
     //m_robotContainer.m_robotDrive.resetGyro();
 
