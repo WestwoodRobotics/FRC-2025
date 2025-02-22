@@ -16,6 +16,7 @@ import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.tusks.Tusks;
 import frc.robot.subsystems.utils.tusks.tuskPositions;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
+import frc.robot.sensors.DIO.LEDController;
 import frc.robot.subsystems.elevator.Elevator;
 
 public class ODCommandFactory {
@@ -24,25 +25,27 @@ public class ODCommandFactory {
     private final Outtake m_outtake;
     private final Elevator m_elevator;
     private final Tusks m_tusks;
+    private final LEDController ledController;
 
 
-    public ODCommandFactory(Intake m_intake, Outtake m_outtake, Elevator m_elevator, Tusks m_tusks){
+    public ODCommandFactory(Intake m_intake, Outtake m_outtake, Elevator m_elevator, Tusks m_tusks, LEDController ledController){
         this.m_intake = m_intake;
         this.m_outtake = m_outtake;
         this.m_elevator = m_elevator;
         this.m_tusks = m_tusks;
+        this.ledController = ledController;
     }
 
     public Command IntakeToOuttakeBeamBreakCommand(){
 
         return new SequentialCommandGroup(
             new InstantCommand(() -> m_intake.setIntakePower(0.8), m_intake),
-            new OuttakeBeamBreakCommand(m_outtake, -0.3)
+            new OuttakeBeamBreakCommand(m_outtake, ledController,  -0.3)
         );  
     }
 
-    public InstantCommand scoreCoral(){
-       return new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.5));
+    public ParallelCommandGroup scoreCoral(){
+       return new ParallelCommandGroup(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3)).raceWith(new WaitCommand(0.5)));
     }
 
     public Command intake(tuskPositions position){

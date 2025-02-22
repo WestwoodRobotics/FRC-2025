@@ -3,6 +3,7 @@ package frc.robot.commands.swerve;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -103,8 +104,12 @@ public class driveCommand extends Command {
         rightX = rotationPIDController.calculate(m_swerveDrive.getProcessedHeading());
       }
     }
-
-    m_swerveDrive.drive((leftY > 0 ? leftY*leftY : -leftY*leftY), (leftX > 0 ? leftX*leftX : -leftX*leftX), (rightX > 0 ? rightX*rightX : -rightX*rightX), true);                                                                               
+    if(DriverStation.getAlliance().get() == Alliance.Blue) {
+      m_swerveDrive.drive((leftY > 0 ? leftY*leftY : -leftY*leftY), (leftX > 0 ? leftX*leftX : -leftX*leftX), (rightX > 0 ? rightX*rightX : -rightX*rightX), true);
+    }
+    else  {
+      m_swerveDrive.drive((leftY > 0 ? -leftY*leftY : leftY*leftY), (leftX > 0 ? -leftX*leftX : leftX*leftX), (rightX > 0 ? rightX*rightX : -rightX*rightX), true);
+    }                                                                             
     //controller.setRumble(RumbleType.kBothRumble, leftY > 0 ? 1 : 0);
   }
 

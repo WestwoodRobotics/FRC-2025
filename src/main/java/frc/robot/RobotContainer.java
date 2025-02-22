@@ -126,7 +126,7 @@ public class RobotContainer {
   private final POVButton OperatorDPadDown = new POVButton(m_operatorController, 180);
   private final POVButton OperatorDPadLeft = new POVButton(m_operatorController, 270);
 
-  private Trigger operatorRightYTrigger = new Trigger(() -> Math.abs(m_operatorController.getRightY()) > 0.10);
+  private Trigger operatorRightYJoystickTrigger = new Trigger(() -> Math.abs(m_operatorController.getRightY()) > 0.10);
 
   private final Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.5);
   private final Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.5);
@@ -136,9 +136,11 @@ public class RobotContainer {
   private final JoystickButton OperatorLeftBumper = new JoystickButton(m_operatorController,
       XboxController.Button.kLeftBumper.value);
 
+  private final Trigger operatorLeftYJoystickTrigger = new Trigger(() -> Math.abs(m_operatorController.getLeftY()) > 0.1);
+
   private SendableChooser<Command> m_chooser = new SendableChooser<>();
   //protected ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_preRoller, m_shooter);
-  ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator, m_tusks);
+  ODCommandFactory ODCommandFactory;
 
 
     
@@ -182,6 +184,7 @@ public class RobotContainer {
     }
     m_robotDrive = new SwerveDrive(m_cameras);
     ledController = new LEDController(m_cameras);
+    ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator, m_tusks, ledController);
 
     
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -285,7 +288,7 @@ public class RobotContainer {
 
 
         driverLeftTrigger
-        .onTrue(new ConditionalTuskBasedIntakeOuttakeCommand(m_intake, m_outtake, m_tusks))
+        .onTrue(new ConditionalTuskBasedIntakeOuttakeCommand(m_intake, m_outtake, ledController, m_tusks))
         .onFalse(ODCommandFactory.stopIntake());
 
        
@@ -297,33 +300,36 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
         OperatorLeftBumper
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake) //left trigger
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed( 0.3))))
-        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)));
-
+        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT) //left trigger
+        .andThen(new ConditionalTuskBasedIntakeOuttakeCommand(m_intake, m_outtake, ledController, m_tusks)));
         
         operatorLeftTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.4), m_intake) //left bumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(() -> m_tusks.stopRoller())));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
         operatorRightTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //left bumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(() -> m_tusks.stopRoller())));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
+
+        OperatorRightBumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3))))
+        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
         // DriverAButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.HOME, 50, 30, 4));
         // DriverBButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L1, 50, 30, 4));
         // DriverXButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L2, 50, 30, 4));
         // DriverYButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L3, 50, 30, 4));
 
-        DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
+        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
+        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
+        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
         //DriverAButton.onTrue(new OuttakeUntilBeamRestored(m_outtake, -0.2));
 
         //DriverRightBumper.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3)));
@@ -339,6 +345,16 @@ public class RobotContainer {
         OperatorAButton
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorEncoderOffset(m_elevator.getElevatorPosition()), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
+
+        operatorLeftYJoystickTrigger.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(m_operatorController.getLeftY()), m_elevator));
+        operatorRightYJoystickTrigger.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(m_operatorController.getLeftY()), m_tusks));
+
+        OperatorAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        OperatorYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+
+
         
         
 

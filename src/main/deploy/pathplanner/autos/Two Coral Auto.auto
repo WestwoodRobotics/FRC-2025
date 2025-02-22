@@ -11,15 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "GoToScorePoseLeft"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "GoToElevatorL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToScorePoseLeft"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToElevatorL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -29,15 +36,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "GoToElevatorHome"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score1ToHumanZone"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToElevatorHome"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Score1ToHumanZone"
+                }
+              }
+            ]
           }
         },
         {
@@ -53,9 +67,34 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToScorePoseLeft"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToElevatorL4"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "GoToScorePoseLeft"
+            "name": "ScoreCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToElevatorHome"
           }
         }
       ]

@@ -51,6 +51,7 @@ public class GoToNearestScoringPoseCommand extends Command{
     private Trajectory trajectory;
 
     private boolean finished;
+    private int terminateFinish;
 
 
     private int visibleFiducialID = 0;
@@ -65,11 +66,11 @@ public class GoToNearestScoringPoseCommand extends Command{
         new Rotation2d(Math.PI)
     );
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.37, -0.18),
+        new Translation2d(0.3, -0.18),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.37, 0.18),
+        new Translation2d(0.3, 0.18),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -89,12 +90,21 @@ public class GoToNearestScoringPoseCommand extends Command{
         angleController.setIntegratorRange(-0.2, 0.2);
         profileTimer = new Timer();
         trajectory = new Trajectory();
+        terminateFinish = 0;
 
         addRequirements(swerve);
     }
 
     public Trajectory generateTrajectory(Pose2d tagPose, Pose2d targetPose) {
-        Pose2d startPose = swerve.getPose();
+        double x_vel = swerve.getOdometry().getXVel();
+        double y_vel = swerve.getOdometry().getXVel();
+        double x_pos = swerve.getOdometry().getX();
+        double y_pos = swerve.getOdometry().getY();
+        Pose2d startPose = new Pose2d(
+            x_pos,
+            y_pos,
+            new Rotation2d(Math.atan2(y_vel, x_vel))
+        );
         
         ArrayList<Translation2d> waypointList = new ArrayList<Translation2d>();
         waypointList.add(tagPose.transformBy(center_transform).getTranslation());
@@ -104,7 +114,10 @@ public class GoToNearestScoringPoseCommand extends Command{
             waypointList,
             targetPose,
             new TrajectoryConfig(1, 2).setStartVelocity(
-                Math.sqrt(Math.pow(swerve.getOdometry().getXVel(), 2) + Math.pow(swerve.getOdometry().getYVel(), 2))
+                Math.sqrt(
+                    Math.pow(x_vel, 2) +
+                    Math.pow(y_vel, 2)
+                )
             )
         );
     }
@@ -141,6 +154,8 @@ public class GoToNearestScoringPoseCommand extends Command{
         trajectory = generateTrajectory(tagPose, targetPose);
         targetAngle = targetPose.getRotation().getRadians();
         profileTimer.restart();
+
+        terminateFinish = 0;
         
         
 
@@ -181,38 +196,45 @@ public class GoToNearestScoringPoseCommand extends Command{
         currentY = swerve.getPose().getY();
         currentAngle = swerve.getPose().getRotation().getRadians();
 
-        Pose2d currPose = trajectory.sample(profileTimer.get()).poseMeters;
-        double currXTarget = currPose.getX();
-        double currYTarget = currPose.getY();
-        double xOutput = xController.calculate(currentX, currXTarget);
-        double yOutput = yController.calculate(currentY, currYTarget);
+        if(trajectory.getStates().size() > 0) {
+            Pose2d currPose = trajectory.sample(profileTimer.get()).poseMeters;
+            double currXTarget = currPose.getX();
+            double currYTarget = currPose.getY();
+            double xOutput = xController.calculate(currentX, currXTarget);
+            double yOutput = yController.calculate(currentY, currYTarget);
 
-        double xSpeedBound = 5;
-        double ySpeedBound = 5;
-        
-        double angleOutput = angleController.calculate(currentAngle, targetAngle);
-        xOutput = Math.min(xSpeedBound, Math.max(-xSpeedBound, xOutput));
-        yOutput = Math.min(ySpeedBound, Math.max(-ySpeedBound, yOutput));
-        angleOutput = Math.min(0.3, Math.max(-0.3, angleOutput));
-        swerve.drive(xOutput, yOutput, angleOutput, true);
-        SmartDashboard.putNumber("Target X", targetX);
-        SmartDashboard.putNumber("Target Y", targetY);
-        // SmartDashboard.putNumber("Target Theta", new Rotation2d(currentAngle).minus(new Rotation2d(targetAngle)).getRadians());
-        SmartDashboard.putNumber("Curr Target X", currXTarget);
-        SmartDashboard.putNumber("Curr Target Y", currYTarget);
+            double xSpeedBound = 5;
+            double ySpeedBound = 5;
+            
+            double angleOutput = angleController.calculate(currentAngle, targetAngle);
+            xOutput = Math.min(xSpeedBound, Math.max(-xSpeedBound, xOutput));
+            yOutput = Math.min(ySpeedBound, Math.max(-ySpeedBound, yOutput));
+            angleOutput = Math.min(0.3, Math.max(-0.3, angleOutput));
+            swerve.drive(xOutput, yOutput, angleOutput, true);
+            SmartDashboard.putNumber("Target X", targetX);
+            SmartDashboard.putNumber("Target Y", targetY);
+            // SmartDashboard.putNumber("Target Theta", new Rotation2d(currentAngle).minus(new Rotation2d(targetAngle)).getRadians());
+            SmartDashboard.putNumber("Curr Target X", currXTarget);
+            SmartDashboard.putNumber("Curr Target Y", currYTarget);
 
-        SmartDashboard.putNumber("Theta Move", angleOutput);
+            SmartDashboard.putNumber("Theta Move", angleOutput);
+
+            if(
+                Math.abs(swerve.getOdometry().getXVel()) < 0.02 &&
+                Math.abs(swerve.getOdometry().getYVel()) < 0.02
+            ) {
+                terminateFinish++;
+            }
+        }
+        else {
+            finished = true;
+        }
         // System.out.println("TargetX: " + targetX + " | " + "TargetY: " + targetY + " | " + "TargetAngle: " + targetAngle);
     }
 
     @Override
     public boolean isFinished(){
-        return finished;
-        // (
-        //     Math.abs(currentX - targetX) < xTolerance &&
-        //     Math.abs(currentY - targetY) < yTolerance &&
-        //     Math.abs(currentAngle - targetAngle) < angleTolerance
-        // ) || finished;
+        return finished || terminateFinish > 10;
     }
 
 
