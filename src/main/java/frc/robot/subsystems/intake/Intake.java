@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
 
         intakeMotorLeftSide.set(-power*0.75);
         intakeMotorRightSide.set(-power*0.75);
-        intakeMotorTop.set(power/4);
+        intakeMotorTop.set(power/8);
         // System.out.println(power);
 
     }

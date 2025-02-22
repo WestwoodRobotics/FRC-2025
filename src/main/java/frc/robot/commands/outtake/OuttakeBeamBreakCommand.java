@@ -64,7 +64,7 @@ public class OuttakeBeamBreakCommand extends Command {
         if (outtake.isCoralDetected()) {
           debounceCounter++;
         }
-        if (debounceCounter >= 4) {
+        if (debounceCounter >= 2) {
           // The front of the coral just passed
           debounceCounter = 0;
           state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;

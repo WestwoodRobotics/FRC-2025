@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -288,14 +289,17 @@ public class RobotContainer {
 
 
         driverLeftTrigger
-        .onTrue(new ConditionalTuskBasedIntakeOuttakeCommand(m_intake, m_outtake, ledController, m_tusks))
+        .onTrue(new ParallelCommandGroup(
+            new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
+              .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.4)),
+            new InstantCommand(() -> m_tusks.setRollerPower(0.3), m_tusks)))
         .onFalse(ODCommandFactory.stopIntake());
 
        
         
         driverRightTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3))))
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3),m_outtake)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3), m_tusks)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
