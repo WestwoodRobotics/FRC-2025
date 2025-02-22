@@ -114,6 +114,12 @@ public class Intake extends SubsystemBase {
         return topPIDController;
     }
 
+    public void setBothPowers(double side_power, double top_power) {
+        intakeMotorLeftSide.set(-side_power);
+        intakeMotorRightSide.set(-side_power);
+        intakeMotorTop.set(top_power);
+    }
+
     /**
      * Sets the power of the side intake motor.
      * 

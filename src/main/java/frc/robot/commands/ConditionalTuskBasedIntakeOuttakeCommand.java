@@ -29,7 +29,7 @@ public class ConditionalTuskBasedIntakeOuttakeCommand extends Command {
   public void initialize() {
     if(m_tusks.getCurrentState() == tuskPositions.IN) {
       new ParallelCommandGroup(
-          new InstantCommand(() -> m_intake.setIntakePower(0.4), m_intake)
+          new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
             .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.4)),
           new InstantCommand(() -> m_tusks.setRollerPower(0.3), m_tusks)
       ).schedule();

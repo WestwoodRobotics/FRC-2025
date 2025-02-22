@@ -304,7 +304,7 @@ public class RobotContainer {
         .andThen(new ConditionalTuskBasedIntakeOuttakeCommand(m_intake, m_outtake, ledController, m_tusks)));
         
         operatorLeftTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-1), m_intake) //right bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));

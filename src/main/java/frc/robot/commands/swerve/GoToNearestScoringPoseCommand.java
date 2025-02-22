@@ -113,7 +113,7 @@ public class GoToNearestScoringPoseCommand extends Command{
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(1, 2).setStartVelocity(
+            new TrajectoryConfig(1.5, 3).setStartVelocity(
                 Math.sqrt(
                     Math.pow(x_vel, 2) +
                     Math.pow(y_vel, 2)

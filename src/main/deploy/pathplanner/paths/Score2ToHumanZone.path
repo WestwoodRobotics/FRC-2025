@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 3.7147500000000004,
+        "y": 2.9329999999999994
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 3.9147499999999993,
+        "y": 3.0829999999999997
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 0.2925,
+        "y": 0.7489999999999998
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 1.053,
+        "y": 1.4899999999999998
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HumanZone"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.78925720891618
+    "rotation": 51.70983680775691
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 61.92751306414696
   },
   "useDefaultConstraints": true
 }

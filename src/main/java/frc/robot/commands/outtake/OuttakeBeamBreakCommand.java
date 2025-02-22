@@ -22,6 +22,7 @@ public class OuttakeBeamBreakCommand extends Command {
   private CoralState state;
   private LEDController leds;
   private Timer timer;
+  private double debounceCounter;
 
   public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double eumStartVal, double power) {
     this.outtake = outtake;
@@ -37,6 +38,7 @@ public class OuttakeBeamBreakCommand extends Command {
     this.power = power;
     this.leds = leds;
     this.enumStartVal=-1;
+    debounceCounter = 0;
 
     addRequirements(outtake);
   }
@@ -48,6 +50,7 @@ public class OuttakeBeamBreakCommand extends Command {
       state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
     }
     state = CoralState.WAITING_FOR_FRONT_CORAL;
+    debounceCounter = 0;
 
   }
 
@@ -59,7 +62,11 @@ public class OuttakeBeamBreakCommand extends Command {
         outtake.setOuttakeSpeed(power);
         leds.blinkin.set(0.91);//violet
         if (outtake.isCoralDetected()) {
+          debounceCounter++;
+        }
+        if (debounceCounter >= 4) {
           // The front of the coral just passed
+          debounceCounter = 0;
           state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
         }
         break;
@@ -110,3 +117,4 @@ public class OuttakeBeamBreakCommand extends Command {
     outtake.setOuttakeSpeed(0);
   }
 }
+
