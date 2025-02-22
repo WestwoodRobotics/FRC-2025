@@ -121,7 +121,7 @@ public class KalmanLocalization {
         double humanCameraTargetArea,
         boolean humanHasTarget
     ) {
-        final double ANG_RAND_WALK_RAD_PER_SEC = 0.1;
+        final double ANG_RAND_WALK_RAD_PER_SEC = 0.0001;
 
         final double AREA_CART_VAR_FACTOR = 0.01;
         final double AREA_ANG_VAR_FACTOR = 0.01;
@@ -157,9 +157,9 @@ public class KalmanLocalization {
         double dt
     ) {
         final double CONSTANT_UNCERTAINTY = 0.000001;
-        final double DIRECTIONAL_UNCERTAINTY = 0.01;
-        final double SPEED_UNCERTAINTY = 0.01;
-        final double ROTATION_UNCERTAINTY = 0.01;
+        final double DIRECTIONAL_UNCERTAINTY = 0.0001;
+        final double SPEED_UNCERTAINTY = 0.001;
+        final double ROTATION_UNCERTAINTY = 0.001;
         double speed = Math.sqrt(velocity.getX()*velocity.getX() + velocity.getY()*velocity.getY());
         double x_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getX())*DIRECTIONAL_UNCERTAINTY + speed*SPEED_UNCERTAINTY;
         double y_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getY())*DIRECTIONAL_UNCERTAINTY + speed*SPEED_UNCERTAINTY;

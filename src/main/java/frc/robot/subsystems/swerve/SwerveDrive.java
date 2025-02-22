@@ -313,6 +313,10 @@ public class SwerveDrive extends SubsystemBase {
     return kalmanLocalization.getPoseMeters();
   }
 
+  public KalmanLocalization getOdometry() {
+    return kalmanLocalization;
+  }
+
   /**
    * Resets the odometry to the specified pose.
    *

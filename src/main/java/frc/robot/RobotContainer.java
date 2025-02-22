@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.PortConstants;
+import frc.robot.commands.ConditionalTuskBasedIntakeOuttakeCommand;
 import frc.robot.commands.ODCommandFactory;
 import frc.robot.commands.elevator.elevatorHoldCommand;
 import frc.robot.commands.elevator.elevatorSetPosition;
@@ -43,6 +44,7 @@ import frc.robot.commands.outtake.OuttakeBeamBreakTimeCommand;
 import frc.robot.commands.outtake.OuttakeCurrentTimeCommand;
 import frc.robot.commands.outtake.OuttakePIDCommand;
 import frc.robot.commands.outtake.OuttakePIDCurrentTimeCommand;
+import frc.robot.commands.outtake.OuttakeUntilBeamRestored;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
@@ -52,6 +54,7 @@ import frc.robot.subsystems.utils.elevator.elevatorPositions;
 import frc.robot.subsystems.utils.swerve.ReefAlignSide;
 import frc.robot.subsystems.utils.tusks.tuskPositions;
 import frc.robot.sensors.PhotonVisionCameras;
+import frc.robot.sensors.DIO.LEDController;
 import frc.robot.commands.swerve.*;
 import frc.robot.commands.tusks.tuskSetPositionCommand;
 
@@ -73,6 +76,7 @@ public class RobotContainer {
   protected final Tusks m_tusks = new Tusks();
   protected PhotonVisionCameras m_cameras;
   protected AprilTagFieldLayout m_layout;
+  protected LEDController ledController;
   
   //private final Intake m_intake = new Intake();
   //private final preRoller m_preRoller = new preRoller();
@@ -134,13 +138,14 @@ public class RobotContainer {
 
   private SendableChooser<Command> m_chooser = new SendableChooser<>();
   //protected ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_preRoller, m_shooter);
+  ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator, m_tusks);
+
 
     
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    ODCommandFactory ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator);
     // Configure the button bindings
     // NamedCommands.registerCommand("SpinSensePreRoller", ODCommandFactory.intakeSenseCommand());
     // NamedCommands.registerCommand("Intake", ODCommandFactory.intakeSenseCommand());
@@ -176,6 +181,7 @@ public class RobotContainer {
         m_cameras = null;
     }
     m_robotDrive = new SwerveDrive(m_cameras);
+    ledController = new LEDController(m_cameras);
 
     
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -271,17 +277,17 @@ public class RobotContainer {
 
         DriverDPadRight.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT));
         //DriverDPadLeft.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
-        DriverDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.stopPivot()));
+        DriverDPadLeft.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
         //DriverDpadRight.onTrue(new InstantCommand(()-> m_tusks.setPivotPower(0.2), m_tusks));
 
 
 
 
+
         driverLeftTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)//right trigger
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, -0.3)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
-        .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
+        .onTrue(new ConditionalTuskBasedIntakeOuttakeCommand(m_intake, m_outtake, m_tusks))
+        .onFalse(ODCommandFactory.stopIntake());
+
        
         
         driverRightTrigger
@@ -314,10 +320,11 @@ public class RobotContainer {
         // DriverXButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L2, 50, 30, 4));
         // DriverYButton.onTrue(new elevatorSetPositionWithCurrentLimit(m_elevator, elevatorPositions.L3, 50, 30, 4));
 
-        DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
-        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
-        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
-        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
+        DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        //DriverAButton.onTrue(new OuttakeUntilBeamRestored(m_outtake, -0.2));
 
         //DriverRightBumper.onTrue(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.3)));
 

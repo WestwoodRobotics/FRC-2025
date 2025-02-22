@@ -298,7 +298,7 @@ public final class Constants {
     public static final int kTuskPivotMotorId = 39;
     public static final int kTuskRollerMotorId = 38;
     public static final double kOutPosition = 0.685;
-    public static final double kInPosition = 0;
+    public static final double kInPosition = 0.07;
 
     public static final double kRollerP = 0.05;
     public static final double kRollerI = 0;

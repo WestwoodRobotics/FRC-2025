@@ -1,5 +1,6 @@
 package frc.robot.commands.swerve;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -12,6 +13,14 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.sensors.PhotonVisionCameras;
@@ -34,9 +43,12 @@ public class GoToNearestScoringPoseCommand extends Command{
     private final double yTolerance = 0.03;
     private final double angleTolerance = 0.01;
 
+    private Timer profileTimer;
+
     private PIDController xController;
     private PIDController yController;
     private PIDController angleController;
+    private Trajectory trajectory;
 
     private boolean finished;
 
@@ -48,12 +60,16 @@ public class GoToNearestScoringPoseCommand extends Command{
     // private HashMap<Integer, ReefRightPoses> reefRightPoseToFiducialID = new HashMap<Integer, ReefRightPoses>();
     private ReefAlignSide side;
 
+    private final Transform2d center_transform = new Transform2d(
+        new Translation2d(0.92, 0),
+        new Rotation2d(Math.PI)
+    );
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.42, -0.165),
+        new Translation2d(0.37, -0.18),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.42, 0.165),
+        new Translation2d(0.37, 0.18),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -64,15 +80,33 @@ public class GoToNearestScoringPoseCommand extends Command{
         this.side = side;
         this.finished = false;
 
-        xController = new PIDController(1.5, 0.0, 0.00);
+        xController = new PIDController(1, 0, 0.03);
         xController.setIntegratorRange(-0.2, 0.2);
-        yController = new PIDController(1.5, 0.0, 0.00);
+        yController = new PIDController(1, 0, 0.03);
         yController.setIntegratorRange(-0.2, 0.2);
         angleController = new PIDController(1, 0.0, 0.00);
         angleController.enableContinuousInput(-Math.PI, Math.PI);
         angleController.setIntegratorRange(-0.2, 0.2);
+        profileTimer = new Timer();
+        trajectory = new Trajectory();
 
         addRequirements(swerve);
+    }
+
+    public Trajectory generateTrajectory(Pose2d tagPose, Pose2d targetPose) {
+        Pose2d startPose = swerve.getPose();
+        
+        ArrayList<Translation2d> waypointList = new ArrayList<Translation2d>();
+        waypointList.add(tagPose.transformBy(center_transform).getTranslation());
+
+        return TrajectoryGenerator.generateTrajectory(
+            startPose,
+            waypointList,
+            targetPose,
+            new TrajectoryConfig(1, 2).setStartVelocity(
+                Math.sqrt(Math.pow(swerve.getOdometry().getXVel(), 2) + Math.pow(swerve.getOdometry().getYVel(), 2))
+            )
+        );
     }
 
     @Override
@@ -101,10 +135,13 @@ public class GoToNearestScoringPoseCommand extends Command{
             finished = true;
             return;
         }
-
         Pose2d tagPose = maybeTagPose.get().toPose2d();
-
+        
         Pose2d targetPose = tagPose.transformBy((side.equals(ReefAlignSide.LEFT)) ? left_transform : right_transform);
+        trajectory = generateTrajectory(tagPose, targetPose);
+        targetAngle = targetPose.getRotation().getRadians();
+        profileTimer.restart();
+        
         
 
         // if (side == ReefAlignSide.LEFT){
@@ -122,12 +159,9 @@ public class GoToNearestScoringPoseCommand extends Command{
         //                 ? reefLeftPoseToFiducialID.get(visibleFiducialID).getPose2d() 
         //                 : reefRightPoseToFiducialID.get(visibleFiducialID).getPose2d();
 
-        targetX = targetPose.getTranslation().getX();
-        targetY = targetPose.getTranslation().getY();
-        targetAngle = targetPose.getRotation().getRadians();
 
-
-
+        
+        
 
 
         // for (ReefPose reefPose : ReefPose.values()){
@@ -147,35 +181,38 @@ public class GoToNearestScoringPoseCommand extends Command{
         currentY = swerve.getPose().getY();
         currentAngle = swerve.getPose().getRotation().getRadians();
 
-        double xOutput = xController.calculate(currentX, targetX);
-        double yOutput = yController.calculate(currentY, targetY);
+        Pose2d currPose = trajectory.sample(profileTimer.get()).poseMeters;
+        double currXTarget = currPose.getX();
+        double currYTarget = currPose.getY();
+        double xOutput = xController.calculate(currentX, currXTarget);
+        double yOutput = yController.calculate(currentY, currYTarget);
 
-        double speedBound = Math.min(0.4, 0.5*Math.log(
-            0.5*(Math.pow(currentX-targetX, 2) +
-            Math.pow(currentY - targetY, 2)) + 1)+0.1
-        );
+        double xSpeedBound = 5;
+        double ySpeedBound = 5;
         
         double angleOutput = angleController.calculate(currentAngle, targetAngle);
-        xOutput = Math.min(speedBound, Math.max(-speedBound, xOutput));
-        yOutput = Math.min(speedBound, Math.max(-speedBound, yOutput));
+        xOutput = Math.min(xSpeedBound, Math.max(-xSpeedBound, xOutput));
+        yOutput = Math.min(ySpeedBound, Math.max(-ySpeedBound, yOutput));
         angleOutput = Math.min(0.3, Math.max(-0.3, angleOutput));
         swerve.drive(xOutput, yOutput, angleOutput, true);
         SmartDashboard.putNumber("Target X", targetX);
         SmartDashboard.putNumber("Target Y", targetY);
-        SmartDashboard.putNumber("Target Theta", new Rotation2d(currentAngle).minus(new Rotation2d(targetAngle)).getRadians());
-        SmartDashboard.putNumber("X Move", xOutput);
-        SmartDashboard.putNumber("Y Move", yOutput);
+        // SmartDashboard.putNumber("Target Theta", new Rotation2d(currentAngle).minus(new Rotation2d(targetAngle)).getRadians());
+        SmartDashboard.putNumber("Curr Target X", currXTarget);
+        SmartDashboard.putNumber("Curr Target Y", currYTarget);
+
         SmartDashboard.putNumber("Theta Move", angleOutput);
         // System.out.println("TargetX: " + targetX + " | " + "TargetY: " + targetY + " | " + "TargetAngle: " + targetAngle);
     }
 
     @Override
     public boolean isFinished(){
-        return (
-            Math.abs(currentX - targetX) < xTolerance &&
-            Math.abs(currentY - targetY) < yTolerance &&
-            Math.abs(currentAngle - targetAngle) < angleTolerance
-        ) || finished;
+        return finished;
+        // (
+        //     Math.abs(currentX - targetX) < xTolerance &&
+        //     Math.abs(currentY - targetY) < yTolerance &&
+        //     Math.abs(currentAngle - targetAngle) < angleTolerance
+        // ) || finished;
     }
 
 

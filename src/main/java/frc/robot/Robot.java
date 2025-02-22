@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.sensors.DIO.Blinkin;
+
+import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.epilogue.*;
 
 import javax.xml.crypto.Data;
@@ -29,9 +30,9 @@ import edu.wpi.first.util.datalog.DataLog;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Timer m_timer;
-  private Blinkin blinkin;
 
   private RobotContainer m_robotContainer;
+  //private Robo swerve = m_robotContainer.m_robotDrive;
   
 
   /**
@@ -43,8 +44,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_robotContainer.m_robotDrive.resetGyro();
-    blinkin = new Blinkin();
+    // m_robotContainer.m_robotDrive.resetGyro();
     DataLogManager.start();
     //Epilogue.bind(this);
     DriverStation.startDataLog(DataLogManager.getLog());
@@ -70,7 +70,6 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    blinkin.setPower(0.93); 
   }
 
   @Override
@@ -120,7 +119,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    blinkin.setPower(0.93); 
+    //blinkin.setPower(0.93); 
     //blinkin.setPower(0.93 );
     
     //m_robotContainer.m_robotDrive.resetGyro();

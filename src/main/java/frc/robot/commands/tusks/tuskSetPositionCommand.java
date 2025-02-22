@@ -8,20 +8,24 @@ import frc.robot.subsystems.utils.tusks.tuskPositions;
 public class tuskSetPositionCommand extends Command{
 
     private PIDController tuskPIDController;
-    private tuskPositions position;
+    private tuskPositions target_position;
+    private tuskPositions current_position;
     private Tusks tusks;
+    
 
-    public tuskSetPositionCommand(Tusks tusks, tuskPositions position){
-        this.tuskPIDController = tusks.getPIDController();
+    public tuskSetPositionCommand(Tusks tusks, tuskPositions target_position){
         this.tusks = tusks;
+        this.target_position = target_position;
 
-        this.position = position;
         addRequirements(tusks);
     }
 
     @Override
     public void initialize(){
-        tuskPIDController.setSetpoint(position.getPosition());
+        this.tuskPIDController = tusks.getPIDController();
+        this.tuskPIDController.setTolerance(0.05);
+        this.current_position = tusks.getCurrentState();
+        tuskPIDController.setSetpoint(target_position.getPosition());
     }
 
     @Override
@@ -37,6 +41,9 @@ public class tuskSetPositionCommand extends Command{
     @Override
     public void end(boolean interrupted){
         tusks.stopPivot();
+        if (!interrupted){
+            tusks.setCurrentState(target_position);
+        }
     }
 
     

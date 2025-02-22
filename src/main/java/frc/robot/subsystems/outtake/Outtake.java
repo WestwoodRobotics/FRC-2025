@@ -60,5 +60,7 @@ public class Outtake extends SubsystemBase {
         SmartDashboard.putNumber("Outtake Current", outtakeMotor.getOutputCurrent());
         SmartDashboard.putNumber("Outtake RPM", outtakeMotor.getEncoder().getVelocity());
     }
+
+
     
 }

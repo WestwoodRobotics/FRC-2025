@@ -5,7 +5,8 @@ import frc.robot.Constants.TuskConstants;
 public enum tuskPositions {
 
     OUT(TuskConstants.kOutPosition),
-    IN(TuskConstants.kInPosition),;
+    IN(TuskConstants.kInPosition);
+    
 
     private final double position;
 
