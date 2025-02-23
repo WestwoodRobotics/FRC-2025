@@ -61,7 +61,7 @@ public class GoToNearestScoringPoseCommand extends Command{
     // private HashMap<Integer, ReefRightPoses> reefRightPoseToFiducialID = new HashMap<Integer, ReefRightPoses>();
     private ReefAlignSide side;
 
-    private final Transform2d center_transform = new Transform2d(
+    private final Transform2d center_far_transform = new Transform2d(
         new Translation2d(0.92, 0),
         new Rotation2d(Math.PI)
     );
@@ -73,9 +73,12 @@ public class GoToNearestScoringPoseCommand extends Command{
         new Translation2d(0.3, 0.18),
         new Rotation2d(Math.PI)
     );
+    private final Transform2d true_center_transform = new Transform2d(
+        new Translation2d(0.3, 0),
+        new Rotation2d(Math.PI)
+    );
     //11.8 
     public GoToNearestScoringPoseCommand(SwerveDrive swerve, AprilTagFieldLayout layout, ReefAlignSide side){ 
-
         this.swerve = swerve;
         this.layout = layout;
         this.side = side;
@@ -107,7 +110,7 @@ public class GoToNearestScoringPoseCommand extends Command{
         );
         
         ArrayList<Translation2d> waypointList = new ArrayList<Translation2d>();
-        waypointList.add(tagPose.transformBy(center_transform).getTranslation());
+        waypointList.add(tagPose.transformBy(center_far_transform).getTranslation());
 
         return TrajectoryGenerator.generateTrajectory(
             startPose,
@@ -150,7 +153,18 @@ public class GoToNearestScoringPoseCommand extends Command{
         }
         Pose2d tagPose = maybeTagPose.get().toPose2d();
         
-        Pose2d targetPose = tagPose.transformBy((side.equals(ReefAlignSide.LEFT)) ? left_transform : right_transform);
+        //Pose2d targetPose = tagPose.transformBy((side.equals(ReefAlignSide.LEFT)) ? left_transform : right_transform);
+        Pose2d targetPose = new Pose2d();
+        
+        if (side.equals(ReefAlignSide.LEFT)){
+            targetPose = tagPose.transformBy(left_transform);
+        }
+        else if (side.equals(ReefAlignSide.RIGHT)){
+            targetPose = tagPose.transformBy(right_transform);
+        }
+        else if (side.equals(ReefAlignSide.CENTER)){
+            targetPose = tagPose.transformBy(true_center_transform);
+        }
         trajectory = generateTrajectory(tagPose, targetPose);
         targetAngle = targetPose.getRotation().getRadians();
         profileTimer.restart();

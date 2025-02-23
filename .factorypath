@@ -1,4 +1,4 @@
 <factorypath>
-    <factorypathentry kind="EXTJAR" id="C:\Users\Public\wpilib\2025\maven\edu\wpi\first\epilogue\epilogue-runtime-java\2025.3.1\epilogue-runtime-java-2025.3.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\Public\wpilib\2025\maven\edu\wpi\first\epilogue\epilogue-processor-java\2025.3.1\epilogue-processor-java-2025.3.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="/home/vscode/.gradle/caches/modules-2/files-2.1/edu.wpi.first.epilogue/epilogue-runtime-java/2025.3.1/1893f52706c36e8280c63e9349fdd4773c2035a8/epilogue-runtime-java-2025.3.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="/home/vscode/.gradle/caches/modules-2/files-2.1/edu.wpi.first.epilogue/epilogue-processor-java/2025.3.1/ff799829098ab00775a8dfc5135089f408df595c/epilogue-processor-java-2025.3.1.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>
