@@ -291,7 +291,7 @@ public class RobotContainer {
         driverLeftTrigger
         .onTrue(
             new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
-            .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.4)
+            .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
             ))
         .onFalse(ODCommandFactory.stopIntake());
 
