@@ -279,9 +279,9 @@ public class RobotContainer {
 
         DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
 
-        DriverDPadRight.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT));
+        //DriverDPadRight.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT));
         //DriverDPadLeft.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
-        DriverDPadLeft.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
+        //DriverDPadLeft.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
         //DriverDpadRight.onTrue(new InstantCommand(()-> m_tusks.setPivotPower(0.2), m_tusks));
 
 
@@ -289,10 +289,10 @@ public class RobotContainer {
 
 
         driverLeftTrigger
-        .onTrue(new ParallelCommandGroup(
+        .onTrue(
             new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
-              .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.4)),
-            new InstantCommand(() -> m_tusks.setRollerPower(0.3), m_tusks)))
+            .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.4)
+            ))
         .onFalse(ODCommandFactory.stopIntake());
 
        
