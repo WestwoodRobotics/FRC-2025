@@ -105,10 +105,10 @@ public class driveCommand extends Command {
       }
     }
     if(DriverStation.getAlliance().get() == Alliance.Blue) {
-      m_swerveDrive.drive((leftY > 0 ? leftY*leftY : -leftY*leftY), (leftX > 0 ? leftX*leftX : -leftX*leftX), (rightX > 0 ? rightX*rightX : -rightX*rightX), true);
+      m_swerveDrive.drive((leftY > 0 ? leftY*leftY*leftY : leftY*leftY*leftY), (leftX > 0 ? leftX*leftX*leftX : leftX*leftX*leftX), (rightX > 0 ? rightX*rightX*rightX : rightX*rightX*rightX), true);
     }
     else  {
-      m_swerveDrive.drive((leftY > 0 ? -leftY*leftY : leftY*leftY), (leftX > 0 ? -leftX*leftX : leftX*leftX), (rightX > 0 ? rightX*rightX : -rightX*rightX), true);
+      m_swerveDrive.drive((leftY > 0 ? leftY*leftY*leftY : leftY*leftY*leftY), (leftX > 0 ? leftX*leftX*leftX : leftX*leftX*leftX), (rightX > 0 ? rightX*rightX*rightX : rightX*rightX*rightX), true);
     }                                                                             
     //controller.setRumble(RumbleType.kBothRumble, leftY > 0 ? 1 : 0);
   }

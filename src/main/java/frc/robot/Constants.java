@@ -242,13 +242,14 @@ public final class Constants {
 
   public static final class ElevatorConstants{
     public static final double kElevatorHomePosition = 0;
-    public static final double kElevatorL2Position = -16.5;
-    public static final double kElevatorL3Position = -34.5;
+    public static final double kElevatorL2Position = -17.5;
+    public static final double kElevatorL3Position = -37.5;
     public static final double kElevatorL4Position = -73;
 
     public static final double kP = 0.06;
     public static final double kI = 0;
     public static final double kD = 0;
+
 
     // Current detection constants
     public static final double kCurrentDetectionThreshold = 30.0; // Threshold for detecting a current spike

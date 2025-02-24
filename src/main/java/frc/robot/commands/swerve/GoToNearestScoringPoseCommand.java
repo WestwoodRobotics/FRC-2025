@@ -39,7 +39,7 @@ public class GoToNearestScoringPoseCommand extends Command{
     private double currentY;
     private double currentAngle;
 
-    private final double xTolerance = 0.03;
+    private final double xTolerance = 0.01;
     private final double yTolerance = 0.03;
     private final double angleTolerance = 0.01;
 
@@ -61,20 +61,26 @@ public class GoToNearestScoringPoseCommand extends Command{
     // private HashMap<Integer, ReefRightPoses> reefRightPoseToFiducialID = new HashMap<Integer, ReefRightPoses>();
     private ReefAlignSide side;
 
-    private final Transform2d center_far_transform = new Transform2d(
-        new Translation2d(0.92, 0),
+    private final Transform2d center_far_left_transform = new Transform2d(
+        new Translation2d(1, -0.1),
         new Rotation2d(Math.PI)
     );
+
+    private final Transform2d center_far_right_transform = new Transform2d(
+        new Translation2d(1, 0.13),
+        new Rotation2d(Math.PI)
+    );
+
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.3, -0.18),
+        new Translation2d(0.2, -0.18),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.3, 0.18),
+        new Translation2d(0.2, 0.2),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
-        new Translation2d(0.3, 0),
+        new Translation2d(0.2, 0),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -84,11 +90,11 @@ public class GoToNearestScoringPoseCommand extends Command{
         this.side = side;
         this.finished = false;
 
-        xController = new PIDController(1, 0, 0.03);
+        xController = new PIDController(1.2, 0, 0.03);
         xController.setIntegratorRange(-0.2, 0.2);
         yController = new PIDController(1, 0, 0.03);
         yController.setIntegratorRange(-0.2, 0.2);
-        angleController = new PIDController(1, 0.0, 0.00);
+        angleController = new PIDController(1.2, 0.0, 0.0003);
         angleController.enableContinuousInput(-Math.PI, Math.PI);
         angleController.setIntegratorRange(-0.2, 0.2);
         profileTimer = new Timer();
@@ -110,13 +116,21 @@ public class GoToNearestScoringPoseCommand extends Command{
         );
         
         ArrayList<Translation2d> waypointList = new ArrayList<Translation2d>();
-        waypointList.add(tagPose.transformBy(center_far_transform).getTranslation());
+        if (side == ReefAlignSide.LEFT){
+            waypointList.add(tagPose.transformBy(center_far_left_transform).getTranslation());
+        }
+        else if (side == ReefAlignSide.RIGHT){
+            waypointList.add(tagPose.transformBy(center_far_right_transform).getTranslation());
+        }
+        else if (side == ReefAlignSide.CENTER){
+            waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
+        }
 
         return TrajectoryGenerator.generateTrajectory(
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(1.5, 3).setStartVelocity(
+            new TrajectoryConfig(1.5, 0.5).setStartVelocity(
                 Math.sqrt(
                     Math.pow(x_vel, 2) +
                     Math.pow(y_vel, 2)
@@ -217,8 +231,8 @@ public class GoToNearestScoringPoseCommand extends Command{
             double xOutput = xController.calculate(currentX, currXTarget);
             double yOutput = yController.calculate(currentY, currYTarget);
 
-            double xSpeedBound = 5;
-            double ySpeedBound = 5;
+            double xSpeedBound = 3;
+            double ySpeedBound = 3;
             
             double angleOutput = angleController.calculate(currentAngle, targetAngle);
             xOutput = Math.min(xSpeedBound, Math.max(-xSpeedBound, xOutput));
@@ -248,7 +262,7 @@ public class GoToNearestScoringPoseCommand extends Command{
 
     @Override
     public boolean isFinished(){
-        return finished || terminateFinish > 10;
+        return finished || terminateFinish > 20;
     }
 
 
