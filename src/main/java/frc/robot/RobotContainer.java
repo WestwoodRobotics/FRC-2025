@@ -138,7 +138,11 @@ public class RobotContainer {
         m_cameras = null;
     }
 
+    // Initialize controllers first
+    m_driverController = new XboxController(PortConstants.kDriverControllerPort);
+    m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
 
+    // Initialize subsystems
     m_robotDrive = new SwerveDrive(m_cameras);
     m_elevator =  new Elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
     m_intake = new Intake();
@@ -147,11 +151,10 @@ public class RobotContainer {
     ledController = new LEDController(m_cameras);
     ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator, m_tusks, ledController);
 
+    // Configure default commands 
+    m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
 
-    
-
-
-
+    // Register named commands
     NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
     NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
     NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
@@ -161,16 +164,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", ODCommandFactory.IntakeToOuttakeBeamBreakCommand());
     NamedCommands.registerCommand("ScoreCoral", ODCommandFactory.scoreCoral());
 
-    
-    // Configure default commands 
-    
-    m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
-
+    // Build autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
-
-    m_driverController = new XboxController(PortConstants.kDriverControllerPort);
-    m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
   
+    // Initialize controller buttons
     DriverAButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
     DriverBButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
     DriverXButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
@@ -195,13 +192,21 @@ public class RobotContainer {
         XboxController.Button.kX.value);
     OperatorYButton = new JoystickButton(m_operatorController,
         XboxController.Button.kY.value);
-
+    
+    OperatorDPadUp = new POVButton(m_operatorController, 0);
+    OperatorDPadRight = new POVButton(m_operatorController, 90);
+    OperatorDPadDown = new POVButton(m_operatorController, 180);
+    OperatorDPadLeft = new POVButton(m_operatorController, 270);
+    
+    operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.5);
+    operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.5);
+    
+    OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
+    OperatorLeftBumper = new JoystickButton(m_operatorController, XboxController.Button.kLeftBumper.value);
 
     configureButtonBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
-
-    
   }
 
   /*
