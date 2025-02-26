@@ -7,20 +7,14 @@ import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.subsystems.intake.Intake;
 
 public class LEDController extends SubsystemBase {
-
     public Spark blinkin;
-
     private PhotonVisionCameras cameras;
-
-
     
     public LEDController(PhotonVisionCameras cameras){
        blinkin = new Spark(2);
-
-
        this.cameras = cameras;
     }
-
+    
     @Override
     public void periodic(){
         if (this.cameras != null ){
@@ -31,7 +25,5 @@ public class LEDController extends SubsystemBase {
                 this.blinkin.set(-0.81);
             }
         }
-        
     }
-    
 }

@@ -40,66 +40,67 @@ import java.util.ArrayList;
 
 public class SwerveDrive extends SubsystemBase {
   // Create MAXSwerveModules
-  private MAXSwerveModule m_frontLeft = new MAXSwerveModule(
-      PortConstants.kFrontLeftDrivingCanId,
-      PortConstants.kFrontLeftTurningCanId,
-      DriveConstants.kFrontLeftChassisAngularOffset);
-
-  private MAXSwerveModule m_frontRight = new MAXSwerveModule(
-      PortConstants.kFrontRightDrivingCanId,
-      PortConstants.kFrontRightTurningCanId,
-      DriveConstants.kFrontRightChassisAngularOffset);
-
-  private MAXSwerveModule m_rearLeft = new MAXSwerveModule(
-      PortConstants.kRearLeftDrivingCanId,
-      PortConstants.kRearLeftTurningCanId,
-      DriveConstants.kRearLeftChassisAngularOffset);
-
-  private MAXSwerveModule m_rearRight = new MAXSwerveModule(
-      PortConstants.kRearRightDrivingCanId,
-      PortConstants.kRearRightTurningCanId,
-      DriveConstants.kRearRightChassisAngularOffset);
-
-  StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-  .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-
-
-
+  private MAXSwerveModule m_frontLeft;
+  private MAXSwerveModule m_frontRight;
+  private MAXSwerveModule m_rearLeft;
+  private MAXSwerveModule m_rearRight;
   
-
+  StructArrayPublisher<SwerveModuleState> publisher;
+  
   // The gyro sensor
-  public Gyro m_gyro = new Gyro();
-  // SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
-  //     DriveConstants.kDriveKinematics,
-  //     m_gyro.getProcessedRot2dYaw(),
-  //     new SwerveModulePosition[] {
-  //         m_frontLeft.getPosition(),
-  //         m_frontRight.getPosition(),
-  //         m_rearLeft.getPosition(),
-  //         m_rearRight.getPosition()
-  //     });
-
-  KalmanLocalization kalmanLocalization = new KalmanLocalization(new Pose2d(
-    new Translation2d(0, 0),
-    new Rotation2d(0)
-  ));
-
-
-    private boolean slowMode = false;
-    private boolean isTestMode = false;
-    private RobotConfig config;
-    public Field2d fieldVisualization;
-    public PhotonVisionCameras m_cameras;
+  public Gyro m_gyro;
+  
+  KalmanLocalization kalmanLocalization;
+  
+  private boolean slowMode = false;
+  private boolean isTestMode = false;
+  private RobotConfig config;
+  public Field2d fieldVisualization;
+  public PhotonVisionCameras m_cameras;
 
   /** Creates a new DriveSubsystem. */
   public SwerveDrive(PhotonVisionCameras cameras) {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
-    this.config = config;
-    this.isTestMode = isTestMode;
+    
+    // Initialize module objects
+    m_frontLeft = new MAXSwerveModule(
+      PortConstants.kFrontLeftDrivingCanId,
+      PortConstants.kFrontLeftTurningCanId,
+      DriveConstants.kFrontLeftChassisAngularOffset);
+      
+    m_frontRight = new MAXSwerveModule(
+      PortConstants.kFrontRightDrivingCanId,
+      PortConstants.kFrontRightTurningCanId,
+      DriveConstants.kFrontRightChassisAngularOffset);
+      
+    m_rearLeft = new MAXSwerveModule(
+      PortConstants.kRearLeftDrivingCanId,
+      PortConstants.kRearLeftTurningCanId,
+      DriveConstants.kRearLeftChassisAngularOffset);
+      
+    m_rearRight = new MAXSwerveModule(
+      PortConstants.kRearRightDrivingCanId,
+      PortConstants.kRearRightTurningCanId,
+      DriveConstants.kRearRightChassisAngularOffset);
+    
+    // Initialize publisher
+    publisher = NetworkTableInstance.getDefault()
+      .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+    
+    // Initialize gyro
+    m_gyro = new Gyro();
+    
+    // Initialize KalmanLocalization
+    kalmanLocalization = new KalmanLocalization(new Pose2d(
+      new Translation2d(0, 0),
+      new Rotation2d(0)
+    ));
+    
+    this.isTestMode = false;
     fieldVisualization = new Field2d();
     m_cameras = cameras;
-
+    
     try{
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
