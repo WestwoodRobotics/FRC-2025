@@ -65,18 +65,18 @@ public class GoToNearestScoringPoseCommand extends Command{
         new Translation2d(1, -0.1),
         new Rotation2d(Math.PI)
     );
-    //TODO: CHECK THIS
+
     private final Transform2d center_far_right_transform = new Transform2d(
-        new Translation2d(1, 0.13),
+        new Translation2d(1, 0.1),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.2, -0.18),
+        new Translation2d(0.25, -0.16),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.2, 0.2),
+        new Translation2d(0.25, 0.18),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(

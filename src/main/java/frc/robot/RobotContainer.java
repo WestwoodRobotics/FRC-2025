@@ -285,14 +285,15 @@ public class RobotContainer {
 
 
         DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
-        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
-        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
-        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2)));
+        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
+        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
+        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
 
 
         /*
          * OPERATOR BUTTON MAPPINGS
          */
+
         
         // OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02+0.165, 0));
         // OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02-0.165, 0));
@@ -302,11 +303,11 @@ public class RobotContainer {
         OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.2), m_tusks)).onFalse(new tuskHoldPositionCommand(m_tusks));
         OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new tuskHoldPositionCommand(m_tusks)); 
 
-        OperatorAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
+        OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
         //OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
         OperatorBButton.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.CENTER));
         OperatorYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        OperatorAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
 
 
         

@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase {
      */
     public void setIntakePower(double power) {
 
-        intakeMotorLeftSide.set(-power*0.75);
+        intakeMotorLeftSide.set(power*0.75);
         intakeMotorRightSide.set(-power*0.75);
         intakeMotorTop.set(power/8);
         // System.out.println(power);
@@ -115,7 +115,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setBothPowers(double side_power, double top_power) {
-        intakeMotorLeftSide.set(-side_power);
+        intakeMotorLeftSide.set(side_power);
         intakeMotorRightSide.set(-side_power);
         intakeMotorTop.set(top_power);
     }
@@ -127,7 +127,8 @@ public class Intake extends SubsystemBase {
      */
     public void setSideIntakePower(double power) {
 
-        intakeMotorLeftSide.set(power);
+        intakeMotorLeftSide.set(-power);
+        intakeMotorRightSide.set(power);
 
     }
 

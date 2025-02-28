@@ -23,6 +23,7 @@ public class OuttakeBeamBreakCommand extends Command {
   private LEDController leds;
   private Timer timer;
   private double debounceCounter;
+  private boolean isElevator;
 
   public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double eumStartVal, double power) {
     this.outtake = outtake;
@@ -43,9 +44,26 @@ public class OuttakeBeamBreakCommand extends Command {
     addRequirements(outtake);
   }
 
+  public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double power, boolean isElevator) {
+    this.outtake = outtake;
+    this.power = power;
+    this.leds = leds;
+    this.enumStartVal=-1;
+    this.isElevator = isElevator;
+    debounceCounter = 0;
+
+    addRequirements(outtake);
+  }
+
   @Override
   public void initialize() {
     this.timer = new Timer();
+
+    if(isElevator && !outtake.isCoralDetected()){
+      state = CoralState.DONE;
+      return;
+    }
+
     if(enumStartVal > 0){
       state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
     }
@@ -56,6 +74,7 @@ public class OuttakeBeamBreakCommand extends Command {
 
   @Override
   public void execute() {
+    
     switch (state) {
       case WAITING_FOR_FRONT_CORAL:
         // Spin forward until the beam breaks (we detect coral)
