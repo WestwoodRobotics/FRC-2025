@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9147499999999993,
-        "y": 3.0829999999999997
+        "x": 3.9147499999999997,
+        "y": 3.083
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.2925,
-        "y": 0.7489999999999998
+        "x": 1.1867827868852459,
+        "y": 0.9621413934426232
       },
       "prevControl": {
-        "x": 1.053,
-        "y": 1.4899999999999998
+        "x": 1.9472827868852465,
+        "y": 1.703141393442623
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanZone"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 51.70983680775691
+    "rotation": 54.46232220802552
   },
   "reversed": false,
   "folder": null,

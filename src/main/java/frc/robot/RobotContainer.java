@@ -276,12 +276,11 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
         OperatorRightBumper
-        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT)
-        .andThen(new tuskHoldPositionCommand(m_tusks))
-        .andThen(new ParallelCommandGroup(
-            new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.15), m_outtake),
-            new InstantCommand(() -> m_tusks.setRollerPower(-0.15), m_tusks)
-        )));
+        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
+
+        
+        
+        
 
 
         DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
