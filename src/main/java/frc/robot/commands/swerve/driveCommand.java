@@ -51,6 +51,7 @@ public class driveCommand extends Command {
     isRotInput = true;
     rotationPIDController = new PIDController(Constants.DriveConstants.kP, Constants.DriveConstants.kI, Constants.DriveConstants.kD);
     rotationPIDController.setTolerance(5);
+    rotationPIDController.enableContinuousInput(0, 360);
     targetHeading = m_swerveDrive.getProcessedHeading();
     rotationPIDController.setSetpoint(targetHeading);
     isYuMode = false;
@@ -101,16 +102,17 @@ public class driveCommand extends Command {
         }
       }
       if (isRotInput) {
-        rightX = rotationPIDController.calculate(m_swerveDrive.getProcessedHeading());
+        rightX = rotationPIDController.calculate(m_swerveDrive.getProcessedHeading() % 360);
       }
     }
     if(DriverStation.getAlliance().get() == Alliance.Blue) {
-      m_swerveDrive.drive((leftY > 0 ? leftY*leftY*leftY : leftY*leftY*leftY), (leftX > 0 ? leftX*leftX*leftX : leftX*leftX*leftX), (rightX > 0 ? rightX*rightX*rightX : rightX*rightX*rightX), true);
+      m_swerveDrive.drive(leftY*leftY*leftY, leftX*leftX*leftX, rightX*rightX*rightX, true);
     }
     else  {
-      m_swerveDrive.drive((leftY > 0 ? leftY*leftY*leftY : leftY*leftY*leftY), (leftX > 0 ? leftX*leftX*leftX : leftX*leftX*leftX), (rightX > 0 ? rightX*rightX*rightX : rightX*rightX*rightX), true);
+      m_swerveDrive.drive(-(leftY*leftY*leftY), -(leftX*leftX*leftX), rightX*rightX*rightX, true);
     }                                                                             
     //controller.setRumble(RumbleType.kBothRumble, leftY > 0 ? 1 : 0);
+
   }
 
   /**

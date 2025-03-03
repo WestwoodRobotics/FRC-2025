@@ -46,6 +46,7 @@ public class SwerveDrive extends SubsystemBase {
   private MAXSwerveModule m_rearRight;
   
   StructArrayPublisher<SwerveModuleState> publisher;
+  private boolean alignFastMode = true;
   
   // The gyro sensor
   public Gyro m_gyro;
@@ -205,6 +206,7 @@ public class SwerveDrive extends SubsystemBase {
     double gyro_rate = m_gyro.getZRate()*Math.PI/180;
     Pose2d reef_camera_pose = null;
     double reef_camera_area = 0;
+    double reef_camera_distance_to_tag = 0;
     boolean reef_has_target = false;
 
     if (m_cameras == null){
@@ -219,6 +221,7 @@ public class SwerveDrive extends SubsystemBase {
     } catch (Exception e){
       reef_camera_pose = kalmanLocalization.getPoseMeters();
     }
+
     
     try{
       reef_camera_area = m_cameras.getReefCameraArea();
@@ -267,6 +270,7 @@ public class SwerveDrive extends SubsystemBase {
       SmartDashboard.putBoolean("Human Has target", false);
     }
 
+    
 
     kalmanLocalization.update(
       wheel_vel,
@@ -301,6 +305,9 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putData(fieldVisualization);
     SmartDashboard.putNumber("X Pose",getPose().getX());
     SmartDashboard.putNumber("Y Vaue", getPose().getY());
+    SmartDashboard.putNumber("Front Left Module Encoder Val", m_frontLeft.m_drivingEncoder.getPosition());
+    SmartDashboard.putBoolean("Fast Align Mode", alignFastMode);
+    SmartDashboard.putNumber("Fiducial ID Detected", m_cameras.getBestReefCameraFiducialId());
     
   }
 
@@ -461,5 +468,13 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose){
+  }
+
+  public void setAlignFastMode(boolean mode){
+    alignFastMode = mode;
+  }
+
+  public boolean getAlignFastMode(){
+    return alignFastMode;
   }
 }

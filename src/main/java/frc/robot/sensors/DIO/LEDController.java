@@ -11,7 +11,7 @@ public class LEDController extends SubsystemBase {
     private PhotonVisionCameras cameras;
     
     public LEDController(PhotonVisionCameras cameras){
-       blinkin = new Spark(2);
+       blinkin = new Spark(3);
        this.cameras = cameras;
     }
     
@@ -25,5 +25,6 @@ public class LEDController extends SubsystemBase {
                 this.blinkin.set(-0.81);
             }
         }
+        
     }
 }

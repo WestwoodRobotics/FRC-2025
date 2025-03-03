@@ -56,6 +56,7 @@ public class GoToNearestScoringPoseCommand extends Command{
 
     private int visibleFiducialID = 0;
     private AprilTagFieldLayout layout;
+    private boolean fastMode;
 
     // private HashMap<Integer, ReefLeftPoses> reefLeftPoseToFiducialID = new HashMap<Integer, ReefLeftPoses>();
     // private HashMap<Integer, ReefRightPoses> reefRightPoseToFiducialID = new HashMap<Integer, ReefRightPoses>();
@@ -72,11 +73,11 @@ public class GoToNearestScoringPoseCommand extends Command{
     );
 
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.25, -0.16),
+        new Translation2d(0.25, -0.162),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.25, 0.18),
+        new Translation2d(0.25, 0.175),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
@@ -84,7 +85,7 @@ public class GoToNearestScoringPoseCommand extends Command{
         new Rotation2d(Math.PI)
     );
     //11.8 
-    public GoToNearestScoringPoseCommand(SwerveDrive swerve, AprilTagFieldLayout layout, ReefAlignSide side){ 
+    public GoToNearestScoringPoseCommand(SwerveDrive swerve, AprilTagFieldLayout layout, ReefAlignSide side, boolean fastMode){ 
         this.swerve = swerve;
         this.layout = layout;
         this.side = side;
@@ -100,6 +101,8 @@ public class GoToNearestScoringPoseCommand extends Command{
         profileTimer = new Timer();
         trajectory = new Trajectory();
         terminateFinish = 0;
+
+        this.fastMode = fastMode;
 
         addRequirements(swerve);
     }
@@ -126,11 +129,15 @@ public class GoToNearestScoringPoseCommand extends Command{
             waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
         }
 
+        double accelerationLimit = 0.5;
+        if (fastMode) {
+            accelerationLimit = 1;
+        }
         return TrajectoryGenerator.generateTrajectory(
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(1.5, 0.5).setStartVelocity(
+            new TrajectoryConfig(1.5, accelerationLimit).setStartVelocity(
                 Math.sqrt(
                     Math.pow(x_vel, 2) +
                     Math.pow(y_vel, 2)

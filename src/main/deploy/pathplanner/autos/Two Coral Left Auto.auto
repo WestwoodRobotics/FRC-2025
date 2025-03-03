@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartToScore1"
+            "pathName": "StartToScore1Top"
           }
         },
         {
@@ -48,7 +48,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score1ToHumanZone"
+                  "pathName": "Score1ToHumanZoneTop"
                 }
               }
             ]
@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HumanZoneToScore2"
+            "pathName": "HumanZoneToScore2Top"
           }
         },
         {

@@ -91,6 +91,7 @@ public class RobotContainer {
     private  JoystickButton DriverBButton;
     private  JoystickButton DriverXButton;
     private  JoystickButton DriverYButton;
+    private JoystickButton  DriverStartButton;
 
 
     private  POVButton DriverDPadUp;
@@ -142,6 +143,8 @@ public class RobotContainer {
     m_driverController = new XboxController(PortConstants.kDriverControllerPort);
     m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
 
+
+
     // Initialize subsystems
     m_robotDrive = new SwerveDrive(m_cameras);
     m_elevator =  new Elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
@@ -155,14 +158,16 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
 
     // Register named commands
-    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
-    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
-    NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
+    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
+    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
+    NamedCommands.registerCommand("GoToElevatorL4",((new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)))).raceWith(new WaitCommand(1.3)));
     NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
     NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
+    
     NamedCommands.registerCommand("GoToElevatorHome", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
     NamedCommands.registerCommand("Intake", ODCommandFactory.IntakeToOuttakeBeamBreakCommand());
     NamedCommands.registerCommand("ScoreCoral", ODCommandFactory.scoreCoral());
+    NamedCommands.registerCommand("StopIntakeAndOuttake", ODCommandFactory.stopIntake());
 
     // Build autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -183,6 +188,8 @@ public class RobotContainer {
         
     driverLeftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5);
     driverRightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5);
+
+    DriverStartButton = new JoystickButton(m_driverController, XboxController.Button.kStart.value);
   
     OperatorAButton = new JoystickButton(m_operatorController,
         XboxController.Button.kA.value);
@@ -207,6 +214,7 @@ public class RobotContainer {
     configureButtonBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
+
   }
 
   /*
@@ -226,6 +234,8 @@ public class RobotContainer {
         * DRIVER BUTTON MAPPINGS
         */
 
+        
+
         DriverDPadUp
         .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25), m_elevator))
         .onFalse(new elevatorHoldCommand(m_elevator));
@@ -235,9 +245,9 @@ public class RobotContainer {
         .onFalse(new elevatorHoldCommand(m_elevator));
 
 
-        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
+        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
 
-        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
+        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
 
         //intake
         driverLeftTrigger
@@ -288,6 +298,8 @@ public class RobotContainer {
         DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
         DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
 
+        DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.setAlignFastMode(!m_robotDrive.getAlignFastMode()), m_robotDrive));
+
 
         /*
          * OPERATOR BUTTON MAPPINGS
@@ -304,7 +316,7 @@ public class RobotContainer {
 
         OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
         //OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        OperatorBButton.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.CENTER));
+        OperatorBButton.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.CENTER, m_robotDrive.getAlignFastMode()));
         OperatorYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
         OperatorAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
 

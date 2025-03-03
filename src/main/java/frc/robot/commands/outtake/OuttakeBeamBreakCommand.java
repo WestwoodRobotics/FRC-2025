@@ -63,10 +63,6 @@ public class OuttakeBeamBreakCommand extends Command {
       state = CoralState.DONE;
       return;
     }
-
-    if(enumStartVal > 0){
-      state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
-    }
     state = CoralState.WAITING_FOR_FRONT_CORAL;
     debounceCounter = 0;
 

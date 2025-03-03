@@ -121,7 +121,7 @@ public class KalmanLocalization {
         double humanCameraTargetArea,
         boolean humanHasTarget
     ) {
-        final double ANG_RAND_WALK_RAD_PER_SEC = 0.0001;
+        final double ANG_RAND_WALK_RAD_PER_SEC = 0.000121;
 
         final double AREA_CART_VAR_FACTOR = 0.01;
         final double AREA_ANG_VAR_FACTOR = 0.01;

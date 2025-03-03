@@ -39,21 +39,9 @@ public class ODCommandFactory {
 
     public Command IntakeToOuttakeBeamBreakCommand(){
 
-        return new ParallelRaceGroup( new SequentialCommandGroup(
-            new InstantCommand(() -> m_intake.setIntakePower(0.6), m_intake),
-            new WaitCommand(1.5),
-            new InstantCommand(() -> m_intake.setIntakePower(0), m_intake),
-            new WaitCommand(0.3),
-            new InstantCommand(() -> m_intake.setIntakePower(0.6)),
-            new WaitCommand(1.5),
-            new InstantCommand(() -> m_intake.setIntakePower(0), m_intake),
-            new WaitCommand(0.3),
-            new InstantCommand(() -> m_intake.setIntakePower(0.6)),
-            new WaitCommand(1.5),
-            new InstantCommand(() -> m_intake.setIntakePower(0), m_intake),
-            new WaitCommand(0.3),
-            new InstantCommand(() -> m_intake.setIntakePower(0.6))
-        ),  new OuttakeBeamBreakCommand(m_outtake, ledController,  -0.6));
+        return new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)).andThen(new InstantCommand(() -> m_intake.stopIntake(), m_intake));
+
     }
 
     public ParallelCommandGroup scoreCoral(){
@@ -84,6 +72,9 @@ public class ODCommandFactory {
             new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)
         );
     }
+    
+
+    
 
 
 }
