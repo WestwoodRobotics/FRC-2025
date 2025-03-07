@@ -308,6 +308,11 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Front Left Module Encoder Val", m_frontLeft.m_drivingEncoder.getPosition());
     SmartDashboard.putBoolean("Fast Align Mode", alignFastMode);
     SmartDashboard.putNumber("Fiducial ID Detected", m_cameras.getBestReefCameraFiducialId());
+
+    SmartDashboard.putNumber("Front Left Module", this.m_frontLeft.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Front Right Module", this.m_frontRight.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Rear Left Module", this.m_rearLeft.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Rear Right Module", this.m_rearRight.getVelocityVector().getNorm());
     
   }
 
@@ -344,19 +349,24 @@ public class SwerveDrive extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    drive(xSpeed, ySpeed, rot, fieldRelative, false);
+    drive(xSpeed, ySpeed, rot, fieldRelative, false, false);
   }
 
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isTestMode) {
+  public void driveOnlyGyro(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    drive(xSpeed, ySpeed, rot, fieldRelative, false, true);
+  }
+
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isTestMode, boolean isOnlyGyro) {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
+    
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                new Rotation2d(kalmanLocalization.getTheta()))
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, (isOnlyGyro ? m_gyro.getProcessedRot2dYaw() : new Rotation2d(kalmanLocalization.getTheta())))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -375,7 +385,7 @@ public class SwerveDrive extends SubsystemBase {
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
-
+  
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
@@ -476,5 +486,9 @@ public class SwerveDrive extends SubsystemBase {
 
   public boolean getAlignFastMode(){
     return alignFastMode;
+  }
+
+  public Gyro getGyro(){
+    return m_gyro;
   }
 }

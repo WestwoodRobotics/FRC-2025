@@ -204,6 +204,8 @@ public class RobotContainer {
     OperatorDPadRight = new POVButton(m_operatorController, 90);
     OperatorDPadDown = new POVButton(m_operatorController, 180);
     OperatorDPadLeft = new POVButton(m_operatorController, 270);
+
+    
     
     operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.5);
     operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.5);
@@ -234,6 +236,7 @@ public class RobotContainer {
         * DRIVER BUTTON MAPPINGS
         */
 
+        DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
         
 
         DriverDPadUp

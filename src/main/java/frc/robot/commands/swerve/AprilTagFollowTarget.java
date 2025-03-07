@@ -127,12 +127,10 @@ public class AprilTagFollowTarget extends Command {
                 double rot_output = rotPID.calculate(t_rot, rotOffset);
                 rot_output = rot_output > 0.4 ? 0.4 : rot_output;
                 rot_output = rot_output < -0.4 ? -0.4 : rot_output;
-
-
-                swerve.drive(-z_output, x_output, 
-                rot_output, true);
-                System.out.println("X: " + t_x + " Z: " + t_z + "Rot: " + t_rot);
                 
+
+                swerve.drive(-z_output, x_output, rot_output, true);
+                System.out.println("X: " + t_x + " Z: " + t_z + "Rot: " + t_rot);
             break;
         }
     }

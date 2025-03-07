@@ -14,7 +14,7 @@ public class intakePIDCommand extends Command {
 
     public intakePIDCommand(Intake intake, double sideRollerTargetRPM, double topRollerTargetRPM){ 
         this.intake = intake;
-        this.intakeSidePIDController = intake.getSidePIDController();
+
         this.intakeTopPIDController = intake.getTopPIDController();
         this.sideRollerTargetRPM = sideRollerTargetRPM;
         this.topRollerTargetRPM = topRollerTargetRPM;
@@ -29,7 +29,7 @@ public class intakePIDCommand extends Command {
 
     @Override
     public void execute() {
-        intake.setSideIntakePower(intakeSidePIDController.calculate(intake.getSideMotorRPM()));
+
         intake.setTopIntakePower(intakeTopPIDController.calculate(intake.getTopMotorRPM()));
     }
 
