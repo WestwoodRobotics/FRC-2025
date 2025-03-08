@@ -279,9 +279,9 @@ public class SwerveDrive extends SubsystemBase {
       null,
       gyro_rate,
       reef_camera_area,
-      0,
+      human_camera_area,
       reef_has_target,
-      false
+      human_has_target
     );
 
     SmartDashboard.putNumber("Gyro rate", gyro_rate);
@@ -313,6 +313,7 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Front Right Module", this.m_frontRight.getVelocityVector().getNorm());
     SmartDashboard.putNumber("Rear Left Module", this.m_rearLeft.getVelocityVector().getNorm());
     SmartDashboard.putNumber("Rear Right Module", this.m_rearRight.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Gyro Value", this.m_gyro.getProcessedRot2dYaw().getDegrees());
     
   }
 

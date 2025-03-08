@@ -42,7 +42,7 @@ public class Elevator extends SubsystemBase {
         elevatorMotor1.configure(Configs.Elevator.elevator1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 320));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(50, 50));
         elevatorPosSetpoint = 0;
         elevatorPower = 0;
         elevatorProfileTimer = new Timer();
@@ -98,6 +98,10 @@ public class Elevator extends SubsystemBase {
             SmartDashboard.putNumber("Elevator vel calc", currentState.velocity);
             elevatorMotor1.set(elevatorPIDController.calculate(getElevatorPosition(), currentState.position));
         }
+        SmartDashboard.putNumber("Elevator (ID 50) Encoder Value", elevatorMotor1.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevator (ID 34) Encoder Value", elevatorMotor1.getEncoder().getPosition());
+
+
     }
 
     public PIDController getPIDController() {

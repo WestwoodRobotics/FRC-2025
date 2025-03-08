@@ -86,17 +86,29 @@ public class driveCommand extends Command {
     //   if (isRotInput) {
     //     rightX = rotationPIDController.calculate(m_swerveDrive.getProcessedHeading() % 360);
     //   }
+
     // }
-    double leftYInput = (leftY/Math.sqrt(leftY*leftY + leftX*leftX))*(Math.pow(leftX, 2) + Math.pow(leftY,2));
-    double leftXInput = (leftX/Math.sqrt(leftY*leftY + leftX*leftX))*(Math.pow(leftX, 2) + Math.pow(leftY,2));
+    double magnitude = 0;
+    magnitude = magnitude > 1 ? 1 : Math.sqrt(leftY*leftY+leftX*leftX);
+
+    double scaled_magnitude = Math.pow(magnitude, 3);
+    double new_leftX = leftX * scaled_magnitude;
+    double new_leftY = leftY * scaled_magnitude;
+
+
+
+
+    
 
 
     if(DriverStation.getAlliance().get() == Alliance.Blue) {
-      m_swerveDrive.driveOnlyGyro(leftY,leftX, rightX, true);
+      m_swerveDrive.drive(Math.copySign(new_leftY, leftY), Math.copySign(new_leftX, leftX), rightX, true);
     }
     else {
-      m_swerveDrive.driveOnlyGyro(-leftY, -leftX, rightX, true);
-    }                                                                             
+      m_swerveDrive.drive(-Math.copySign(new_leftY, leftY), -Math.copySign(new_leftX, leftX), rightX, true);
+    }         
+    
+                                                                     
     //controller.setRumble(RumbleType.kBothRumble, leftY > 0 ? 1 : 0);
 
   }

@@ -265,31 +265,31 @@ public final class Constants {
   }
 
   public static final class CameraConstants{
-    public static final double kReefCameraToRobotX = 0.24765;
-    public static final double kReefCameraToRobotY = 0;
-    public static final double kReefCameraToRobotZ = 0.305;
+    public static final double kReefCameraToRobotX = -0.24765;
+    public static final double kReefCameraToRobotY = 0.15875;
+    public static final double kReefCameraToRobotZ = -0.305;
 
     public static final double kReefCameraToRobotPitch = 0;
     public static final double kReefCameraToRobotYaw = 0;
     public static final double kReefCameraToRobotRoll = 0;
 
     public static final Transform3d kReefCameraToRobotTransform = new Transform3d(
-      new Translation3d(-kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
+      new Translation3d(kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
       new Rotation3d(kReefCameraToRobotPitch, kReefCameraToRobotYaw, kReefCameraToRobotRoll)
     );
 
 
 
-    public static final double kHumanPlayerCameraToRobotX = 0.24765;
-    public static final double kHumanPlayerCameraToRobotY = 0;
-    public static final double kHumanPlayerCameraToRobotZ = 0.305;
+    public static final double kHumanPlayerCameraToRobotX = -0.24765;
+    public static final double kHumanPlayerCameraToRobotY = -0.15875;
+    public static final double kHumanPlayerCameraToRobotZ = -0.305;
 
     public static final double kHumanPlayerCameraToRobotPitch = 0;
     public static final double kHumanPlayerCameraToRobotYaw = 0;
     public static final double kHumanPlayerCameraToRobotRoll = 0;
 
     public static final Transform3d kHumanPlayerCameraToRobotTransform = new Transform3d(
-      new Translation3d(-kHumanPlayerCameraToRobotX, kHumanPlayerCameraToRobotY, kHumanPlayerCameraToRobotZ),
+      new Translation3d(kHumanPlayerCameraToRobotX, kHumanPlayerCameraToRobotY, kHumanPlayerCameraToRobotZ),
       new Rotation3d(kHumanPlayerCameraToRobotPitch, kHumanPlayerCameraToRobotYaw, kHumanPlayerCameraToRobotRoll)
     );
 

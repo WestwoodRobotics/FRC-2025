@@ -11,11 +11,14 @@ public class tuskHoldPositionCommand extends Command {
     private double holdPosition;
 
     public tuskHoldPositionCommand(Tusks tusks) {
+        
         this.tusks = tusks;
+
         // Instantiate a new PIDController based on the tusk pivot PID constants
         this.pidController = new PIDController(TuskConstants.kPivotP, TuskConstants.kPivotI, TuskConstants.kPivotD);
         pidController.setTolerance(0.05);
         addRequirements(tusks);
+        
     }
 
     @Override
@@ -23,6 +26,7 @@ public class tuskHoldPositionCommand extends Command {
         holdPosition = tusks.getPivotPosition();
         pidController.reset();
         pidController.setSetpoint(holdPosition);
+        tusks.setHoldPoseMode(false);
     }
 
     @Override
@@ -33,6 +37,7 @@ public class tuskHoldPositionCommand extends Command {
 
     @Override
     public boolean isFinished() {
+        tusks.setHoldPoseMode(true);
         return false; // continue holding indefinitely
     }
 

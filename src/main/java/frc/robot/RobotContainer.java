@@ -102,6 +102,8 @@ public class RobotContainer {
     private  Trigger driverLeftTrigger;
     private  Trigger driverRightTrigger;
 
+    private JoystickButton driverRightJoystickButton;
+
     private  JoystickButton OperatorAButton;
     private  JoystickButton OperatorBButton; 
     private  JoystickButton OperatorXButton;
@@ -117,6 +119,7 @@ public class RobotContainer {
 
     private  JoystickButton OperatorRightBumper;
     private JoystickButton OperatorLeftBumper;
+
 
     ODCommandFactory ODCommandFactory;
 
@@ -190,6 +193,7 @@ public class RobotContainer {
     driverRightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5);
 
     DriverStartButton = new JoystickButton(m_driverController, XboxController.Button.kStart.value);
+    driverRightJoystickButton = new JoystickButton(m_driverController, XboxController.Button.kRightStick.value);
   
     OperatorAButton = new JoystickButton(m_operatorController,
         XboxController.Button.kA.value);
@@ -236,7 +240,7 @@ public class RobotContainer {
         * DRIVER BUTTON MAPPINGS
         */
 
-        DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
+        //DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
         
 
         DriverDPadUp
@@ -273,7 +277,7 @@ public class RobotContainer {
         .andThen(new tuskHoldPositionCommand(m_tusks))
         .andThen(new ParallelCommandGroup(
             new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.3), m_outtake),
-            new InstantCommand(() -> m_tusks.setRollerPower(0.3), m_tusks)
+            (new InstantCommand(() -> m_tusks.setRollerPower(0.3), m_tusks))
         )));
         
         operatorLeftTrigger
@@ -301,7 +305,9 @@ public class RobotContainer {
         DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
         DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
 
-        DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.setAlignFastMode(!m_robotDrive.getAlignFastMode()), m_robotDrive));
+        driverRightJoystickButton.onFalse(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
+
+
 
 
         /*
@@ -314,8 +320,8 @@ public class RobotContainer {
 
         OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
         OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
-        OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.2), m_tusks)).onFalse(new tuskHoldPositionCommand(m_tusks));
-        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new tuskHoldPositionCommand(m_tusks)); 
+        OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition()));
+        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition())); 
 
         OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
         //OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));

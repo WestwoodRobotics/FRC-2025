@@ -2,10 +2,12 @@ package frc.robot.commands.swerve;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.text.html.HTML.Tag;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -63,25 +65,25 @@ public class GoToNearestScoringPoseCommand extends Command{
     private ReefAlignSide side;
 
     private final Transform2d center_far_left_transform = new Transform2d(
-        new Translation2d(1, -0.1),
+        new Translation2d(0.7, -0.175),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d center_far_right_transform = new Transform2d(
-        new Translation2d(1, 0.1),
+        new Translation2d(0.7, 0.175),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.25, -0.162),
+        new Translation2d(0.35, -0.175),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.25, 0.175),
+        new Translation2d(0.35, 0.175),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
-        new Translation2d(0.2, 0),
+        new Translation2d(0.35, 0),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -91,9 +93,9 @@ public class GoToNearestScoringPoseCommand extends Command{
         this.side = side;
         this.finished = false;
 
-        xController = new PIDController(1.2, 0, 0.03);
+        xController = new PIDController(1.5, 0, 0.05);
         xController.setIntegratorRange(-0.2, 0.2);
-        yController = new PIDController(1, 0, 0.03);
+        yController = new PIDController(1.5, 0, 0.05);
         yController.setIntegratorRange(-0.2, 0.2);
         angleController = new PIDController(1.2, 0.0, 0.0003);
         angleController.enableContinuousInput(-Math.PI, Math.PI);
@@ -129,15 +131,15 @@ public class GoToNearestScoringPoseCommand extends Command{
             waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
         }
 
-        double accelerationLimit = 0.5;
+        double accelerationLimit = 2;
         if (fastMode) {
-            accelerationLimit = 1;
+            accelerationLimit = 2;
         }
         return TrajectoryGenerator.generateTrajectory(
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(1.5, accelerationLimit).setStartVelocity(
+            new TrajectoryConfig(3.5, accelerationLimit).setStartVelocity(
                 Math.sqrt(
                     Math.pow(x_vel, 2) +
                     Math.pow(y_vel, 2)
@@ -149,24 +151,11 @@ public class GoToNearestScoringPoseCommand extends Command{
     @Override
     public void initialize(){
         finished = false;
-        try{
-            swerve.m_cameras.reefCameraHasTarget();
-            swerve.m_cameras.getBestReefCameraFiducialId();
-        }
-        catch (Exception e){
-            System.out.println("Crashed!");
-            finished = true;
-            return;
-        }
 
-        if (!swerve.m_cameras.reefCameraHasTarget()){
-            System.out.println("No target!");
-            finished = true;
-            return;
-        }
+        visibleFiducialID = this.closestAprilTag(swerve.getPose().getX(), swerve.getPose().getY());
 
-        visibleFiducialID = swerve.m_cameras.getBestReefCameraFiducialId();
         Optional<Pose3d> maybeTagPose = layout.getTagPose(visibleFiducialID);
+        
         if(maybeTagPose.isEmpty()) {
             System.out.println("No pose!");
             finished = true;
@@ -277,6 +266,21 @@ public class GoToNearestScoringPoseCommand extends Command{
     public void end(boolean interrupted){
         System.out.println("Done!");
         swerve.drive(0, 0, 0, true);
+    }
+
+    public int closestAprilTag(double xPose, double yPose){
+        List<AprilTag> tagList = layout.getTags();
+        int closestAprilTagId = -1;
+        double closestDistance = 3;
+        for (AprilTag aprilTag : tagList){
+            double distance = Math.sqrt(Math.pow(Math.abs(aprilTag.pose.getX() - xPose),2) + Math.pow(Math.abs(aprilTag.pose.getY() - yPose),2));
+            if (distance < closestDistance){
+                closestDistance = distance;
+                closestAprilTagId = aprilTag.ID;
+            }
+        }
+        return closestAprilTagId;
+
     }
 
     
