@@ -34,6 +34,7 @@ public class Elevator extends SubsystemBase {
     private boolean elevatorManual;
     private State startState;
     private State currentState;
+
     
 
     public Elevator(int elevatorMotor1Port, int elevatorMotor2Port) {
@@ -42,13 +43,14 @@ public class Elevator extends SubsystemBase {
         elevatorMotor1.configure(Configs.Elevator.elevator1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(50, 50));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 320));
         elevatorPosSetpoint = 0;
         elevatorPower = 0;
         elevatorProfileTimer = new Timer();
         elevatorManual = true;
         startState = new State(0, 0);
         currentState = new State(0, 0);
+
     }
 
     public void setElevatorSpeed(double speed) {
@@ -136,5 +138,6 @@ public class Elevator extends SubsystemBase {
     public LimitSwitch getElevatorBottomLimitSwitch() {
         return elevatorBottomLimitSwitch;
     }
+
     
 }

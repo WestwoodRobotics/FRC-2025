@@ -10,6 +10,11 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import Archives.commands.outtake.OuttakeBeamBreakTimeCommand;
+import Archives.commands.outtake.OuttakeCurrentTimeCommand;
+import Archives.commands.outtake.OuttakePIDCommand;
+import Archives.commands.outtake.OuttakePIDCurrentTimeCommand;
+import Archives.commands.tusks.tuskHoldPositionCommand;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,17 +36,12 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.PortConstants;
-import frc.robot.commands.ConditionalTuskBasedIntakeOuttakeCommand;
+
 import frc.robot.commands.ODCommandFactory;
 import frc.robot.commands.elevator.elevatorHoldCommand;
-import frc.robot.commands.elevator.elevatorSetPosition;
-import frc.robot.commands.elevator.elevatorSetPositionWithCurrentLimit;
+
 import frc.robot.commands.elevator.elevatorSetPositionWithLimitSwitch;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
-import frc.robot.commands.outtake.OuttakeBeamBreakTimeCommand;
-import frc.robot.commands.outtake.OuttakeCurrentTimeCommand;
-import frc.robot.commands.outtake.OuttakePIDCommand;
-import frc.robot.commands.outtake.OuttakePIDCurrentTimeCommand;
 import frc.robot.commands.outtake.OuttakeUntilBeamRestored;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -55,7 +55,6 @@ import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.sensors.DIO.LEDController;
 import frc.robot.commands.swerve.*;
 import frc.robot.commands.tusks.tuskSetPositionCommand;
-import frc.robot.commands.tusks.tuskHoldPositionCommand;
 
 
 
