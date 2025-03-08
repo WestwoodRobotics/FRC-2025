@@ -18,12 +18,14 @@ public class Outtake extends SubsystemBase {
     private SparkFlex outtakeMotor;
     private CANdiBeamBreak coralDetector;
     private PIDController outtakePIDController;
+    private PIDController BeamBreakController;
     
     public Outtake() {
 
         outtakeMotor = new SparkFlex(PortConstants.outtakeMotorPort, MotorType.kBrushless);
         outtakePIDController = new PIDController(OuttakeConstants.kP, OuttakeConstants.kI, OuttakeConstants.kD);
         coralDetector = new CANdiBeamBreak(PortConstants.kCANdiPort);   
+        BeamBreakController = new PIDController(0.0001, 0.0001, 0);
 
     }
 
@@ -62,6 +64,8 @@ public class Outtake extends SubsystemBase {
         SmartDashboard.putNumber("Outtake RPM", outtakeMotor.getEncoder().getVelocity());
     }
 
-
+    public PIDController getBeamBreakController(){
+        return BeamBreakController;
+    }
     
 }

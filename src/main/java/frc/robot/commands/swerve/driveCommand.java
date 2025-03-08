@@ -50,7 +50,7 @@ public class driveCommand extends Command {
   public void initialize() {
     slowMode = false;
     isRotInput = true;
-    rotationPIDController = new PIDController(Constants.DriveConstants.kP, Constants.DriveConstants.kI, Constants.DriveConstants.kD);
+    rotationPIDController = m_swerveDrive.getRotationPIDController();
     rotationPIDController.setTolerance(5);
     rotationPIDController.enableContinuousInput(0, 360);
     targetHeading = m_swerveDrive.getProcessedHeading();

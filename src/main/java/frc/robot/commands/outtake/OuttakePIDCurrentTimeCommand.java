@@ -41,7 +41,7 @@ public class OuttakePIDCurrentTimeCommand extends Command {
 
   public OuttakePIDCurrentTimeCommand(Outtake outtake, double targetRPM, double currentDetectionThreshold, double timeOffset) {
     this.outtake = outtake;
-    this.pidController = new PIDController(0.0001, 0.0001, 0);
+    this.pidController = outtake.getBeamBreakController();
     this.targetRPM = targetRPM;
     this.currentRPM = outtake.getOuttakeRPM();
     this.currentDetectionThreshold = currentDetectionThreshold;

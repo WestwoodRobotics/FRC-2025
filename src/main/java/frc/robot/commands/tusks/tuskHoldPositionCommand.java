@@ -15,7 +15,7 @@ public class tuskHoldPositionCommand extends Command {
         this.tusks = tusks;
 
         // Instantiate a new PIDController based on the tusk pivot PID constants
-        this.pidController = new PIDController(TuskConstants.kPivotP, TuskConstants.kPivotI, TuskConstants.kPivotD);
+        this.pidController = tusks.getPIDController();
         pidController.setTolerance(0.05);
         addRequirements(tusks);
         
