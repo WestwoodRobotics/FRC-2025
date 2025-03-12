@@ -65,25 +65,25 @@ public class GoToNearestScoringPoseCommand extends Command{
     private ReefAlignSide side;
 
     private final Transform2d center_far_left_transform = new Transform2d(
-        new Translation2d(0.7, -0.175),
+        new Translation2d(1.5, -0.1),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d center_far_right_transform = new Transform2d(
-        new Translation2d(0.7, 0.175),
+        new Translation2d(1.5, 0.1),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.35, -0.175),
+        new Translation2d(0.33, -0.165),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.35, 0.175),
+        new Translation2d(0.33, 0.165),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
-        new Translation2d(0.35, 0),
+        new Translation2d(0.33, 0),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -93,9 +93,9 @@ public class GoToNearestScoringPoseCommand extends Command{
         this.side = side;
         this.finished = false;
 
-        xController = new PIDController(1.5, 0, 0.05);
+        xController = new PIDController(1.2, 0, 0.01);
         xController.setIntegratorRange(-0.2, 0.2);
-        yController = new PIDController(1.5, 0, 0.05);
+        yController = new PIDController(1.2, 0, 0.01);
         yController.setIntegratorRange(-0.2, 0.2);
         angleController = new PIDController(1.2, 0.0, 0.0003);
         angleController.enableContinuousInput(-Math.PI, Math.PI);
@@ -131,19 +131,16 @@ public class GoToNearestScoringPoseCommand extends Command{
             waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
         }
 
-        double accelerationLimit = 2;
+        double accelerationLimit = 1.2;
         if (fastMode) {
-            accelerationLimit = 2;
+            accelerationLimit = 1.2;
         }
         return TrajectoryGenerator.generateTrajectory(
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(3.5, accelerationLimit).setStartVelocity(
-                Math.sqrt(
-                    Math.pow(x_vel, 2) +
-                    Math.pow(y_vel, 2)
-                )
+            new TrajectoryConfig(2, accelerationLimit).setStartVelocity(
+                0
             )
         );
     }
@@ -151,6 +148,9 @@ public class GoToNearestScoringPoseCommand extends Command{
     @Override
     public void initialize(){
         finished = false;
+        this.xController.reset();
+        this.yController.reset();
+        this.angleController.reset();
 
         visibleFiducialID = this.closestAprilTag(swerve.getPose().getX(), swerve.getPose().getY());
 

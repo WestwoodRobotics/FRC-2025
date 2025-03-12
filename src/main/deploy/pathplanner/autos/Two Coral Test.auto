@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedStartToID9"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ID9ToRedRightIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID8Left"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

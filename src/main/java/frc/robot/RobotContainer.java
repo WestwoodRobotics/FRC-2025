@@ -3,12 +3,13 @@ import java.sql.Driver;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
 
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 
 import Archives.commands.outtake.OuttakeBeamBreakTimeCommand;
 import Archives.commands.outtake.OuttakeCurrentTimeCommand;
@@ -19,6 +20,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.struct.parser.ParseException;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -119,6 +121,8 @@ public class RobotContainer {
     private  JoystickButton OperatorRightBumper;
     private JoystickButton OperatorLeftBumper;
 
+    private Command test_auto_command;
+
 
     ODCommandFactory ODCommandFactory;
 
@@ -162,7 +166,8 @@ public class RobotContainer {
     // Register named commands
     NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
     NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
-    NamedCommands.registerCommand("GoToElevatorL4",((new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)))).raceWith(new WaitCommand(1.3)));
+    NamedCommands.registerCommand("GoToElevatorL4",(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
+    NamedCommands.registerCommand("ClearElevator", (new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
     NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
     NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
     
@@ -216,6 +221,19 @@ public class RobotContainer {
     OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
     OperatorLeftBumper = new JoystickButton(m_operatorController, XboxController.Button.kLeftBumper.value);
 
+    // /home/lvuser/deploy/pathplanner/paths/RedStartToID11.path
+    try {
+        test_auto_command = new SequentialCommandGroup(
+            AutoBuilder.followPath(PathPlannerPath.fromPathFile("RedStartToID11")),
+            AutoBuilder.followPath(PathPlannerPath.fromPathFile("ID11ToRedLeftIntake")),
+            AutoBuilder.followPath(PathPlannerPath.fromPathFile("RedLeftIntakeToID6Right")),
+            AutoBuilder.followPath(PathPlannerPath.fromPathFile("ID6RightToRedLeftIntake")),
+            AutoBuilder.followPath(PathPlannerPath.fromPathFile("RedLeftIntakeToID6Left"))
+        );
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
     configureButtonBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -266,7 +284,7 @@ public class RobotContainer {
         //score
         driverRightTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.45),m_outtake)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.45), m_tusks)))
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.35),m_outtake)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.45), m_tusks)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
         
@@ -300,9 +318,9 @@ public class RobotContainer {
 
 
         DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
-        DriverBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
-        DriverYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
-        DriverXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
+        DriverBButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
+        DriverYButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3)));
+        DriverXButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2)));
 
         driverRightJoystickButton.onFalse(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
 

@@ -49,7 +49,8 @@ public class ODCommandFactory {
     public Command IntakeToOuttakeBeamBreakCommand(){
 
         return new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)).andThen(new InstantCommand(() -> m_intake.stopIntake(), m_intake));
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
+        );
 
     }
 

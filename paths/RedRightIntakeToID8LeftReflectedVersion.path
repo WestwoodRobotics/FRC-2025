@@ -1,0 +1,17 @@
+{
+  "name": "Red Right Intake To ID8 Left Reflected",
+  "waypoints": [
+    {
+      "x": 5.0,
+      "y": 6.0,              // originally y=2.0 -> 8-2.0=6.0
+      "theta": -0.2618,      // originally 0.2618
+      "quaternion": { "x": 0, "y": 0, "z": -0.1309, "w": 0.9914 }
+    },
+    {
+      "x": 6.0,
+      "y": 5.5,              // originally y=2.5 -> 8-2.5=5.5
+      "theta": -0.3491,      // originally 0.3491
+      "quaternion": { "x": 0, "y": 0, "z": -0.1736, "w": 0.9848 }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "2025.0",
+  "paths": [
+    "RedStartToID9ReflectedVersion.path",
+    "RedStartToID9Pt2ReflectedVersion.path",
+    "ID9ToRedRightIntakeReflectedVersion.path",
+    "RedRightIntakeToID8LeftReflectedVersion.path",
+    "RedRightIntakeToID8LeftPt2ReflectedVersion.path",
+    "ID8LeftToRedRightIntakeReflectedVersion.path",
+    "RedRightIntakeToID8RightReflectedVersion.path",
+    "RedRightIntakeToID8RightPt2ReflectedVersion.path"
+  ],
+  "reversed": true
+}

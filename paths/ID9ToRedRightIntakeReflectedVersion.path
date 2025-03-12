@@ -1,0 +1,17 @@
+{
+  "name": "ID9 To Red Right Intake Reflected",
+  "waypoints": [
+    {
+      "x": 4.0,
+      "y": 3.5,              // originally y=4.5 -> 8-4.5=3.5
+      "theta": -1.0472,      // originally 1.0472
+      "quaternion": { "x": 0, "y": 0, "z": -0.5, "w": 0.8660 }
+    },
+    {
+      "x": 5.0,
+      "y": 4.5,              // originally y=3.5 -> 8-3.5=4.5
+      "theta": -1.5708,      // originally 1.5708
+      "quaternion": { "x": 0, "y": 0, "z": -0.7071, "w": 0.7071 }
+    }
+  ]
+}

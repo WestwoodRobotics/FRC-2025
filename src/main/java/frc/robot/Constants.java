@@ -241,10 +241,17 @@ public final class Constants {
 
 
   public static final class ElevatorConstants{
+    // public static final double kElevatorHomePosition = 0;
+    // public static final double kElevatorL2Position = -17.5;
+    // public static final double kElevatorL3Position = -37.5;
+    // public static final double kElevatorL4Position = -73;
+
     public static final double kElevatorHomePosition = 0;
-    public static final double kElevatorL2Position = -17.5;
-    public static final double kElevatorL3Position = -37.5;
-    public static final double kElevatorL4Position = -73;
+    public static final double kElevatorL2Position = -21.875;
+    public static final double kElevatorL3Position = -46.875;
+    public static final double kElevatorL4Position = -91.25;
+
+
 
     public static final double kP = 0.06;
     public static final double kI = 0;
@@ -266,7 +273,7 @@ public final class Constants {
 
   public static final class CameraConstants{
     public static final double kReefCameraToRobotX = -0.24765;
-    public static final double kReefCameraToRobotY = 0.15875;
+    public static final double kReefCameraToRobotY = 0.19685;
     public static final double kReefCameraToRobotZ = -0.305;
 
     public static final double kReefCameraToRobotPitch = 0;
@@ -281,7 +288,7 @@ public final class Constants {
 
 
     public static final double kHumanPlayerCameraToRobotX = -0.24765;
-    public static final double kHumanPlayerCameraToRobotY = -0.15875;
+    public static final double kHumanPlayerCameraToRobotY = -0.19685;
     public static final double kHumanPlayerCameraToRobotZ = -0.305;
 
     public static final double kHumanPlayerCameraToRobotPitch = 0;

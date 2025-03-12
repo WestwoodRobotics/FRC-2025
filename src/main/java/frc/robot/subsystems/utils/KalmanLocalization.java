@@ -123,8 +123,8 @@ public class KalmanLocalization {
     ) {
         final double ANG_RAND_WALK_RAD_PER_SEC = 9.89019909e-5;
 
-        final double AREA_CART_VAR_FACTOR = 0.01;
-        final double AREA_ANG_VAR_FACTOR = 0.01;
+        final double AREA_CART_VAR_FACTOR = 0.0005;
+        final double AREA_ANG_VAR_FACTOR = 0.0005;
 
         double reef_cart_var = 10;
         double reef_ang_var = 10;
@@ -156,9 +156,9 @@ public class KalmanLocalization {
         Pose2d velocity,
         double dt
     ) {
-        final double CONSTANT_UNCERTAINTY = 0.000001;
-        final double DIRECTIONAL_UNCERTAINTY = 0.0001;
-        final double SPEED_UNCERTAINTY = 0.001;
+        final double CONSTANT_UNCERTAINTY = 0.0000001;
+        final double DIRECTIONAL_UNCERTAINTY = 0.00001;
+        final double SPEED_UNCERTAINTY = 0.0001;
         final double ROTATION_UNCERTAINTY = 0.001;
         double speed = Math.sqrt(velocity.getX()*velocity.getX() + velocity.getY()*velocity.getY());
         double x_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getX())*DIRECTIONAL_UNCERTAINTY + speed*SPEED_UNCERTAINTY;

@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedStartToID9"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedStartToID9Pt2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ID9ToRedRightIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID8Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID8LeftPt2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ID8LeftToRedRightIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID8Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID8RightPt2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

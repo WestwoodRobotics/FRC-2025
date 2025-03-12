@@ -1,0 +1,17 @@
+{
+  "name": "Red Start To ID9 Pt2 Reflected",
+  "waypoints": [
+    {
+      "x": 2.0,
+      "y": 5.0,              // originally y=3.0 -> 8-3.0=5.0
+      "theta": -0.5236,      // originally 0.5236
+      "quaternion": { "x": 0, "y": 0, "z": -0.2588, "w": 0.9659 }
+    },
+    {
+      "x": 4.0,
+      "y": 4.0,              // originally y=4.0 -> 8-4.0=4.0
+      "theta": -0.7854,      // originally 0.7854
+      "quaternion": { "x": 0, "y": 0, "z": -0.3827, "w": 0.9239 }
+    }
+  ]
+}
