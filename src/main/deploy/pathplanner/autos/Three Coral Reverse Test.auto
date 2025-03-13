@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedStartToID11"
+            "pathName": "RedStartToID11ReflectedVersion"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ID11ToRedLeftIntake"
+            "pathName": "RedStartToID11Pt2ReflectedVersion"
           }
         },
         {
@@ -76,7 +76,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "RedLeftIntakeToID6Right"
+                        "pathName": null
                       }
                     }
                   ]
@@ -137,7 +137,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ID6RightToRedLeftIntake"
+            "pathName": null
           }
         },
         {
@@ -149,7 +149,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedLeftIntakeToID6Left"
+            "pathName": null
           }
         }
       ]
