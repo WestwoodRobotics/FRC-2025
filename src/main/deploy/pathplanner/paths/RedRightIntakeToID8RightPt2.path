@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 13.806,
-        "y": 2.3565
+        "x": 14.073565573770493,
+        "y": 5.469518442622951
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.700278633667212,
-        "y": 2.129954215001186
+        "x": 13.967844207437706,
+        "y": 5.2429726576241364
       },
       "isLocked": false,
       "linkedName": "MidPointToID8Right"
     },
     {
       "anchor": {
-        "x": 13.496,
-        "y": 5.113
+        "x": 13.773872950819673,
+        "y": 4.954047131147541
       },
       "prevControl": {
-        "x": 13.589500848469415,
-        "y": 5.344856833704552
+        "x": 13.867373799289087,
+        "y": 5.185903964852092
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,7 +62,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 1.5,
-    "rotation": 119.99999999999999
+    "rotation": -119.53878225955788
   },
   "useDefaultConstraints": true
 }

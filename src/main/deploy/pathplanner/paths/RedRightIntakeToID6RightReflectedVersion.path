@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 13.806,
-        "y": 2.3565
+        "x": 14.026,
+        "y": 2.604456967213115
       },
       "prevControl": {
-        "x": 14.73025,
-        "y": 0.82175
+        "x": 14.95025,
+        "y": 1.069706967213115
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MidPointToID8Right"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -56,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 1.5,
-    "rotation": 119.99999999999999
+    "rotation": 118.7059525434011
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -128.65460900006468
+    "rotation": 129.16637891333207
   },
   "useDefaultConstraints": true
 }

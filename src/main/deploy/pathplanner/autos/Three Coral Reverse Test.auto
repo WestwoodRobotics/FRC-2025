@@ -157,6 +157,18 @@
           "data": {
             "waitTime": 0.5
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID6RightReflectedVersion"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedRightIntakeToID6RightPt2ReflectedVersion"
+          }
         }
       ]
     }
