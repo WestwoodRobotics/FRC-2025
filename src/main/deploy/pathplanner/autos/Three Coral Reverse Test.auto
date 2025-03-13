@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "RedStartToID11Pt2ReflectedVersion"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 0.25
@@ -50,7 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedStartToID11Pt2ReflectedVersion"
+            "pathName": "ID11ToRedRightIntakeReflectedVersion"
           }
         },
         {
@@ -76,7 +82,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": null
+                        "pathName": "RedRightIntakeToID6LeftReflectedVersion"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "RedRightIntakeToID6LeftPt2ReflectedVersion"
                       }
                     }
                   ]
@@ -137,19 +149,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "ID6LeftToRedRightIntakeReflectedVersion"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 0.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
           }
         }
       ]
