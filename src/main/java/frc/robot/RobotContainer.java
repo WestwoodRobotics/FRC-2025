@@ -166,8 +166,7 @@ public class RobotContainer {
     // Register named commands
     NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
     NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
-    NamedCommands.registerCommand("GoToElevatorL4",(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
-    NamedCommands.registerCommand("ClearElevator", (new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true)));
+    NamedCommands.registerCommand("GoToElevatorL4",(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.35, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4))));
     NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
     NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
     
@@ -317,10 +316,10 @@ public class RobotContainer {
         
 
 
-        DriverAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
-        DriverBButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
-        DriverYButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3)));
-        DriverXButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.2, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2)));
+        DriverAButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME)));
+        DriverBButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
+        DriverYButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3)));
+        DriverXButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2)));
 
         driverRightJoystickButton.onFalse(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
 

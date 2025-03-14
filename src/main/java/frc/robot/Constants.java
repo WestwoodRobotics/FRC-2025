@@ -312,7 +312,7 @@ public final class Constants {
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
-    public static final double kPivotP = 0.7;
+    public static final double kPivotP = 0.05;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
   }

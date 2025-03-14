@@ -107,7 +107,7 @@ public class OuttakeBeamBreakCommand extends Command {
         leds.blinkin.set(0.87); //blue
         if (outtake.isCoralDetected()) {
           // We just detected the back of the coral
-          outtake.setOuttakeSpeed(0);
+          outtake.setOuttakeSpeed(0.0);
           state = CoralState.DONE;
         }
         break;
