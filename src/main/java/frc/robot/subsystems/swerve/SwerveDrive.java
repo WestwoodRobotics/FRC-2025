@@ -34,7 +34,7 @@ import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.subsystems.utils.KalmanLocalization;
 //import frc.robot.subsystems.utils.KalmanLocalization;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 
 
@@ -209,8 +209,11 @@ public class SwerveDrive extends SubsystemBase {
     double reef_camera_distance_to_tag = 0;
     boolean reef_has_target = false;
 
-    if (m_cameras == null){
+    if (m_cameras == null && !RobotBase.isSimulation()){
       System.out.println("Null!");
+    }
+    else if (m_cameras == null){
+      reef_has_target = false;
     }
     else{
       reef_has_target = m_cameras.reefCameraHasTarget();
@@ -307,7 +310,12 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Y Vaue", getPose().getY());
     SmartDashboard.putNumber("Front Left Module Encoder Val", m_frontLeft.m_drivingEncoder.getPosition());
     SmartDashboard.putBoolean("Fast Align Mode", alignFastMode);
-    SmartDashboard.putNumber("Fiducial ID Detected", m_cameras.getBestReefCameraFiducialId());
+    try{
+      SmartDashboard.putNumber("Fiducial ID Detected", m_cameras.getBestReefCameraFiducialId());
+    } catch (Exception e){
+      SmartDashboard.putNumber("Fiducial ID Detected", -1);
+    }
+    
 
     SmartDashboard.putNumber("Front Left Module", this.m_frontLeft.getVelocityVector().getNorm());
     SmartDashboard.putNumber("Front Right Module", this.m_frontRight.getVelocityVector().getNorm());
