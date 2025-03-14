@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 15.691905737701004,
-        "y": 6.068903688524655
+        "x": 14.995059328432438,
+        "y": 7.160337408560293
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 13.881762295081966,
-        "y": 5.433555327868853
+        "x": 14.311,
+        "y": 5.994
       },
       "prevControl": {
-        "x": 15.068545081967214,
-        "y": 6.932018442622951
+        "x": 14.572940583405671,
+        "y": 6.399008951540346
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MidPointToID8Left"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

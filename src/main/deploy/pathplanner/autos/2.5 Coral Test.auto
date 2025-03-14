@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "RedStartToID9"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RedStartToID9"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SwerveSpeedTimerRace"
+                }
+              }
+            ]
           }
         },
         {
@@ -15,9 +28,22 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "race",
                 "data": {
-                  "pathName": "RedStartToID9Pt2"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "RedStartToID9Pt2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SwerveSpeedTimerRace"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -58,13 +84,19 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "parallel",
+                      "type": "race",
                       "data": {
                         "commands": [
                           {
                             "type": "path",
                             "data": {
                               "pathName": "ID9ToRedRightIntake"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "SwerveSpeedTimerRace"
                             }
                           }
                         ]
@@ -77,9 +109,22 @@
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "race",
                       "data": {
-                        "pathName": "RedRightIntakeToID8Left"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "RedRightIntakeToID8Left"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "SwerveSpeedTimerRace"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
@@ -99,9 +144,22 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "race",
                 "data": {
-                  "pathName": "RedRightIntakeToID8LeftPt2"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "RedRightIntakeToID8LeftPt2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SwerveSpeedTimerRace"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -134,13 +192,19 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "ID8LeftToRedRightIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SwerveSpeedTimerRace"
                 }
               }
             ]

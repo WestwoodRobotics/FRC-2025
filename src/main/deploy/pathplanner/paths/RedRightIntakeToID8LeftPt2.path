@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 13.881762295081966,
-        "y": 5.433555327868853
+        "x": 14.311,
+        "y": 5.994
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.756762295081966,
-        "y": 5.217048976922744
+        "x": 14.186,
+        "y": 5.77749364905389
       },
       "isLocked": false,
-      "linkedName": "MidPointToID8Left"
+      "linkedName": null
     },
     {
       "anchor": {

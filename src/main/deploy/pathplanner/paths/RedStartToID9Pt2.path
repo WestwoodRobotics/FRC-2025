@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 12.239446721311474,
-        "y": 5.38560450819672
+        "x": 11.807,
+        "y": 5.994
       },
       "prevControl": null,
       "nextControl": {
-        "x": 12.364446721311474,
-        "y": 5.169098157250611
+        "x": 12.012181899072823,
+        "y": 5.569522956165969
       },
       "isLocked": false,
-      "linkedName": "MidPointToID9"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 4.818682
       },
       "prevControl": {
-        "x": 12.245158,
-        "y": 5.035188350946109
+        "x": 12.232688099054574,
+        "y": 5.098783536460657
       },
       "nextControl": null,
       "isLocked": false,
