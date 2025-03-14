@@ -10,6 +10,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
+import frc.robot.commands.swerve.speedAndTimerTerminateCommand;
+import frc.robot.subsystems.swerve.SwerveDriveMonitor;
 
 import Archives.commands.outtake.OuttakeBeamBreakTimeCommand;
 import Archives.commands.outtake.OuttakeCurrentTimeCommand;
@@ -70,6 +72,7 @@ import frc.robot.commands.tusks.tuskSetPositionCommand;
 public class RobotContainer {
 
     protected SwerveDrive m_robotDrive;
+    protected SwerveDriveMonitor m_robotDriveMonitor;
     protected Elevator m_elevator;
     protected Intake m_intake;
     protected Outtake m_outtake;
@@ -153,6 +156,8 @@ public class RobotContainer {
 
     // Initialize subsystems
     m_robotDrive = new SwerveDrive(m_cameras);
+    m_robotDriveMonitor = new SwerveDriveMonitor(m_robotDrive);
+
     m_elevator =  new Elevator(PortConstants.kElevatorMotor1Port, PortConstants.kElevatorMotor2Port);
     m_intake = new Intake();
     m_tusks = new Tusks();
@@ -169,7 +174,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("GoToElevatorL4",(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.35, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4))));
     NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
     NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
-    
+    NamedCommands.registerCommand("SwerveSpeedTimerRace", new speedAndTimerTerminateCommand(m_robotDriveMonitor));
     NamedCommands.registerCommand("GoToElevatorHome", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
     NamedCommands.registerCommand("Intake", ODCommandFactory.IntakeToOuttakeBeamBreakCommand());
     NamedCommands.registerCommand("ScoreCoral", ODCommandFactory.scoreCoral());
