@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.311,
-        "y": 5.994
+        "x": 13.833811475409837,
+        "y": 5.445543032786884
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.186,
-        "y": 5.77749364905389
+        "x": 13.708811475409837,
+        "y": 5.229036681840775
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "MidPointToID8-copy2"
     },
     {
       "anchor": {
-        "x": 13.730326,
-        "y": 4.828682
+        "x": 13.821823770491804,
+        "y": 4.990010245901639
       },
       "prevControl": {
-        "x": 13.85532628,
-        "y": 5.045188351
+        "x": 13.946824050491804,
+        "y": 5.20651659690164
       },
       "nextControl": null,
       "isLocked": false,

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 14.311,
-        "y": 5.994
+        "x": 13.833811475409837,
+        "y": 5.445543032786884
       },
       "prevControl": {
-        "x": 14.572940583405671,
-        "y": 6.399008951540346
+        "x": 14.095752058815508,
+        "y": 5.850551984327231
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "MidPointToID8-copy2"
     }
   ],
   "rotationTargets": [],

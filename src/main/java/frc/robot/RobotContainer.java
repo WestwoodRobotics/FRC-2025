@@ -280,7 +280,7 @@ public class RobotContainer {
         //intake
         driverLeftTrigger
         .onTrue(
-            new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.4), m_intake)
+            new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.7), m_intake)
             .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
             ))
         .onFalse(ODCommandFactory.stopIntake()); 
@@ -321,10 +321,10 @@ public class RobotContainer {
         
 
 
-        DriverAButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME)));
-        DriverBButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
-        DriverYButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3)));
-        DriverXButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2)));
+        DriverAButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME)));
+        DriverBButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
+        DriverYButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3)));
+        DriverXButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2)));
 
         driverRightJoystickButton.onFalse(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
 

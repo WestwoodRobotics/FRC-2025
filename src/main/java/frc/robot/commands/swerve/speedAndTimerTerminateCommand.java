@@ -7,44 +7,25 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class speedAndTimerTerminateCommand extends Command {
     private final SwerveDriveMonitor swerveDriveMonitor;
-    private final Timer isStoppedTimer;
-    private final Timer initTimer;
-    private boolean isStopped;
-    private boolean commandFinished;
+    private double counter;
     
 
     public speedAndTimerTerminateCommand(SwerveDriveMonitor swerveDriveMonitor) {
         this.swerveDriveMonitor = swerveDriveMonitor;
-        this.isStoppedTimer = new Timer();
-        this.initTimer = new Timer();
-        this.isStopped = false;
-        this.commandFinished = false;
+        this.counter = 0;
         addRequirements(swerveDriveMonitor);
     }
 
     @Override
     public void initialize() {
-        initTimer.start();
+        this.counter = 0;
     }
 
     @Override
     public void execute() {
-        if (initTimer.get() < 0.3) {
-            return;
-        }
+        
         if (!swerveDriveMonitor.isSwerveDriveMoving()) {
-            if (isStopped){
-                if (isStoppedTimer.get() > 0.3){
-                    commandFinished = true;
-                }
-            }
-            else{
-                isStoppedTimer.start();
-                isStopped = true;
-            }
-        } else {
-            isStoppedTimer.start();
-            isStopped = false;
+            this.counter++;
         }
     }
 
@@ -52,16 +33,10 @@ public class speedAndTimerTerminateCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return commandFinished;
+        return this.counter > 5;
     }
 
     public void end(boolean interrupted) {
-        isStoppedTimer.stop();
-        isStoppedTimer.reset();
-        initTimer.stop();
-        initTimer.reset();
-        commandFinished = false;
-        isStopped = false;
         
     }
 

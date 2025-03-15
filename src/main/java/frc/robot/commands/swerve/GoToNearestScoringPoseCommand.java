@@ -65,12 +65,12 @@ public class GoToNearestScoringPoseCommand extends Command{
     private ReefAlignSide side;
 
     private final Transform2d center_far_left_transform = new Transform2d(
-        new Translation2d(1.5, -0.1),
+        new Translation2d(0.75, -0.1),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d center_far_right_transform = new Transform2d(
-        new Translation2d(1.5, 0.1),
+        new Translation2d(0.75, 0.1),
         new Rotation2d(Math.PI)
     );
 
