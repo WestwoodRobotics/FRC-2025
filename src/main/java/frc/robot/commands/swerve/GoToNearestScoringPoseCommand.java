@@ -65,12 +65,13 @@ public class GoToNearestScoringPoseCommand extends Command{
     private ReefAlignSide side;
 
     private final Transform2d center_far_left_transform = new Transform2d(
-        new Translation2d(0.75, -0.1),
+        new Translation2d(1, -0.14),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d center_far_right_transform = new Transform2d(
-        new Translation2d(0.75, 0.1),
+        new Translation2d(1, 0.14
+        ),
         new Rotation2d(Math.PI)
     );
 
@@ -131,9 +132,9 @@ public class GoToNearestScoringPoseCommand extends Command{
             waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
         }
 
-        double accelerationLimit = 1.2;
+        double accelerationLimit = 1;
         if (fastMode) {
-            accelerationLimit = 1.2;
+            accelerationLimit = 1;
         }
         return TrajectoryGenerator.generateTrajectory(
             startPose,

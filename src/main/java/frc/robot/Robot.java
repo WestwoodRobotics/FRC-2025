@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import frc.robot.commands.ODCommandFactory;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.epilogue.*;
 
@@ -29,6 +29,7 @@ import edu.wpi.first.util.datalog.DataLog;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private ODCommandFactory ODCommandFactory;
 
 
   private RobotContainer m_robotContainer;
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    ODCommandFactory = m_robotContainer.ODCommandFactory;
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
@@ -105,7 +107,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-
+    ODCommandFactory.stopIntake().schedule();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

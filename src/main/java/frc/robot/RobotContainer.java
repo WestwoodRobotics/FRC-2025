@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -45,6 +46,7 @@ import frc.robot.commands.ODCommandFactory;
 import frc.robot.commands.elevator.elevatorHoldCommand;
 
 import frc.robot.commands.elevator.elevatorSetPositionWithLimitSwitch;
+import frc.robot.commands.outtake.IntakeOuttakeUntilBeamBroken;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
 import frc.robot.commands.outtake.OuttakeUntilBeamRestored;
 import frc.robot.subsystems.elevator.Elevator;
@@ -90,6 +92,7 @@ public class RobotContainer {
     // The driver's controller
     XboxController m_driverController;
     XboxController m_operatorController;
+    XboxController m_programmerController;
 
     private  JoystickButton DriverAButton;
     private  JoystickButton DriverBButton;
@@ -105,6 +108,7 @@ public class RobotContainer {
     private  JoystickButton DriverLeftBumper;
     private  Trigger driverLeftTrigger;
     private  Trigger driverRightTrigger;
+    private Trigger clearThresholdCommand;
 
     private JoystickButton driverRightJoystickButton;
 
@@ -124,10 +128,16 @@ public class RobotContainer {
     private  JoystickButton OperatorRightBumper;
     private JoystickButton OperatorLeftBumper;
 
+    private JoystickButton programmerBButton;
+    private JoystickButton programmerAButton;
+    private JoystickButton programmerXButton;
+    private JoystickButton programmerYButton;
+
+
     private Command test_auto_command;
+    
 
-
-    ODCommandFactory ODCommandFactory;
+    protected ODCommandFactory ODCommandFactory;
 
 
     
@@ -151,6 +161,7 @@ public class RobotContainer {
     // Initialize controllers first
     m_driverController = new XboxController(PortConstants.kDriverControllerPort);
     m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
+    m_programmerController = new XboxController(2);
 
 
 
@@ -171,7 +182,7 @@ public class RobotContainer {
     // Register named commands
     NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
     NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
-    NamedCommands.registerCommand("GoToElevatorL4",(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.35, true).alongWith(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4))));
+    NamedCommands.registerCommand("GoToElevatorL4",(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.35, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4))));
     NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
     NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
     NamedCommands.registerCommand("SwerveSpeedTimerRace", new speedAndTimerTerminateCommand(m_robotDriveMonitor));
@@ -225,6 +236,15 @@ public class RobotContainer {
     OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
     OperatorLeftBumper = new JoystickButton(m_operatorController, XboxController.Button.kLeftBumper.value);
 
+    programmerAButton = new JoystickButton(m_programmerController, XboxController.Button.kA.value);
+    programmerBButton = new JoystickButton(m_programmerController, XboxController.Button.kB.value);
+    programmerXButton = new JoystickButton(m_programmerController, XboxController.Button.kX.value);
+    programmerYButton = new JoystickButton(m_programmerController, XboxController.Button.kY.value);
+    clearThresholdCommand = new Trigger(() -> m_elevator.getElevatorPosition() <= -70);
+
+
+    
+
     // /home/lvuser/deploy/pathplanner/paths/RedStartToID11.path
     try {
         test_auto_command = new SequentialCommandGroup(
@@ -254,7 +274,17 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   
-
+    private void bindElevatorCommands(Trigger input, elevatorPositions position) {
+        input.and(clearThresholdCommand).onTrue(
+            new OuttakeUntilBeamRestored(m_outtake, -0.1).andThen(
+                new elevatorSetPositionWithLimitSwitch(m_elevator, position)
+            ).andThen(
+                new IntakeOuttakeUntilBeamBroken(m_outtake, 0.5).raceWith(new WaitCommand(2))
+            )
+            
+        );
+        input.and(clearThresholdCommand.negate()).onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, position));
+    }
 
     private void configureButtonBindings() {
         /*
@@ -280,7 +310,7 @@ public class RobotContainer {
         //intake
         driverLeftTrigger
         .onTrue(
-            new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.7), m_intake)
+            new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.5), m_intake)
             .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
             ))
         .onFalse(ODCommandFactory.stopIntake()); 
@@ -320,13 +350,20 @@ public class RobotContainer {
         
         
 
+        bindElevatorCommands(DriverAButton, elevatorPositions.HOME);
+        bindElevatorCommands(DriverBButton, elevatorPositions.L4);
+        bindElevatorCommands(DriverYButton, elevatorPositions.L3);
+        bindElevatorCommands(DriverXButton, elevatorPositions.L2);
 
-        DriverAButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME)));
-        DriverBButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4)));
-        DriverYButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3)));
-        DriverXButton.onTrue(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.65, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2)));
 
         driverRightJoystickButton.onFalse(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
+
+        bindElevatorCommands(programmerAButton, elevatorPositions.L35);
+        bindElevatorCommands(programmerBButton, elevatorPositions.L4);
+        programmerXButton.onTrue(new OuttakeUntilBeamRestored(m_outtake, -0.1));
+
+        programmerYButton.onTrue(new IntakeOuttakeUntilBeamBroken(m_outtake, 0.06));
+        
 
 
 

@@ -18,10 +18,10 @@ public class LEDController extends SubsystemBase {
     @Override
     public void periodic(){
         if (this.cameras != null ){
-            if(this.cameras.reefCameraHasTarget()) {
+            if(this.cameras.reefCameraHasTarget() || this.cameras.humanPlayerCameraHasTarget()) {
                 this.blinkin.set(0.73);
             }
-            else {
+            else {  
                 this.blinkin.set(-0.81);
             }
         }
