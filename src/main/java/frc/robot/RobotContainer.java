@@ -281,7 +281,7 @@ public class RobotContainer {
             ).andThen(
                 new IntakeOuttakeUntilBeamBroken(m_outtake, 0.5).raceWith(new WaitCommand(2))
             )
-            
+
         );
         input.and(clearThresholdCommand.negate()).onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, position));
     }
@@ -351,19 +351,25 @@ public class RobotContainer {
         
 
         bindElevatorCommands(DriverAButton, elevatorPositions.HOME);
+        
         bindElevatorCommands(DriverBButton, elevatorPositions.L4);
+
         bindElevatorCommands(DriverYButton, elevatorPositions.L3);
+
         bindElevatorCommands(DriverXButton, elevatorPositions.L2);
 
 
         driverRightJoystickButton.onFalse(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
 
         bindElevatorCommands(programmerAButton, elevatorPositions.L35);
+
         bindElevatorCommands(programmerBButton, elevatorPositions.L4);
+
         programmerXButton.onTrue(new OuttakeUntilBeamRestored(m_outtake, -0.1));
 
         programmerYButton.onTrue(new IntakeOuttakeUntilBeamBroken(m_outtake, 0.06));
         
+
 
 
 
