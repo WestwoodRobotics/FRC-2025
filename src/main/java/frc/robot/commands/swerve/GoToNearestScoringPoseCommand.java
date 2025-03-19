@@ -112,7 +112,7 @@ public class GoToNearestScoringPoseCommand extends Command{
 
     public Trajectory generateTrajectory(Pose2d tagPose, Pose2d targetPose) {
         double x_vel = swerve.getOdometry().getXVel();
-        double y_vel = swerve.getOdometry().getXVel();
+        double y_vel = swerve.getOdometry().getYVel();
         double x_pos = swerve.getOdometry().getX();
         double y_pos = swerve.getOdometry().getY();
         Pose2d startPose = new Pose2d(
