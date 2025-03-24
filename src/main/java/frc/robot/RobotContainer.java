@@ -182,7 +182,9 @@ public class RobotContainer {
     // Register named commands
     NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
     NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
-    NamedCommands.registerCommand("GoToElevatorL4",(new OuttakeBeamBreakCommand(m_outtake, ledController, -0.35, true).andThen(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4))));
+    NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
+    NamedCommands.registerCommand("GoToElevatorL4First",new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
+
     NamedCommands.registerCommand("GoToElevatorL3", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3));
     NamedCommands.registerCommand("GoToElevatorL2", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2));
     NamedCommands.registerCommand("SwerveSpeedTimerRace", new speedAndTimerTerminateCommand(m_robotDriveMonitor));
@@ -190,6 +192,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", ODCommandFactory.IntakeToOuttakeBeamBreakCommand());
     NamedCommands.registerCommand("ScoreCoral", ODCommandFactory.scoreCoral());
     NamedCommands.registerCommand("StopIntakeAndOuttake", ODCommandFactory.stopIntake());
+    
+
 
     // Build autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -332,8 +336,8 @@ public class RobotContainer {
         )));
         
         operatorLeftTrigger
-        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-1), m_intake) //right bumper
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
+        .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.25), m_intake) //right bumper
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.7))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
 
@@ -389,7 +393,7 @@ public class RobotContainer {
 
         OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
         //OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        OperatorBButton.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.CENTER, m_robotDrive.getAlignFastMode()));
+        bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);
         OperatorYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
         OperatorAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
 

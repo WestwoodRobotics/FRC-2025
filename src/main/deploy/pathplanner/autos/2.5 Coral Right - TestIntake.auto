@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RedStartToID9Mirrored"
+                  "pathName": "RedStartToID9"
                 }
               }
             ]
@@ -26,15 +26,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "wait",
                       "data": {
-                        "pathName": "RedStartToID9Pt2Mirrored"
+                        "waitTime": 2.0
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 1.5
+                        "name": "GoToScorePoseRight"
                       }
                     }
                   ]
@@ -47,7 +47,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "GoToElevatorL4"
+                        "name": "GoToElevatorL4First"
                       }
                     },
                     {
@@ -90,7 +90,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "ID9ToRedRightIntakeMirrored"
+                              "pathName": "ID9ToRedRightIntake"
                             }
                           }
                         ]
@@ -109,7 +109,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "RedRightIntakeToID8LeftMirrored"
+                              "pathName": "RedRightIntakeToID8Left"
                             }
                           }
                         ]
@@ -136,15 +136,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "RedRightIntakeToID8LeftPt2Mirrored"
-                      }
-                    },
-                    {
                       "type": "wait",
                       "data": {
                         "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToScorePoseRight"
                       }
                     }
                   ]
@@ -192,7 +192,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ID8LeftToRedRightIntakeMirrored"
+                  "pathName": "ID8RightToRedRightIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
                 }
               }
             ]

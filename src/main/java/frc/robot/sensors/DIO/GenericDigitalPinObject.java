@@ -15,7 +15,6 @@ public abstract class GenericDigitalPinObject extends SubsystemBase{
 
     /**
      * Constructs a GenericDigitalPinObject with a specified digital input channel.
-     * 
      * @param channel The digital input channel the object is connected to.
      */
     public GenericDigitalPinObject(int channel){
@@ -24,7 +23,6 @@ public abstract class GenericDigitalPinObject extends SubsystemBase{
 
     /**
      * Returns the status of the digital input.
-     * 
      * @return True if the input is high, false if it is low.
      */
     public boolean getStatus(){

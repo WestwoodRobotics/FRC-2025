@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RedStartToID9"
+                  "pathName": "RedStartToID9Mirrored"
                 }
               }
             ]
@@ -26,15 +26,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "GoToScorePoseLeft"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 2.0
                       }
                     }
                   ]
@@ -90,7 +90,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "ID9ToRedRightIntake"
+                              "pathName": "ID9ToRedRightIntakeMirrored"
                             }
                           }
                         ]
@@ -109,7 +109,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "RedRightIntakeToID8Left"
+                              "pathName": "RedRightIntakeToID8LeftMirrored"
                             }
                           }
                         ]
@@ -192,7 +192,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ID8LeftToRedRightIntake"
+                  "pathName": "ID8LeftToRedRightIntakeMirrored"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
                 }
               }
             ]

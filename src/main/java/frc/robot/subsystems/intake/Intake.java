@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
     public void setIntakePower(double power) {
 
 
-        intakeMotorTop.set(power/8);
+        intakeMotorTop.set(power);
         // System.out.println(power);
 
     }
