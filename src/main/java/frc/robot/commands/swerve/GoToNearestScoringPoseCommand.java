@@ -76,15 +76,15 @@ public class GoToNearestScoringPoseCommand extends Command{
     );
 
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.33, -0.165),
+        new Translation2d(0.4, -0.165),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.33, 0.165),
+        new Translation2d(0.4, 0.165),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
-        new Translation2d(0.33, 0),
+        new Translation2d(0.4, 0),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -112,7 +112,7 @@ public class GoToNearestScoringPoseCommand extends Command{
 
     public Trajectory generateTrajectory(Pose2d tagPose, Pose2d targetPose) {
         double x_vel = swerve.getOdometry().getXVel();
-        double y_vel = swerve.getOdometry().getXVel();
+        double y_vel = swerve.getOdometry().getYVel();
         double x_pos = swerve.getOdometry().getX();
         double y_pos = swerve.getOdometry().getY();
         Pose2d startPose = new Pose2d(
@@ -132,17 +132,17 @@ public class GoToNearestScoringPoseCommand extends Command{
             waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
         }
 
-        double accelerationLimit = 1;
+        double accelerationLimit = 2;
         if (fastMode) {
-            accelerationLimit = 1;
+            accelerationLimit = 2;
         }
         return TrajectoryGenerator.generateTrajectory(
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(2, accelerationLimit).setStartVelocity(
+            new TrajectoryConfig(3, accelerationLimit).setStartVelocity(
                 0
-            )
+            ).setStartVelocity(Math.sqrt(x_vel*x_vel+y_vel*y_vel))
         );
     }
 
@@ -228,8 +228,8 @@ public class GoToNearestScoringPoseCommand extends Command{
             double xOutput = xController.calculate(currentX, currXTarget);
             double yOutput = yController.calculate(currentY, currYTarget);
 
-            double xSpeedBound = 3;
-            double ySpeedBound = 3;
+            double xSpeedBound = 4;
+            double ySpeedBound = 4;
             
             double angleOutput = angleController.calculate(currentAngle, targetAngle);
             xOutput = Math.min(xSpeedBound, Math.max(-xSpeedBound, xOutput));

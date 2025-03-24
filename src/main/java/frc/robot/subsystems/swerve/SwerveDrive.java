@@ -279,7 +279,7 @@ public class SwerveDrive extends SubsystemBase {
       wheel_vel,
       wheel_pos,
       reef_camera_pose,
-      null,
+      human_camera_pose,
       gyro_rate,
       reef_camera_area,
       human_camera_area,
