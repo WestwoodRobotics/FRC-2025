@@ -37,6 +37,8 @@ public class tuskSetPositionCommand extends Command{
         tusks.stopPivot();
         if (!interrupted){
             tusks.setCurrentState(target_position);
+        } else {
+            tusks.setCurrentState(tuskPositions.INTERRUPTED);
         }
     }
 

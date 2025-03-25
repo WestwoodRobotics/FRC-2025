@@ -4,8 +4,14 @@ import frc.robot.Constants.TuskConstants;
 
 public enum tuskPositions {
 
-    OUT(TuskConstants.kOutPosition),
-    IN(TuskConstants.kInPosition);
+    GROUND(TuskConstants.kGroundPosition),
+    L3(TuskConstants.kL3Position),
+    L4(TuskConstants.kL4Position),
+    PROCESSOR(TuskConstants.kProcessorPosition),
+    NET(TuskConstants.kNetPosition),
+    HOME(TuskConstants.kHomePosition),
+    INTERRUPTED(TuskConstants.kInterruptedPosition);
+
     
 
     private final double position;

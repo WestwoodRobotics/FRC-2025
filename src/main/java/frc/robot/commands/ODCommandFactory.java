@@ -63,10 +63,6 @@ public class ODCommandFactory {
         //tuskPositions current_position = this.m_tusks.getCurrentState();
         tuskPositions current_position = position;
 
-        if (current_position == tuskPositions.IN){
-            
-        } 
-
         return new ParallelCommandGroup(
             new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.3), m_outtake),
             new InstantCommand(() -> m_tusks.setRollerPower(0.3), m_tusks)
@@ -78,7 +74,7 @@ public class ODCommandFactory {
     public Command  stopIntake(){
         return new ParallelCommandGroup(
             new InstantCommand(() -> m_intake.setIntakePower(0), m_intake),
-            new InstantCommand(() -> m_tusks.setRollerPower(0), m_tusks),
+            new InstantCommand(() -> m_tusks.stopRoller(), m_tusks),
             new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)
         );
     }

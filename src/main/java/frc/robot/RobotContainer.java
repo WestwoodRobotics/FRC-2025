@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -180,8 +180,8 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
 
     // Register named commands
-    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
-    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
+    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
+    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
     NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
     NamedCommands.registerCommand("GoToElevatorL4First",new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
 
@@ -298,37 +298,29 @@ public class RobotContainer {
         //DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
         
 
-        DriverDPadUp
-        .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(-0.25), m_elevator))
-        .onFalse(new elevatorHoldCommand(m_elevator));
+        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
 
-        DriverDPadDown
-        .onTrue(new InstantCommand(()-> m_elevator.setElevatorSpeed(0.25), m_elevator))
-        .onFalse(new elevatorHoldCommand(m_elevator));
-
-
-        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, m_robotDrive.getAlignFastMode()));
-
-        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, m_robotDrive.getAlignFastMode()));
+        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
 
         //intake
         driverLeftTrigger
         .onTrue(
-            new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.5), m_intake)
+            (new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.5), m_intake)
             .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
-            ))
+            )).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.5), m_tusks)))
         .onFalse(ODCommandFactory.stopIntake()); 
 
         //score
         driverRightTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake)
-        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.35),m_outtake)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.45), m_tusks)))
+        .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.35),m_outtake)).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.50), m_tusks)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.stopRoller(), m_tusks)));
         
 
+
         OperatorLeftBumper
-        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.OUT)
+        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.PROCESSOR)
         .andThen(new tuskHoldPositionCommand(m_tusks))
         .andThen(new ParallelCommandGroup(
             new InstantCommand(() -> m_outtake.setOuttakeSpeed(0.3), m_outtake),
@@ -339,16 +331,16 @@ public class RobotContainer {
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(-0.25), m_intake) //right bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(0.7))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.stopRoller(), m_tusks)));
 
         operatorRightTrigger
         .onTrue(new InstantCommand(()-> m_intake.setIntakePower(0.4), m_intake) //right bumper
         .andThen(new InstantCommand(()-> m_outtake.setOuttakeSpeed(-0.3))).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.3))))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
-        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.setRollerPower(0), m_tusks)));
+        .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.stopRoller(), m_tusks)));
 
         OperatorRightBumper
-        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.IN));
+        .onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.HOME));
 
         
         
@@ -391,11 +383,15 @@ public class RobotContainer {
         OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition()));
         OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition())); 
 
-        OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
+        // OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
         //OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);
-        OperatorYButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        OperatorAButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        DriverDPadUp.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L3).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+        DriverDPadDown.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L2).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
+
+        OperatorXButton.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.PROCESSOR));
+        OperatorBButton.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.GROUND));
+        OperatorYButton.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.NET));
 
 
         

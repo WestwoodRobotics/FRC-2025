@@ -306,10 +306,20 @@ public final class Constants {
   public class TuskConstants{
     public static final int kTuskPivotMotorId = 39;
     public static final int kTuskRollerMotorId = 38;
+
+
+    public static final double kGroundPosition = 0;
+    public static final double kL3Position = 0;
+    public static final double kL4Position = 0;
+    public static final double kNetPosition = 0;
+    public static final double kProcessorPosition = 0;
+    public static final double kHomePosition = 0;
+    public static final double kInterruptedPosition = 0;
+
     public static final double kOutPosition = -13.3;
     public static final double kInPosition = 0.1;
 
-    public static final double kRollerP = 0.05;
+    public static final double kRollerP = 0.18;
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
