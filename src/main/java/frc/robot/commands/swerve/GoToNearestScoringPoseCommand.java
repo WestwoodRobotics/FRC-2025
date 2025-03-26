@@ -41,6 +41,8 @@ public class GoToNearestScoringPoseCommand extends Command{
     private double currentY;
     private double currentAngle;
 
+    private Pose2d targetPose;
+
     private final double xTolerance = 0.01;
     private final double yTolerance = 0.03;
     private final double angleTolerance = 0.01;
@@ -65,26 +67,26 @@ public class GoToNearestScoringPoseCommand extends Command{
     private ReefAlignSide side;
 
     private final Transform2d center_far_left_transform = new Transform2d(
-        new Translation2d(1, -0.14),
+        new Translation2d(0.75, -0.185),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d center_far_right_transform = new Transform2d(
-        new Translation2d(1, 0.14
+        new Translation2d(0.75, 0.145
         ),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d left_transform = new Transform2d(
-        new Translation2d(0.4, -0.165),
+        new Translation2d(0.5, -0.185),
         new Rotation2d(Math.PI)
     );
     private final Transform2d right_transform = new Transform2d(
-        new Translation2d(0.4, 0.165),
+        new Translation2d(0.5, 0.145),
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
-        new Translation2d(0.4, 0),
+        new Translation2d(0.5, 0),
         new Rotation2d(Math.PI)
     );
     //11.8 
@@ -104,6 +106,7 @@ public class GoToNearestScoringPoseCommand extends Command{
         profileTimer = new Timer();
         trajectory = new Trajectory();
         terminateFinish = 0;
+        targetPose = new Pose2d();
 
         this.fastMode = fastMode;
 
@@ -140,9 +143,9 @@ public class GoToNearestScoringPoseCommand extends Command{
             startPose,
             waypointList,
             targetPose,
-            new TrajectoryConfig(3, accelerationLimit).setStartVelocity(
+            new TrajectoryConfig(2, accelerationLimit).setStartVelocity(
                 0
-            ).setStartVelocity(Math.sqrt(x_vel*x_vel+y_vel*y_vel))
+            ).setStartVelocity(Math.sqrt(x_vel*x_vel+y_vel*y_vel)).setEndVelocity(0)
         );
     }
 
@@ -165,7 +168,7 @@ public class GoToNearestScoringPoseCommand extends Command{
         Pose2d tagPose = maybeTagPose.get().toPose2d();
         
         //Pose2d targetPose = tagPose.transformBy((side.equals(ReefAlignSide.LEFT)) ? left_transform : right_transform);
-        Pose2d targetPose = new Pose2d();
+        targetPose = new Pose2d();
         
         if (side.equals(ReefAlignSide.LEFT)){
             targetPose = tagPose.transformBy(left_transform);
@@ -246,7 +249,9 @@ public class GoToNearestScoringPoseCommand extends Command{
 
             if(
                 Math.abs(swerve.getOdometry().getXVel()) < 0.02 &&
-                Math.abs(swerve.getOdometry().getYVel()) < 0.02
+                Math.abs(swerve.getOdometry().getYVel()) < 0.02 &&
+                Math.abs(swerve.getOdometry().getX() - targetPose.getX()) < 0.03 &&
+                Math.abs(swerve.getOdometry().getY() - targetPose.getY()) < 0.03
             ) {
                 terminateFinish++;
             }

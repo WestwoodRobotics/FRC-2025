@@ -10,7 +10,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
-import frc.robot.commands.swerve.speedAndTimerTerminateCommand;
+
 import frc.robot.subsystems.swerve.SwerveDriveMonitor;
 
 import Archives.commands.outtake.OuttakeBeamBreakTimeCommand;
@@ -180,8 +180,8 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
 
     // Register named commands
-    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
-    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
+    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, this.m_robotDrive.getAlignFastMode()));
+    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, this.m_robotDrive.getAlignFastMode()));
     NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
     NamedCommands.registerCommand("GoToElevatorL4First",new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
 
@@ -298,9 +298,9 @@ public class RobotContainer {
         //DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
         
 
-        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
+        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, this.m_robotDrive.getAlignFastMode()));
 
-        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
+        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, this.m_robotDrive.getAlignFastMode()));
 
         //intake
         driverLeftTrigger

@@ -126,15 +126,15 @@ public class KalmanLocalization {
         double reef_cart_var = 10;
         double reef_ang_var = 10;
         if(reefHasTarget && reefCameraTargetArea > 0) {
-            reef_cart_var = Math.max(Math.exp(-1*reefCameraTargetArea-6), 1e-9);
-            reef_ang_var = Math.max(Math.exp(-1*reefCameraTargetArea-6), 1e-9);
+            reef_cart_var = Math.max(Math.exp(-1*reefCameraTargetArea-5), 1e-9);
+            reef_ang_var = Math.max(Math.exp(-1*reefCameraTargetArea-5), 1e-9);
         }
 
         double human_cart_var = 10;
         double human_ang_var = 10;
         if(humanHasTarget && humanCameraTargetArea > 0) {
-            human_cart_var = Math.max(Math.exp(-1*humanCameraTargetArea-6), 1e-9);
-            human_ang_var = Math.max(Math.exp(-1*humanCameraTargetArea-6), 1e-9);
+            human_cart_var = Math.max(Math.exp(-1*humanCameraTargetArea-5), 1e-9);
+            human_ang_var = Math.max(Math.exp(-1*humanCameraTargetArea-5), 1e-9);
         }
 
         return new Matrix<N7, N7>(new SimpleMatrix(7, 7, true,
@@ -154,8 +154,8 @@ public class KalmanLocalization {
         double dt
     ) {
         final double CONSTANT_UNCERTAINTY = 0.0000001;
-        final double DIRECTIONAL_UNCERTAINTY = 0.0001;
-        final double SPEED_UNCERTAINTY = 0.0001;
+        final double DIRECTIONAL_UNCERTAINTY = 0.001;
+        final double SPEED_UNCERTAINTY = 0.001;
         final double ROTATION_UNCERTAINTY = 0.01;
         double speed = velocity.getX()*velocity.getX() + velocity.getY()*velocity.getY();
         double x_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getX())*DIRECTIONAL_UNCERTAINTY + speed*SPEED_UNCERTAINTY;
