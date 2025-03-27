@@ -89,7 +89,17 @@ public class GoToNearestScoringPoseCommand extends Command{
         new Translation2d(0.5, 0),
         new Rotation2d(Math.PI)
     );
-    //11.8 
+
+    private final Transform2d algae_reef_pickup_transform_initital = new Transform2d(
+        new Translation2d(0.8, -0.185),
+        new Rotation2d(Math.PI)
+    );
+
+    private final Transform2d algae_reef_pickup_transform_final = new Transform2d(
+        new Translation2d(0.75, 0.145),
+        new Rotation2d(Math.PI)
+    );
+
     public GoToNearestScoringPoseCommand(SwerveDrive swerve, AprilTagFieldLayout layout, ReefAlignSide side, boolean fastMode){ 
         this.swerve = swerve;
         this.layout = layout;
@@ -133,6 +143,9 @@ public class GoToNearestScoringPoseCommand extends Command{
         }
         else if (side == ReefAlignSide.CENTER){
             waypointList.add(tagPose.transformBy(true_center_transform).getTranslation());
+        }
+        else if (side == ReefAlignSide.ALGAE_SCORE){
+            waypointList.add(tagPose.transformBy(algae_reef_pickup_transform_initital).getTranslation());
         }
 
         double accelerationLimit = 2;
@@ -178,6 +191,9 @@ public class GoToNearestScoringPoseCommand extends Command{
         }
         else if (side.equals(ReefAlignSide.CENTER)){
             targetPose = tagPose.transformBy(true_center_transform);
+        }
+        else if (side.equals(ReefAlignSide.ALGAE_SCORE)){
+            targetPose = tagPose.transformBy(algae_reef_pickup_transform_final);
         }
         trajectory = generateTrajectory(tagPose, targetPose);
         targetAngle = targetPose.getRotation().getRadians();

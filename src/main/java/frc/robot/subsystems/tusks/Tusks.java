@@ -34,7 +34,6 @@ public class Tusks extends SubsystemBase{
         tuskPivotMotor = new SparkMax(TuskConstants.kTuskPivotMotorId, MotorType.kBrushless);
         tuskPivotPIDController = new PIDController(TuskConstants.kPivotP, TuskConstants.kPivotI, TuskConstants.kPivotD);
         tuskRollerPIDController = new PIDController(TuskConstants.kRollerP, TuskConstants.kRollerI, TuskConstants.kRollerD);
-        tuskPivotSubsystemPIDController = new PIDController(TuskConstants.kPivotP, TuskConstants.kPivotI, TuskConstants.kPivotD);
         isHoldPose = true;
         isHoldPoseUpdated = false;
         isRollerHold = true;
@@ -139,6 +138,9 @@ public class Tusks extends SubsystemBase{
 
         if (isRollerHold && isRollerHoldUpdated){
             tuskRollerMotor.set(tuskRollerPIDController.calculate(tuskRollerMotor.getEncoder().getPosition()));
+            //TODO: NEED TO CHECK DIRECTION POSITIVE ENCODER VALUES IS OUTTAKE OR NOT
+            //Want to try (IF POS VAL IS OUT THEN THIS IS GOOD, IF NOT THEN REVERSE)
+            //tuskRollerMotor.set(tuskRollerPIDController.calculate(tuskRollerMotor.getEncoder().getPosition() - 0.5));
         }
 
 
