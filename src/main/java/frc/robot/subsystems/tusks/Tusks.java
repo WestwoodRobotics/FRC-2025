@@ -147,6 +147,7 @@ public class Tusks extends SubsystemBase{
         SmartDashboard.putBoolean("isHoldPoseUpdated", isHoldPoseUpdated);
         SmartDashboard.putNumber("holdPose", holdPose);
         SmartDashboard.putNumber("Tusk Pivot Encoder", tuskPivotMotor.getEncoder().getPosition());
+        
 
 
     }
@@ -189,6 +190,10 @@ public class Tusks extends SubsystemBase{
         isRollerHold = true;
         isRollerHoldUpdated = true;
         tuskRollerMotor.getEncoder().setPosition(position);
+    }
+
+    public void resetTusksPivot(){
+        tuskPivotMotor.getEncoder().setPosition(0);
     }
 
 

@@ -103,7 +103,7 @@ public class OuttakeBeamBreakCommand extends Command {
 
       case WAITING_FOR_BACK_CORAL:
         // Spin in reverse until the beam breaks again (back of coral)
-        outtake.setOuttakeSpeed(-0.15*power);
+        outtake.setOuttakeSpeed(-0.2*power);
         leds.blinkin.set(0.87); //blue
         if (outtake.isCoralDetected()) {
           // We just detected the back of the coral

@@ -23,7 +23,7 @@ public class tuskSetPositionCommand extends Command{
     public void initialize(){
 
         this.tuskPIDController = tusks.getPIDController();
-        this.tuskPIDController.setTolerance(0.05);
+        this.tuskPIDController.setTolerance(0.3);
         tusks.setTargetPosition(target_position.getPosition());
     }
 

@@ -251,6 +251,7 @@ public final class Constants {
     public static final double kElevatorL3Position = -46.875;
     public static final double kElevatorL35Position = -80.25; //-91.25 OG
     public static final double kElevatorL4Position = -88.25; //-91.25 OG
+    public static final double kElevatorBargePosition = -95.5;
 
 
 
@@ -308,9 +309,9 @@ public final class Constants {
     public static final int kTuskRollerMotorId = 38;
 
 
-    public static final double kGroundPosition = 0;
-    public static final double kL3Position = 0;
-    public static final double kL4Position = 0;
+    public static final double kGroundPosition = -13.5;
+    public static final double kL3Position = -2.875;
+    public static final double kL4Position = -2.875;
     public static final double kNetPosition = 0;
     public static final double kProcessorPosition = 0;
     public static final double kHomePosition = 0;
@@ -319,11 +320,11 @@ public final class Constants {
     public static final double kOutPosition = -13.3;
     public static final double kInPosition = 0.1;
 
-    public static final double kRollerP = 0.18;
+    public static final double kRollerP = 0.36;
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
-    public static final double kPivotP = 0.05;
+    public static final double kPivotP = 0.025;
     public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.0;
   }

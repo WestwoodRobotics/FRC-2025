@@ -9,7 +9,8 @@ public enum elevatorPositions {
     L2(ElevatorConstants.kElevatorL2Position),
     L3(ElevatorConstants.kElevatorL3Position),
     L35(ElevatorConstants.kElevatorL35Position),
-    L4(ElevatorConstants.kElevatorL4Position);
+    L4(ElevatorConstants.kElevatorL4Position),
+    BARGE(ElevatorConstants.kElevatorBargePosition);
     
 
 
