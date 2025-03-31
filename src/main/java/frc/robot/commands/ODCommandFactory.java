@@ -48,14 +48,14 @@ public class ODCommandFactory {
 
     public Command IntakeToOuttakeBeamBreakCommand(){
 
-        return new InstantCommand(() -> m_intake.setBothPowers(0.5, 0.7), m_intake)
+        return new InstantCommand(() -> m_intake.setBothPowers(0.5, 0.75), m_intake)
         .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
         );
 
     }
 
     public ParallelCommandGroup scoreCoral(){
-       return new ParallelCommandGroup(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.45)).raceWith(new WaitCommand(0.5)));
+       return new ParallelCommandGroup(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.45)).raceWith(new WaitCommand(0.55)));
     }
 
     public Command intake(tuskPositions position){

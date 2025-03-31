@@ -250,8 +250,8 @@ public final class Constants {
     public static final double kElevatorL2Position = -21.875;
     public static final double kElevatorL3Position = -46.875;
     public static final double kElevatorL35Position = -80.25; //-91.25 OG
-    public static final double kElevatorL4Position = -88.25; //-91.25 OG
-    public static final double kElevatorBargePosition = -95.5;
+    public static final double kElevatorL4Position = -90.25; //-91.25 OG
+    public static final double kElevatorBargePosition = -93.5;
 
 
 
@@ -320,7 +320,7 @@ public final class Constants {
     public static final double kOutPosition = -13.3;
     public static final double kInPosition = 0.1;
 
-    public static final double kRollerP = 0.36;
+    public static final double kRollerP = 0.075;
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 

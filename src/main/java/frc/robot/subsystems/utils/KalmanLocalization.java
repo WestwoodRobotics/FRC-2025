@@ -126,15 +126,15 @@ public class KalmanLocalization {
         double reef_cart_var = 10;
         double reef_ang_var = 10;
         if(reefHasTarget && reefCameraTargetArea > 0) {
-            reef_cart_var = Math.max(Math.exp(-1*reefCameraTargetArea-5), 1e-9);
-            reef_ang_var = Math.max(Math.exp(-1*reefCameraTargetArea-5), 1e-9);
+            reef_cart_var = Math.max(Math.exp(-1.5*reefCameraTargetArea-0.5), 1e-9);
+            reef_ang_var = Math.max(Math.exp(-1.5*reefCameraTargetArea-0.5), 1e-9);
         }
 
         double human_cart_var = 10;
         double human_ang_var = 10;
         if(humanHasTarget && humanCameraTargetArea > 0) {
-            human_cart_var = Math.max(Math.exp(-1*humanCameraTargetArea-5), 1e-9);
-            human_ang_var = Math.max(Math.exp(-1*humanCameraTargetArea-5), 1e-9);
+            human_cart_var = Math.max(Math.exp(-2*humanCameraTargetArea-1), 1e-9);
+            human_ang_var = Math.max(Math.exp(-2*humanCameraTargetArea-1), 1e-9);
         }
 
         return new Matrix<N7, N7>(new SimpleMatrix(7, 7, true,

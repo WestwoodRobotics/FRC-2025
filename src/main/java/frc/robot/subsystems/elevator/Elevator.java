@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +35,7 @@ public class Elevator extends SubsystemBase {
     private boolean elevatorManual;
     private State startState;
     private State currentState;
+    private TrapezoidProfile autoProfile;
 
     
 
@@ -45,6 +47,8 @@ public class Elevator extends SubsystemBase {
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500, 700));
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(8000, 15000));
+        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(80, 80));
+        autoProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500,500));
         elevatorPosSetpoint = 0;
         elevatorPower = 0;
         elevatorProfileTimer = new Timer();
@@ -95,6 +99,13 @@ public class Elevator extends SubsystemBase {
                 startState,
                 new State(elevatorPosSetpoint, 0)
             );
+            if (DriverStation.isAutonomousEnabled()){
+                currentState = autoProfile.calculate(
+                    elevatorProfileTimer.get(),
+                    startState,
+                    new State(elevatorPosSetpoint, 0)
+                );
+            }
             SmartDashboard.putNumber("Elevator current", getElevatorPosition());
             SmartDashboard.putNumber("Elevator calc", currentState.position);
             SmartDashboard.putNumber("Elevator vel", elevatorMotor1.getEncoder().getVelocity()/60);

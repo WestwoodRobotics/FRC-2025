@@ -128,7 +128,7 @@ public class Tusks extends SubsystemBase{
 
         if(!isRollerHoldUpdated){
             rollerHoldPose = tuskRollerMotor.getEncoder().getPosition();
-            tuskRollerPIDController.setSetpoint(rollerHoldPose);
+            tuskRollerPIDController.setSetpoint(rollerHoldPose+0.15);
             isRollerHoldUpdated = true;
         }
 
@@ -137,10 +137,9 @@ public class Tusks extends SubsystemBase{
         }
 
         if (isRollerHold && isRollerHoldUpdated){
+            //tuskRollerMotor.set(tuskRollerPIDController.calculate(tuskRollerMotor.getEncoder().getPosition()));
+
             tuskRollerMotor.set(tuskRollerPIDController.calculate(tuskRollerMotor.getEncoder().getPosition()));
-            //TODO: NEED TO CHECK DIRECTION POSITIVE ENCODER VALUES IS OUTTAKE OR NOT
-            //Want to try (IF POS VAL IS OUT THEN THIS IS GOOD, IF NOT THEN REVERSE)
-            //tuskRollerMotor.set(tuskRollerPIDController.calculate(tuskRollerMotor.getEncoder().getPosition() - 0.5));
         }
 
 
@@ -149,6 +148,7 @@ public class Tusks extends SubsystemBase{
         SmartDashboard.putBoolean("isHoldPoseUpdated", isHoldPoseUpdated);
         SmartDashboard.putNumber("holdPose", holdPose);
         SmartDashboard.putNumber("Tusk Pivot Encoder", tuskPivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Tusk Roller Encoder",tuskRollerMotor.getEncoder().getPosition());
         
 
 

@@ -278,8 +278,8 @@ public class SwerveDrive extends SubsystemBase {
     kalmanLocalization.update(
       wheel_vel,
       wheel_pos,
-      reef_camera_pose,
-      human_camera_pose,
+      reef_camera_area >= 0.3 ? reef_camera_pose : null,
+      human_camera_area >= 0.3 ? human_camera_pose : null,
       gyro_rate,
       reef_camera_area,
       human_camera_area,

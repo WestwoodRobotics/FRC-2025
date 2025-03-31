@@ -60,6 +60,7 @@ import frc.robot.subsystems.utils.tusks.tuskPositions;
 import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.sensors.DIO.LEDController;
 import frc.robot.commands.swerve.*;
+import frc.robot.commands.tusks.tuskJoystickPower;
 import frc.robot.commands.tusks.tuskSetPositionCommand;
 
 
@@ -135,6 +136,8 @@ public class RobotContainer {
     private JoystickButton programmerAButton;
     private JoystickButton programmerXButton;
     private JoystickButton programmerYButton;
+    private Trigger operatorRightYJoystickTrigger;
+    private Trigger operatorLeftYJoystickTrigger;
 
     
 
@@ -143,6 +146,7 @@ public class RobotContainer {
     
 
     protected ODCommandFactory ODCommandFactory;
+
 
 
     
@@ -185,8 +189,10 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
 
     // Register named commands
-    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, this.m_robotDrive.getAlignFastMode()));
-    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, this.m_robotDrive.getAlignFastMode()));
+    NamedCommands.registerCommand("GoToScorePoseLeft", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, 2));
+    NamedCommands.registerCommand("GoToScorePoseRight", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, 2));
+    NamedCommands.registerCommand("GoToScorePoseLeftSlow", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, 1));
+    NamedCommands.registerCommand("GoToScorePoseRightSlow", new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, 1));
     NamedCommands.registerCommand("GoToElevatorL4", new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
     NamedCommands.registerCommand("GoToElevatorL4First",new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4));
 
@@ -239,6 +245,11 @@ public class RobotContainer {
 
     operatorLeftJoystickButton = new JoystickButton(m_operatorController, XboxController.Button.kLeftStick.value);
     operatorRightJoystickButton = new JoystickButton(m_operatorController, XboxController.Button.kRightStick.value);
+
+    operatorRightYJoystickTrigger = new Trigger(() -> m_operatorController.getRightY()>=0.05);
+    operatorLeftYJoystickTrigger = new Trigger(() -> m_operatorController.getLeftY()>=0.05);
+    
+
     
     
     operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.5);
@@ -306,9 +317,9 @@ public class RobotContainer {
         //DriverStartButton.onTrue(new InstantCommand(() -> m_robotDrive.getGyro().setGyroYawOffset(180), m_robotDrive));
         
 
-        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT, this.m_robotDrive.getAlignFastMode()));
+        DriverLeftBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.LEFT));
 
-        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT, this.m_robotDrive.getAlignFastMode()));
+        DriverRightBumper.whileTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.RIGHT));
 
         //intake
         driverLeftTrigger
@@ -383,13 +394,15 @@ public class RobotContainer {
 
         OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
         OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
-        OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.1), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
-        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.1), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks)); 
+        //OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.1), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
+        //OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.1), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks)); 
+        operatorLeftYJoystickTrigger.onTrue(new tuskJoystickPower(m_tusks, m_operatorController)).onFalse(new InstantCommand(()-> m_tusks.lockPosition(), m_tusks));
+        
 
         // OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
         //OperatorBButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.L4).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);
-        DriverDPadUp.onTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.ALGAE_SCORE, false)).onFalse(new InstantCommand(() -> m_robotDrive.drive(0, 0, 0, false), m_robotDrive));
+        //DriverDPadUp.onTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.ALGAE_SCORE, false)).onFalse(new InstantCommand(() -> m_robotDrive.drive(0, 0, 0, false), m_robotDrive));
         DriverDPadDown.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.BARGE).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
 
         operatorLeftJoystickButton.onTrue(new InstantCommand((() -> m_tusks.setPivotPower(0.1)), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.resetTusksPivot()).alongWith(new InstantCommand(() -> m_tusks.lockPosition())));

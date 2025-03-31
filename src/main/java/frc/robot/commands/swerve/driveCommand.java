@@ -91,7 +91,7 @@ public class driveCommand extends Command {
     double magnitude = 0;
     magnitude = magnitude > 1 ? 1 : Math.sqrt(leftY*leftY+leftX*leftX);
 
-    double scaled_magnitude = Math.pow(magnitude, 3);
+    double scaled_magnitude = Math.pow(magnitude, 2);
     double new_leftX = leftX * scaled_magnitude;
     double new_leftY = leftY * scaled_magnitude;
 
