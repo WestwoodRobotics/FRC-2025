@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 16.843,
-        "y": 7.483
+        "x": 16.86670081967213,
+        "y": 7.399538934426229
       },
       "prevControl": null,
       "nextControl": {
-        "x": 15.199059328432439,
-        "y": 7.435337408560293
+        "x": 15.129106750275287,
+        "y": 6.676872239768258
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.074,
-        "y": 5.829149590163934
+        "x": 14.169467213114753,
+        "y": 6.339620901639344
       },
       "prevControl": {
-        "x": 14.335940583405671,
-        "y": 6.23415854170428
+        "x": 14.398731365899923,
+        "y": 6.439310160076241
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MidPointToID8-copy2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -36,7 +36,7 @@
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 4.0,
-        "maxAcceleration": 1.5,
+        "maxAcceleration": 2.2,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,

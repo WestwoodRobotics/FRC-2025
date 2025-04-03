@@ -246,16 +246,30 @@ public final class Constants {
     // public static final double kElevatorL3Position = -37.5;
     // public static final double kElevatorL4Position = -73;
 
+    //OG GR is 15:1
+    //NEW GR IS 9:1
+
+    //OLD POSES
+
+    // public static final double kElevatorHomePosition = 0;
+    // public static final double kElevatorL2Position = -21.875;
+    // public static final double kElevatorL3Position = -46.875;
+    // public static final double kElevatorL35Position = -80.25; //-91.25 OG
+    // public static final double kElevatorL4Position = -90.25; //-91.25 OG
+    // public static final double kElevatorBargePosition = -93.5;
+
+    //NEW POSES
     public static final double kElevatorHomePosition = 0;
-    public static final double kElevatorL2Position = -21.875;
-    public static final double kElevatorL3Position = -46.875;
-    public static final double kElevatorL35Position = -80.25; //-91.25 OG
-    public static final double kElevatorL4Position = -90.25; //-91.25 OG
-    public static final double kElevatorBargePosition = -93.5;
+    public static final double kElevatorL2Position = -13.125; // (-21.875/15)*9
+    public static final double kElevatorL3Position = -28.125; // (-46.875/15)*9
+    public static final double kElevatorL35Position = -48.15; // (-80.25/15)*9
+    public static final double kElevatorL4Position = -54.15; // (-90.25/15)*9
+    public static final double kElevatorBargePosition = -56.1; // (-93.5/15)*9
 
 
 
-    public static final double kP = 0.06;
+
+    public static final double kP = 0.075;
     public static final double kI = 0;
     public static final double kD = 0;
 
@@ -310,10 +324,9 @@ public final class Constants {
 
 
     public static final double kGroundPosition = -13.5;
-    public static final double kL3Position = -2.875;
-    public static final double kL4Position = -2.875;
-    public static final double kNetPosition = 0;
-    public static final double kProcessorPosition = 0;
+    public static final double kL3Position = -9;
+    public static final double kL4Position = -8.75;
+    public static final double kProcessorPosition = -9.1;
     public static final double kHomePosition = 0;
     public static final double kInterruptedPosition = 0;
 
@@ -324,8 +337,8 @@ public final class Constants {
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
-    public static final double kPivotP = 0.025;
-    public static final double kPivotI = 0.0;
+    public static final double kPivotP = 0.035;
+    public static final double kPivotI = 0.00008;
     public static final double kPivotD = 0.0;
   }
 

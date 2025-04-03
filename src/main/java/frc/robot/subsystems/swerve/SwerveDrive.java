@@ -44,6 +44,8 @@ public class SwerveDrive extends SubsystemBase {
   private MAXSwerveModule m_frontRight;
   private MAXSwerveModule m_rearLeft;
   private MAXSwerveModule m_rearRight;
+
+  private boolean isNoKalmanFilterBackUpMode;
   
   StructArrayPublisher<SwerveModuleState> publisher;
   private boolean alignFastMode = true;
@@ -133,7 +135,7 @@ public class SwerveDrive extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
-
+    isNoKalmanFilterBackUpMode = false;
   }
 
   public SwerveDrive(PhotonVisionCameras cameras, Gyro gyro, MAXSwerveModule frontLeft, MAXSwerveModule frontRight, MAXSwerveModule rearLeft, MAXSwerveModule rearRight, RobotConfig config, boolean isTestMode){
@@ -324,6 +326,7 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Value", this.m_gyro.getProcessedRot2dYaw().getDegrees());
 
     SmartDashboard.putNumber("Swerve Front Left Module", m_frontLeft.m_drivingSpark.getOutputCurrent());
+    SmartDashboard.putBoolean("BACKUP MODE", isNoKalmanFilterBackUpMode);
     
   }
 
@@ -502,4 +505,21 @@ public class SwerveDrive extends SubsystemBase {
   public Gyro getGyro(){
     return m_gyro;
   }
+
+  public void setNoKalmanFilterBackUpMode(boolean mode){
+    if (isNoKalmanFilterBackUpMode == false && mode == true){
+      m_gyro.setGyroYawOffset(m_gyro.getProcessedRot2dYaw().getDegrees());
+    }
+    isNoKalmanFilterBackUpMode = mode;
+  }
+
+  public boolean getNoKalmanFilterBackUpMode(){
+    return isNoKalmanFilterBackUpMode;
+  }
+
+  public void testButton(){
+    System.out.println("Hello World");
+  }
+
+  
 }

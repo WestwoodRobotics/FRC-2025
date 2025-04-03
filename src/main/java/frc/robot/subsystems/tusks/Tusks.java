@@ -112,8 +112,6 @@ public class Tusks extends SubsystemBase{
             SmartDashboard.putString("Tusk Position", "L4");
         } else if (currentState == tuskPositions.PROCESSOR){
             SmartDashboard.putString("Tusk Position", "PROCESSOR");
-        } else if (currentState == tuskPositions.NET){
-            SmartDashboard.putString("Tusk Position", "NET");
         } else if (currentState == tuskPositions.GROUND){
             SmartDashboard.putString("Tusk Position", "GROUND");
         } else if (currentState == tuskPositions.INTERRUPTED){

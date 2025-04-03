@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 12.17950819672131,
-        "y": 5.697284836065574
+        "y": 5.691284836065574
       },
       "prevControl": null,
       "nextControl": {
         "x": 12.384690095794133,
-        "y": 5.272807792231543
+        "y": 5.266807792231543
       },
       "isLocked": false,
-      "linkedName": "MidpointToId9-copy"
+      "linkedName": null
     },
     {
       "anchor": {
         "x": 12.299385245901638,
-        "y": 5.001997950819672
+        "y": 4.995997950819672
       },
       "prevControl": {
         "x": 12.161915344956212,
-        "y": 5.2820994872803295
+        "y": 5.27609948728033
       },
       "nextControl": null,
       "isLocked": false,

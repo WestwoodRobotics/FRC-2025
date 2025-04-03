@@ -26,6 +26,7 @@ public class Elevator extends SubsystemBase {
     private SparkFlex elevatorMotor2;
     private PIDController elevatorPIDController;
     private double elevatorEncoderOffset = 0;
+    private elevatorPositions currentPosition;
     //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
     private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
     private TrapezoidProfile profile;
@@ -46,7 +47,7 @@ public class Elevator extends SubsystemBase {
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500, 700));
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(8000, 15000));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(80, 80));
         autoProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500,500));
         elevatorPosSetpoint = 0;
@@ -55,11 +56,13 @@ public class Elevator extends SubsystemBase {
         elevatorManual = true;
         startState = new State(0, 0);
         currentState = new State(0, 0);
+        currentPosition = elevatorPositions.HOME;
 
     }
 
     public void setElevatorSpeed(double speed) {
         elevatorPower = speed;
+        currentPosition = elevatorPositions.INTERRUPTED;
         elevatorManual = true;
     }
 
@@ -114,6 +117,26 @@ public class Elevator extends SubsystemBase {
         }
         SmartDashboard.putNumber("Elevator (ID 50) Encoder Value", elevatorMotor1.getEncoder().getPosition());
         SmartDashboard.putNumber("Elevator (ID 34) Encoder Value", elevatorMotor1.getEncoder().getPosition());
+        if (currentPosition == elevatorPositions.HOME){
+            SmartDashboard.putString("Elevator State", "HOME");
+
+        }
+        if (currentPosition == elevatorPositions.L2){
+            SmartDashboard.putString("Elevator State", "L2");
+            
+        }
+        if (currentPosition == elevatorPositions.L3){
+            SmartDashboard.putString("Elevator State", "L3");
+            
+        }
+        if (currentPosition == elevatorPositions.L4){
+            SmartDashboard.putString("Elevator State", "L4");
+            
+        }
+        if (currentPosition == elevatorPositions.INTERRUPTED){
+            SmartDashboard.putString("Elevator State", "INTERRUPTED");
+            
+        }
 
 
     }
@@ -150,6 +173,31 @@ public class Elevator extends SubsystemBase {
     public LimitSwitch getElevatorBottomLimitSwitch() {
         return elevatorBottomLimitSwitch;
     }
+
+    public void setElevatorPositionEnum(elevatorPositions setPosition){
+        currentPosition = setPosition;
+    }   
+
+    public elevatorPositions getElevatorPositionEnum(){
+        return currentPosition;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
 }

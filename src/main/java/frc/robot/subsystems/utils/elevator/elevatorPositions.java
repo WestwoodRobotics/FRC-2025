@@ -10,6 +10,7 @@ public enum elevatorPositions {
     L3(ElevatorConstants.kElevatorL3Position),
     L35(ElevatorConstants.kElevatorL35Position),
     L4(ElevatorConstants.kElevatorL4Position),
+    INTERRUPTED(ElevatorConstants.kElevatorHomePosition),
     BARGE(ElevatorConstants.kElevatorBargePosition);
     
 

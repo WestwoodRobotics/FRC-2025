@@ -100,7 +100,6 @@ public class driveCommand extends Command {
 
     
 
-
     if(DriverStation.getAlliance().get() == Alliance.Blue) {
       m_swerveDrive.drive(Math.copySign(new_leftY, leftY), Math.copySign(new_leftX, leftX), rightX, true);
     }

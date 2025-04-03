@@ -8,7 +8,7 @@ public enum tuskPositions {
     L3(TuskConstants.kL3Position),
     L4(TuskConstants.kL4Position),
     PROCESSOR(TuskConstants.kProcessorPosition),
-    NET(TuskConstants.kNetPosition),
+    
     HOME(TuskConstants.kHomePosition),
     INTERRUPTED(TuskConstants.kInterruptedPosition);
 

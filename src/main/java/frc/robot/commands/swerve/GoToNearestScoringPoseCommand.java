@@ -89,17 +89,18 @@ public class GoToNearestScoringPoseCommand extends Command{
         new Rotation2d(Math.PI)
     );
     private final Transform2d true_center_transform = new Transform2d(
+
         new Translation2d(0.5, 0),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d algae_reef_pickup_transform_initital = new Transform2d(
-        new Translation2d(0.8, LEFT_DIST),
+        new Translation2d(0.73, RIGHT_DIST),
         new Rotation2d(Math.PI)
     );
 
     private final Transform2d algae_reef_pickup_transform_final = new Transform2d(
-        new Translation2d(0.75, RIGHT_DIST),
+        new Translation2d(0.68, RIGHT_DIST-0.1),
         new Rotation2d(Math.PI)
     );
 

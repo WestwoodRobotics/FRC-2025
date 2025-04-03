@@ -28,7 +28,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "GoToScorePoseRight"
+                        "name": "GoToScorePoseLeft"
                       }
                     }
                   ]
@@ -93,7 +93,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.25
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -188,7 +188,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "ID8RightToRedRightIntake"
+                              "pathName": "ID8LeftToRedRightIntake"
                             }
                           }
                         ]
@@ -197,7 +197,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.25
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -207,7 +207,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "RedRightIntakeToID8Left"
+                              "pathName": "RedRightIntakeToID8Right"
                             }
                           }
                         ]
@@ -273,7 +273,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.5
           }
         },
         {

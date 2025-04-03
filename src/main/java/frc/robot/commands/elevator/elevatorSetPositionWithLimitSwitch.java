@@ -8,6 +8,7 @@ import frc.robot.Constants;
 
 public class elevatorSetPositionWithLimitSwitch extends Command {
     private final double targetPosition;
+    private  elevatorPositions targetPoseEnum;
     private final Elevator elevator;
     private static final double thresh = 0.5;
     private final double tolerance = 0.5;
@@ -16,6 +17,7 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     private double counter;
     
     public elevatorSetPositionWithLimitSwitch(Elevator elevator, elevatorPositions position) {
+        this.targetPoseEnum = position;
         this.targetPosition = position.getPosition();
         timer = new Timer();
         this.elevator = elevator;
@@ -25,6 +27,7 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     
     public elevatorSetPositionWithLimitSwitch(Elevator elevator, double position) {
         this.targetPosition = position;
+        
         this.elevator = elevator;
         addRequirements(elevator);
         this.counter = 0;
@@ -63,6 +66,13 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
     @Override
     public void end(boolean interrupted) {
         // elevator.setElevatorSpeed(0);
+        if (interrupted){
+            elevator.setElevatorPositionEnum(elevatorPositions.INTERRUPTED);
+        }   
+        else{
+            elevator.setElevatorPositionEnum(targetPoseEnum);
+        }
+
     }
 }
 
