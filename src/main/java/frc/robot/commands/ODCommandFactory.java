@@ -55,7 +55,7 @@ public class ODCommandFactory {
     }
 
     public ParallelCommandGroup scoreCoral(){
-       return new ParallelCommandGroup(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.45)).raceWith(new WaitCommand(0.55)));
+       return new ParallelCommandGroup(new InstantCommand(() -> m_outtake.setOuttakeSpeed(-0.45), m_outtake).raceWith(new WaitCommand(0.55)));
     }
 
     public Command intake(tuskPositions position){
