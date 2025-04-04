@@ -263,8 +263,8 @@ public final class Constants {
     public static final double kElevatorL2Position = -13.125; // (-21.875/15)*9
     public static final double kElevatorL3Position = -28.125; // (-46.875/15)*9
     public static final double kElevatorL35Position = -48.15; // (-80.25/15)*9
-    public static final double kElevatorL4Position = -54.15; // (-90.25/15)*9
-    public static final double kElevatorBargePosition = -56.1; // (-93.5/15)*9
+    public static final double kElevatorL4Position = -53.9; // (-90.25/15)*9
+    public static final double kElevatorBargePosition = -50.283062; // (-93.5/15)*9
 
 
 
