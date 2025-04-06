@@ -34,72 +34,76 @@ import frc.robot.sensors.PhotonVisionCameras;
 import frc.robot.subsystems.utils.KalmanLocalization;
 //import frc.robot.subsystems.utils.KalmanLocalization;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 
 
 public class SwerveDrive extends SubsystemBase {
   // Create MAXSwerveModules
-  private MAXSwerveModule m_frontLeft = new MAXSwerveModule(
-      PortConstants.kFrontLeftDrivingCanId,
-      PortConstants.kFrontLeftTurningCanId,
-      DriveConstants.kFrontLeftChassisAngularOffset);
+  private MAXSwerveModule m_frontLeft;
+  private MAXSwerveModule m_frontRight;
+  private MAXSwerveModule m_rearLeft;
+  private MAXSwerveModule m_rearRight;
 
-  private MAXSwerveModule m_frontRight = new MAXSwerveModule(
-      PortConstants.kFrontRightDrivingCanId,
-      PortConstants.kFrontRightTurningCanId,
-      DriveConstants.kFrontRightChassisAngularOffset);
-
-  private MAXSwerveModule m_rearLeft = new MAXSwerveModule(
-      PortConstants.kRearLeftDrivingCanId,
-      PortConstants.kRearLeftTurningCanId,
-      DriveConstants.kRearLeftChassisAngularOffset);
-
-  private MAXSwerveModule m_rearRight = new MAXSwerveModule(
-      PortConstants.kRearRightDrivingCanId,
-      PortConstants.kRearRightTurningCanId,
-      DriveConstants.kRearRightChassisAngularOffset);
-
-  StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-  .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-
-
-
+  private boolean isNoKalmanFilterBackUpMode;
   
-
+  StructArrayPublisher<SwerveModuleState> publisher;
+  private boolean alignFastMode = true;
+  
   // The gyro sensor
-  public Gyro m_gyro = new Gyro();
-  // SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
-  //     DriveConstants.kDriveKinematics,
-  //     m_gyro.getProcessedRot2dYaw(),
-  //     new SwerveModulePosition[] {
-  //         m_frontLeft.getPosition(),
-  //         m_frontRight.getPosition(),
-  //         m_rearLeft.getPosition(),
-  //         m_rearRight.getPosition()
-  //     });
-
-  KalmanLocalization kalmanLocalization = new KalmanLocalization(new Pose2d(
-    new Translation2d(0, 0),
-    new Rotation2d(0)
-  ));
-
-
-    private boolean slowMode = false;
-    private boolean isTestMode = false;
-    private RobotConfig config;
-    public Field2d fieldVisualization;
-    public PhotonVisionCameras m_cameras;
+  public Gyro m_gyro;
+  
+  KalmanLocalization kalmanLocalization;
+  
+  private boolean slowMode = false;
+  private boolean isTestMode = false;
+  private RobotConfig config;
+  public Field2d fieldVisualization;
+  public PhotonVisionCameras m_cameras;
 
   /** Creates a new DriveSubsystem. */
   public SwerveDrive(PhotonVisionCameras cameras) {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
-    this.config = config;
-    this.isTestMode = isTestMode;
+    
+    // Initialize module objects
+    m_frontLeft = new MAXSwerveModule(
+      PortConstants.kFrontLeftDrivingCanId,
+      PortConstants.kFrontLeftTurningCanId,
+      DriveConstants.kFrontLeftChassisAngularOffset);
+      
+    m_frontRight = new MAXSwerveModule(
+      PortConstants.kFrontRightDrivingCanId,
+      PortConstants.kFrontRightTurningCanId,
+      DriveConstants.kFrontRightChassisAngularOffset);
+      
+    m_rearLeft = new MAXSwerveModule(
+      PortConstants.kRearLeftDrivingCanId,
+      PortConstants.kRearLeftTurningCanId,
+      DriveConstants.kRearLeftChassisAngularOffset);
+      
+    m_rearRight = new MAXSwerveModule(
+      PortConstants.kRearRightDrivingCanId,
+      PortConstants.kRearRightTurningCanId,
+      DriveConstants.kRearRightChassisAngularOffset);
+    
+    // Initialize publisher
+    publisher = NetworkTableInstance.getDefault()
+      .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+    
+    // Initialize gyro
+    m_gyro = new Gyro();
+    
+    // Initialize KalmanLocalization
+    kalmanLocalization = new KalmanLocalization(new Pose2d(
+      new Translation2d(0, 0),
+      new Rotation2d(0)
+    ));
+    
+    this.isTestMode = false;
     fieldVisualization = new Field2d();
     m_cameras = cameras;
-
+    
     try{
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
@@ -125,13 +129,13 @@ public class SwerveDrive extends SubsystemBase {
 
               var alliance = DriverStation.getAlliance();
               if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
+                return alliance.get() == DriverStation.Alliance.Blue;
               }
               return false;
             },
             this // Reference to this subsystem to set requirements
     );
-
+    isNoKalmanFilterBackUpMode = false;
   }
 
   public SwerveDrive(PhotonVisionCameras cameras, Gyro gyro, MAXSwerveModule frontLeft, MAXSwerveModule frontRight, MAXSwerveModule rearLeft, MAXSwerveModule rearRight, RobotConfig config, boolean isTestMode){
@@ -155,12 +159,12 @@ public class SwerveDrive extends SubsystemBase {
     // Configure AutoBuilder last
     AutoBuilder.configure(
             this::getPose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            (Pose2d p) -> {}, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(10, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(10, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -170,7 +174,7 @@ public class SwerveDrive extends SubsystemBase {
 
               var alliance = DriverStation.getAlliance();
               if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
+                return alliance.get() == DriverStation.Alliance.Blue;
               }
               return false;
             },
@@ -204,10 +208,14 @@ public class SwerveDrive extends SubsystemBase {
     double gyro_rate = m_gyro.getZRate()*Math.PI/180;
     Pose2d reef_camera_pose = null;
     double reef_camera_area = 0;
+    double reef_camera_distance_to_tag = 0;
     boolean reef_has_target = false;
 
-    if (m_cameras == null){
+    if (m_cameras == null && !RobotBase.isSimulation()){
       System.out.println("Null!");
+    }
+    else if (m_cameras == null){
+      reef_has_target = false;
     }
     else{
       reef_has_target = m_cameras.reefCameraHasTarget();
@@ -218,6 +226,7 @@ public class SwerveDrive extends SubsystemBase {
     } catch (Exception e){
       reef_camera_pose = kalmanLocalization.getPoseMeters();
     }
+
     
     try{
       reef_camera_area = m_cameras.getReefCameraArea();
@@ -266,17 +275,18 @@ public class SwerveDrive extends SubsystemBase {
       SmartDashboard.putBoolean("Human Has target", false);
     }
 
+    
 
     kalmanLocalization.update(
       wheel_vel,
       wheel_pos,
-      reef_camera_pose,
-      null,
+      reef_camera_area >= 0.27 ? reef_camera_pose : null,
+      human_camera_area >= 0.27 ? human_camera_pose : null,
       gyro_rate,
       reef_camera_area,
-      0,
+      human_camera_area,
       reef_has_target,
-      false
+      human_has_target
     );
 
     SmartDashboard.putNumber("Gyro rate", gyro_rate);
@@ -300,6 +310,23 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putData(fieldVisualization);
     SmartDashboard.putNumber("X Pose",getPose().getX());
     SmartDashboard.putNumber("Y Vaue", getPose().getY());
+    SmartDashboard.putNumber("Front Left Module Encoder Val", m_frontLeft.m_drivingEncoder.getPosition());
+    SmartDashboard.putBoolean("Fast Align Mode", alignFastMode);
+    try{
+      SmartDashboard.putNumber("Fiducial ID Detected", m_cameras.getBestReefCameraFiducialId());
+    } catch (Exception e){
+      SmartDashboard.putNumber("Fiducial ID Detected", -1);
+    }
+    
+
+    SmartDashboard.putNumber("Front Left Module", this.m_frontLeft.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Front Right Module", this.m_frontRight.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Rear Left Module", this.m_rearLeft.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Rear Right Module", this.m_rearRight.getVelocityVector().getNorm());
+    SmartDashboard.putNumber("Gyro Value", this.m_gyro.getProcessedRot2dYaw().getDegrees());
+
+    SmartDashboard.putNumber("Swerve Front Left Module", m_frontLeft.m_drivingSpark.getOutputCurrent());
+    SmartDashboard.putBoolean("BACKUP MODE", isNoKalmanFilterBackUpMode);
     
   }
 
@@ -336,19 +363,24 @@ public class SwerveDrive extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    drive(xSpeed, ySpeed, rot, fieldRelative, false);
+    drive(xSpeed, ySpeed, rot, fieldRelative, false, false);
   }
 
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isTestMode) {
+  public void driveOnlyGyro(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    drive(xSpeed, ySpeed, rot, fieldRelative, false, true);
+  }
+
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isTestMode, boolean isOnlyGyro) {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
+    
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                new Rotation2d(kalmanLocalization.getTheta()))
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, (isOnlyGyro ? m_gyro.getProcessedRot2dYaw() : new Rotation2d(kalmanLocalization.getTheta())))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -367,7 +399,7 @@ public class SwerveDrive extends SubsystemBase {
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
-
+  
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
@@ -461,4 +493,33 @@ public class SwerveDrive extends SubsystemBase {
 
   public void resetPose(Pose2d pose){
   }
+
+  public void setAlignFastMode(boolean mode){
+    alignFastMode = mode;
+  }
+
+  public boolean getAlignFastMode(){
+    return alignFastMode;
+  }
+
+  public Gyro getGyro(){
+    return m_gyro;
+  }
+
+  public void setNoKalmanFilterBackUpMode(boolean mode){
+    if (isNoKalmanFilterBackUpMode == false && mode == true){
+      m_gyro.setGyroYawOffset(m_gyro.getProcessedRot2dYaw().getDegrees());
+    }
+    isNoKalmanFilterBackUpMode = mode;
+  }
+
+  public boolean getNoKalmanFilterBackUpMode(){
+    return isNoKalmanFilterBackUpMode;
+  }
+
+  public void testButton(){
+    System.out.println("Hello World");
+  }
+
+  
 }

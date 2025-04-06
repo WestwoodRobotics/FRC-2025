@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +26,7 @@ public class Elevator extends SubsystemBase {
     private SparkFlex elevatorMotor2;
     private PIDController elevatorPIDController;
     private double elevatorEncoderOffset = 0;
+    private elevatorPositions currentPosition;
     //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
     private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
     private TrapezoidProfile profile;
@@ -34,6 +36,8 @@ public class Elevator extends SubsystemBase {
     private boolean elevatorManual;
     private State startState;
     private State currentState;
+    private TrapezoidProfile autoProfile;
+
     
 
     public Elevator(int elevatorMotor1Port, int elevatorMotor2Port) {
@@ -42,17 +46,23 @@ public class Elevator extends SubsystemBase {
         elevatorMotor1.configure(Configs.Elevator.elevator1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(180, 240));
+        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500, 700));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
+        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(80, 80));
+        autoProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500,500));
         elevatorPosSetpoint = 0;
         elevatorPower = 0;
         elevatorProfileTimer = new Timer();
         elevatorManual = true;
         startState = new State(0, 0);
         currentState = new State(0, 0);
+        currentPosition = elevatorPositions.HOME;
+
     }
 
     public void setElevatorSpeed(double speed) {
         elevatorPower = speed;
+        currentPosition = elevatorPositions.INTERRUPTED;
         elevatorManual = true;
     }
 
@@ -92,12 +102,43 @@ public class Elevator extends SubsystemBase {
                 startState,
                 new State(elevatorPosSetpoint, 0)
             );
+            if (DriverStation.isAutonomousEnabled()){
+                currentState = autoProfile.calculate(
+                    elevatorProfileTimer.get(),
+                    startState,
+                    new State(elevatorPosSetpoint, 0)
+                );
+            }
             SmartDashboard.putNumber("Elevator current", getElevatorPosition());
             SmartDashboard.putNumber("Elevator calc", currentState.position);
             SmartDashboard.putNumber("Elevator vel", elevatorMotor1.getEncoder().getVelocity()/60);
             SmartDashboard.putNumber("Elevator vel calc", currentState.velocity);
             elevatorMotor1.set(elevatorPIDController.calculate(getElevatorPosition(), currentState.position));
         }
+        SmartDashboard.putNumber("Elevator (ID 50) Encoder Value", elevatorMotor1.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevator (ID 34) Encoder Value", elevatorMotor1.getEncoder().getPosition());
+        if (currentPosition == elevatorPositions.HOME){
+            SmartDashboard.putString("Elevator State", "HOME");
+
+        }
+        if (currentPosition == elevatorPositions.L2){
+            SmartDashboard.putString("Elevator State", "L2");
+            
+        }
+        if (currentPosition == elevatorPositions.L3){
+            SmartDashboard.putString("Elevator State", "L3");
+            
+        }
+        if (currentPosition == elevatorPositions.L4){
+            SmartDashboard.putString("Elevator State", "L4");
+            
+        }
+        if (currentPosition == elevatorPositions.INTERRUPTED){
+            SmartDashboard.putString("Elevator State", "INTERRUPTED");
+            
+        }
+
+
     }
 
     public PIDController getPIDController() {
@@ -132,5 +173,31 @@ public class Elevator extends SubsystemBase {
     public LimitSwitch getElevatorBottomLimitSwitch() {
         return elevatorBottomLimitSwitch;
     }
+
+    public void setElevatorPositionEnum(elevatorPositions setPosition){
+        currentPosition = setPosition;
+    }   
+
+    public elevatorPositions getElevatorPositionEnum(){
+        return currentPosition;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 }

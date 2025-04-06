@@ -26,6 +26,7 @@ public class KalmanFilter<N extends Num, C extends Num, S extends Num> {
         Matrix<N, N> a_priori_cov = update_matrix.times(state_covariance).times(update_matrix.transpose()).plus(process_cov);
         state = a_priori_state;
         state_covariance = a_priori_cov;
+        correctCovariance(state_covariance);
     }
     
     public Matrix<S, N1> innovation(
@@ -51,6 +52,7 @@ public class KalmanFilter<N extends Num, C extends Num, S extends Num> {
 
         state = a_post_state;
         state_covariance = a_post_cov;
+        correctCovariance(state_covariance);
     }
 
     public Matrix<N, N1> getState(){
@@ -59,5 +61,18 @@ public class KalmanFilter<N extends Num, C extends Num, S extends Num> {
 
     public Matrix<N, N> getCovariance() {
         return state_covariance;
+    }
+
+    public void correctCovariance(Matrix<N, N> covariance) {
+        for(int i = 0; i < covariance.getNumRows(); i++) {
+            for(int j = 0; j < covariance.getNumCols(); j++) {
+                if(i != j) {
+                    double d1 = covariance.get(i, j);
+                    double d2 = covariance.get(j, i);
+                    covariance.set(i, j, (d1+d2)/2);
+                    covariance.set(j, i, (d1+d2)/2);
+                }        
+            }
+        }
     }
 }

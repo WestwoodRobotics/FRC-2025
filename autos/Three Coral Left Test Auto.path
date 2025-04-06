@@ -1,0 +1,13 @@
+{
+  "name": "Three Coral Left Test Auto",
+  "segments": [
+    "RedRightIntakeToID8RightPt2ReflectedVersion.path",
+    "RedRightIntakeToID8RightReflectedVersion.path",
+    "ID8LeftToRedRightIntakeReflectedVersion.path",
+    "RedRightIntakeToID8LeftPt2ReflectedVersion.path",
+    "RedRightIntakeToID8LeftReflectedVersion.path",
+    "ID9ToRedRightIntakeReflectedVersion.path",
+    "RedStartToID9Pt2ReflectedVersion.path",
+    "RedStartToID9ReflectedVersion.path"
+  ]
+}

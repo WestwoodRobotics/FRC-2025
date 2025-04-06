@@ -39,9 +39,9 @@ public final class Constants {
     public static final double kRotationalSlewRate = 2; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(21.5);
+    public static final double kTrackWidth = Units.inchesToMeters(26);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(21.5);
+    public static final double kWheelBase = Units.inchesToMeters(26);
     // Distance between front and back wheels on robot
     public static final Translation2d frontLeftPos = new Translation2d(kWheelBase / 2, kTrackWidth / 2);
     public static final Translation2d frontRightPos = new Translation2d(kWheelBase / 2, -kTrackWidth / 2);
@@ -115,7 +115,7 @@ public final class Constants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 15;
+    public static final int kDrivingMotorPinionTeeth = 12;
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
@@ -125,7 +125,7 @@ public final class Constants {
     public static final double kDrivingMotorFreeSpeedRps = VortexMotorConstants.kFreeSpeedRpm / 60;
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
+    // 45 teeth on the wheel's bevel gear, 12 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 20) / (kDrivingMotorPinionTeeth * 15);
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
@@ -229,7 +229,7 @@ public final class Constants {
 
 
     public static final double kTopI = 0;
-
+ 
 
     public static final double kTopD = 0;
   } 
@@ -241,12 +241,35 @@ public final class Constants {
 
 
   public static final class ElevatorConstants{
-    public static final double kElevatorHomePosition = 0;
-    public static final double kElevatorL2Position = -17.5;
-    public static final double kElevatorL3Position = -37.5;
-    public static final double kElevatorL4Position = -73;
+    // public static final double kElevatorHomePosition = 0;
+    // public static final double kElevatorL2Position = -17.5;
+    // public static final double kElevatorL3Position = -37.5;
+    // public static final double kElevatorL4Position = -73;
 
-    public static final double kP = 0.06;
+    //OG GR is 15:1
+    //NEW GR IS 9:1
+
+    //OLD POSES
+
+    // public static final double kElevatorHomePosition = 0;
+    // public static final double kElevatorL2Position = -21.875;
+    // public static final double kElevatorL3Position = -46.875;
+    // public static final double kElevatorL35Position = -80.25; //-91.25 OG
+    // public static final double kElevatorL4Position = -90.25; //-91.25 OG
+    // public static final double kElevatorBargePosition = -93.5;
+
+    //NEW POSES
+    public static final double kElevatorHomePosition = 0;
+    public static final double kElevatorL2Position = -13.125; // (-21.875/15)*9
+    public static final double kElevatorL3Position = -28.125; // (-46.875/15)*9
+    public static final double kElevatorL35Position = -48.15; // (-80.25/15)*9
+    public static final double kElevatorL4Position = -53.9; // (-90.25/15)*9
+    public static final double kElevatorBargePosition = -50.283062; // (-93.5/15)*9
+
+
+
+
+    public static final double kP = 0.075;
     public static final double kI = 0;
     public static final double kD = 0;
 
@@ -265,31 +288,31 @@ public final class Constants {
   }
 
   public static final class CameraConstants{
-    public static final double kReefCameraToRobotX = 0.24765;
-    public static final double kReefCameraToRobotY = 0;
-    public static final double kReefCameraToRobotZ = 0.305;
+    public static final double kReefCameraToRobotX = -0.25019; 
+    public static final double kReefCameraToRobotY = 0.18685;
+    public static final double kReefCameraToRobotZ = -0.3604;
 
     public static final double kReefCameraToRobotPitch = 0;
     public static final double kReefCameraToRobotYaw = 0;
     public static final double kReefCameraToRobotRoll = 0;
 
     public static final Transform3d kReefCameraToRobotTransform = new Transform3d(
-      new Translation3d(-kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
+      new Translation3d(kReefCameraToRobotX, kReefCameraToRobotY, kReefCameraToRobotZ),
       new Rotation3d(kReefCameraToRobotPitch, kReefCameraToRobotYaw, kReefCameraToRobotRoll)
     );
 
 
 
-    public static final double kHumanPlayerCameraToRobotX = 0.24765;
-    public static final double kHumanPlayerCameraToRobotY = 0;
-    public static final double kHumanPlayerCameraToRobotZ = 0.305;
+    public static final double kHumanPlayerCameraToRobotX = -0.25019;
+    public static final double kHumanPlayerCameraToRobotY = -0.18685;
+    public static final double kHumanPlayerCameraToRobotZ = -0.3604;
 
     public static final double kHumanPlayerCameraToRobotPitch = 0;
     public static final double kHumanPlayerCameraToRobotYaw = 0;
     public static final double kHumanPlayerCameraToRobotRoll = 0;
 
     public static final Transform3d kHumanPlayerCameraToRobotTransform = new Transform3d(
-      new Translation3d(-kHumanPlayerCameraToRobotX, kHumanPlayerCameraToRobotY, kHumanPlayerCameraToRobotZ),
+      new Translation3d(kHumanPlayerCameraToRobotX, kHumanPlayerCameraToRobotY, kHumanPlayerCameraToRobotZ),
       new Rotation3d(kHumanPlayerCameraToRobotPitch, kHumanPlayerCameraToRobotYaw, kHumanPlayerCameraToRobotRoll)
     );
 
@@ -298,15 +321,24 @@ public final class Constants {
   public class TuskConstants{
     public static final int kTuskPivotMotorId = 39;
     public static final int kTuskRollerMotorId = 38;
-    public static final double kOutPosition = 0.685;
-    public static final double kInPosition = 0.07;
 
-    public static final double kRollerP = 0.05;
+
+    public static final double kGroundPosition = -13.5;
+    public static final double kL3Position = -9;
+    public static final double kL4Position = -8.75;
+    public static final double kProcessorPosition = -9.1;
+    public static final double kHomePosition = 0;
+    public static final double kInterruptedPosition = 0;
+
+    public static final double kOutPosition = -13.3;
+    public static final double kInPosition = 0.1;
+
+    public static final double kRollerP = 0.075;
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
-    public static final double kPivotP = 0.7;
-    public static final double kPivotI = 0.0;
+    public static final double kPivotP = 0.035;
+    public static final double kPivotI = 0.00008;
     public static final double kPivotD = 0.0;
   }
 

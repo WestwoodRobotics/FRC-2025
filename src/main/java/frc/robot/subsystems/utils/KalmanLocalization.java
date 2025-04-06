@@ -121,27 +121,24 @@ public class KalmanLocalization {
         double humanCameraTargetArea,
         boolean humanHasTarget
     ) {
-        final double ANG_RAND_WALK_RAD_PER_SEC = 0.0001;
-
-        final double AREA_CART_VAR_FACTOR = 0.01;
-        final double AREA_ANG_VAR_FACTOR = 0.01;
+        final double ANG_RAND_WALK_RAD_PER_SEC = 9.89019909e-5;
 
         double reef_cart_var = 10;
         double reef_ang_var = 10;
         if(reefHasTarget && reefCameraTargetArea > 0) {
-            reef_cart_var = AREA_CART_VAR_FACTOR/reefCameraTargetArea;
-            reef_ang_var = AREA_ANG_VAR_FACTOR/reefCameraTargetArea;
+            reef_cart_var = Math.max(Math.exp(-1.5*reefCameraTargetArea-0.5), 1e-9);
+            reef_ang_var = Math.max(Math.exp(-1.5*reefCameraTargetArea-0.5), 1e-9);
         }
 
         double human_cart_var = 10;
         double human_ang_var = 10;
         if(humanHasTarget && humanCameraTargetArea > 0) {
-            human_cart_var = AREA_CART_VAR_FACTOR/humanCameraTargetArea;
-            human_ang_var = AREA_ANG_VAR_FACTOR/humanCameraTargetArea;
+            human_cart_var = Math.max(Math.exp(-2*humanCameraTargetArea-1), 1e-9);
+            human_ang_var = Math.max(Math.exp(-2*humanCameraTargetArea-1), 1e-9);
         }
 
         return new Matrix<N7, N7>(new SimpleMatrix(7, 7, true,
-            Math.pow(ANG_RAND_WALK_RAD_PER_SEC*dt, 2), 0, 0, 0, 0, 0 , 0,
+            ANG_RAND_WALK_RAD_PER_SEC*dt, 0, 0, 0, 0, 0 , 0,
             0, reef_cart_var, 0, 0, 0, 0, 0,
             0, 0, reef_cart_var, 0, 0, 0, 0,
             0, 0, 0, reef_ang_var, 0, 0, 0,
@@ -156,17 +153,17 @@ public class KalmanLocalization {
         Pose2d velocity,
         double dt
     ) {
-        final double CONSTANT_UNCERTAINTY = 0.000001;
-        final double DIRECTIONAL_UNCERTAINTY = 0.0001;
+        final double CONSTANT_UNCERTAINTY = 0.0000001;
+        final double DIRECTIONAL_UNCERTAINTY = 0.001;
         final double SPEED_UNCERTAINTY = 0.001;
-        final double ROTATION_UNCERTAINTY = 0.001;
-        double speed = Math.sqrt(velocity.getX()*velocity.getX() + velocity.getY()*velocity.getY());
+        final double ROTATION_UNCERTAINTY = 0.01;
+        double speed = velocity.getX()*velocity.getX() + velocity.getY()*velocity.getY();
         double x_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getX())*DIRECTIONAL_UNCERTAINTY + speed*SPEED_UNCERTAINTY;
         double y_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getY())*DIRECTIONAL_UNCERTAINTY + speed*SPEED_UNCERTAINTY;
         double t_uncertainty = CONSTANT_UNCERTAINTY + Math.abs(velocity.getRotation().getRadians())*ROTATION_UNCERTAINTY + speed*SPEED_UNCERTAINTY;
 
 
-        final double BIAS_STABILITY_RAD_PER_SEC = 0.00003878509;
+        final double BIAS_STABILITY_RAD_PER_SEC = 0.00000001;
         double bias_stability_var = BIAS_STABILITY_RAD_PER_SEC;
         return new Matrix<N7, N7>(new SimpleMatrix(
             new double[][]{
@@ -176,7 +173,7 @@ public class KalmanLocalization {
                 {0, 0, 0, x_uncertainty, 0, 0, 0},
                 {0, 0, 0, 0, y_uncertainty, 0, 0},
                 {0, 0, 0, 0, 0, t_uncertainty, 0},
-                {0, 0, 0, 0, 0, 0, bias_stability_var},
+                {0, 0, 0, 0, 0, 0, bias_stability_var*dt},
             }
         ));
     }

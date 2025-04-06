@@ -16,21 +16,15 @@ public class tuskSetPositionCommand extends Command{
     public tuskSetPositionCommand(Tusks tusks, tuskPositions target_position){
         this.tusks = tusks;
         this.target_position = target_position;
-
         addRequirements(tusks);
     }
 
     @Override
     public void initialize(){
-        this.tuskPIDController = tusks.getPIDController();
-        this.tuskPIDController.setTolerance(0.05);
-        this.current_position = tusks.getCurrentState();
-        tuskPIDController.setSetpoint(target_position.getPosition());
-    }
 
-    @Override
-    public void execute(){
-        tusks.setPivotPower(tuskPIDController.calculate(tusks.getPivotPosition()));
+        this.tuskPIDController = tusks.getPIDController();
+        this.tuskPIDController.setTolerance(0.3);
+        tusks.setTargetPosition(target_position.getPosition());
     }
 
     @Override
@@ -43,6 +37,8 @@ public class tuskSetPositionCommand extends Command{
         tusks.stopPivot();
         if (!interrupted){
             tusks.setCurrentState(target_position);
+        } else {
+            tusks.setCurrentState(tuskPositions.INTERRUPTED);
         }
     }
 

@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import frc.robot.commands.ODCommandFactory;
+import frc.robot.sensors.DIO.LEDController;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.epilogue.*;
 
@@ -29,10 +30,10 @@ import edu.wpi.first.util.datalog.DataLog;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private Timer m_timer;
+  private ODCommandFactory ODCommandFactory;
+
 
   private RobotContainer m_robotContainer;
-  //private Robo swerve = m_robotContainer.m_robotDrive;
   
 
   /**
@@ -44,9 +45,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    // m_robotContainer.m_robotDrive.resetGyro();
+    ODCommandFactory = m_robotContainer.ODCommandFactory;
     DataLogManager.start();
-    //Epilogue.bind(this);
     DriverStation.startDataLog(DataLogManager.getLog());
 
   }
@@ -75,16 +75,14 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     
+    
+    
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    //m_robotContainer.ODCommandFactory.resetTimer();
-    m_robotContainer.m_robotDrive.resetGyro();
-    //m_robotContainer.m_shooter.removeDefaultCommand();
-    //m_robotContainer.ODCommandFactory.startTimer();
-    //m_robotContainer.m_shooter.setDefaultCommand(new shooterPIDCommand(m_robotContainer.m_shooter, 1000));
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     /*
@@ -103,7 +101,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    //System.out.println(m_robotContainer.m_robotDrive.getProcessedHeading());
+    
   }
 
   @Override
@@ -112,17 +110,13 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    //m_robotContainer.ODCommandFactory.stopTimer();
+    ODCommandFactory.stopIntake().schedule();
 
-    //m_robotContainer.m_shooter.removeDefaultCommand();
-    //m_robotContainer.m_shooter.stopShooter();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //blinkin.setPower(0.93); 
-    //blinkin.setPower(0.93 );
     
-    //m_robotContainer.m_robotDrive.resetGyro();
+
 
   }
 

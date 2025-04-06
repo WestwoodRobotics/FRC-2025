@@ -23,6 +23,7 @@ public class OuttakeBeamBreakCommand extends Command {
   private LEDController leds;
   private Timer timer;
   private double debounceCounter;
+  private boolean isElevator;
 
   public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double eumStartVal, double power) {
     this.outtake = outtake;
@@ -43,11 +44,24 @@ public class OuttakeBeamBreakCommand extends Command {
     addRequirements(outtake);
   }
 
+  public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double power, boolean isElevator) {
+    this.outtake = outtake;
+    this.power = power;
+    this.leds = leds;
+    this.enumStartVal=-1;
+    this.isElevator = isElevator;
+    debounceCounter = 0;
+
+    addRequirements(outtake);
+  }
+
   @Override
   public void initialize() {
     this.timer = new Timer();
-    if(enumStartVal > 0){
-      state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
+
+    if(isElevator && !outtake.isCoralDetected()){
+      state = CoralState.DONE;
+      return;
     }
     state = CoralState.WAITING_FOR_FRONT_CORAL;
     debounceCounter = 0;
@@ -56,6 +70,7 @@ public class OuttakeBeamBreakCommand extends Command {
 
   @Override
   public void execute() {
+    
     switch (state) {
       case WAITING_FOR_FRONT_CORAL:
         // Spin forward until the beam breaks (we detect coral)
@@ -77,7 +92,7 @@ public class OuttakeBeamBreakCommand extends Command {
           state = CoralState.DONE;
           return;
         }
-        outtake.setOuttakeSpeed(0.3*power);
+        outtake.setOuttakeSpeed(0.25*power);
         
         
         if (outtake.isCoralNotDetected()) {
@@ -88,11 +103,11 @@ public class OuttakeBeamBreakCommand extends Command {
 
       case WAITING_FOR_BACK_CORAL:
         // Spin in reverse until the beam breaks again (back of coral)
-        outtake.setOuttakeSpeed(-0.4*power);
+        outtake.setOuttakeSpeed(-0.2*power);
         leds.blinkin.set(0.87); //blue
         if (outtake.isCoralDetected()) {
           // We just detected the back of the coral
-          outtake.setOuttakeSpeed(0);
+          outtake.setOuttakeSpeed(0.0);
           state = CoralState.DONE;
         }
         break;
