@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
     private double elevatorEncoderOffset = 0;
     private elevatorPositions currentPosition;
     //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
-    private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
+    // private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
     private TrapezoidProfile profile;
     private double elevatorPosSetpoint;
     private double elevatorPower;
@@ -170,9 +170,9 @@ public class Elevator extends SubsystemBase {
     //     return elevatorTopLimitSwitch;
     // }
     
-    public LimitSwitch getElevatorBottomLimitSwitch() {
-        return elevatorBottomLimitSwitch;
-    }
+    // public LimitSwitch getElevatorBottomLimitSwitch() {
+    //     return elevatorBottomLimitSwitch;
+    // }
 
     public void setElevatorPositionEnum(elevatorPositions setPosition){
         currentPosition = setPosition;
