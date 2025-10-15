@@ -10,7 +10,7 @@ public class setZero extends Command {
     private Timer timer;
     private double prevPos;
 
-    public elevatorHoldCommand(Elevator elevator) {
+    public setZero(Elevator elevator) {
         this.elevator = elevator;
         addRequirements(elevator);
         timer = new Timer();
