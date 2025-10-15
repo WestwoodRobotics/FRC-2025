@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
-import frc.robot.sensors.DIO.LimitSwitch;
+/* import frc.robot.sensors.DIO.LimitSwitch; */
 
 public class Elevator extends SubsystemBase {
 
