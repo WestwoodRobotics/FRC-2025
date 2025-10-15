@@ -46,6 +46,7 @@ import frc.robot.commands.ODCommandFactory;
 import frc.robot.commands.elevator.elevatorHoldCommand;
 import frc.robot.commands.elevator.elevatorPowerSetRespectLevel;
 import frc.robot.commands.elevator.elevatorSetPositionWithLimitSwitch;
+import frc.robot.commands.elevator.setZero;
 import frc.robot.commands.outtake.IntakeOuttakeUntilBeamBroken;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
 import frc.robot.commands.outtake.OuttakeUntilBeamRestored;
