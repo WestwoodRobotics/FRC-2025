@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
-import frc.robot.sensors.DIO.LimitSwitch;
+/* import frc.robot.sensors.DIO.LimitSwitch; */
 
 public class Elevator extends SubsystemBase {
 
@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
     private double elevatorEncoderOffset = 0;
     private elevatorPositions currentPosition;
     //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
-    private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
+    // private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
     private TrapezoidProfile profile;
     private double elevatorPosSetpoint;
     private double elevatorPower;
@@ -170,9 +170,9 @@ public class Elevator extends SubsystemBase {
     //     return elevatorTopLimitSwitch;
     // }
     
-    public LimitSwitch getElevatorBottomLimitSwitch() {
-        return elevatorBottomLimitSwitch;
-    }
+    // public LimitSwitch getElevatorBottomLimitSwitch() {
+    //     return elevatorBottomLimitSwitch;
+    // }
 
     public void setElevatorPositionEnum(elevatorPositions setPosition){
         currentPosition = setPosition;

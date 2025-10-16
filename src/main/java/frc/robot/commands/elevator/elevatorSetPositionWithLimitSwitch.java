@@ -49,10 +49,10 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
         //     elevator.setElevatorEncoderPosition(elevatorPositions.L4.getPosition());
         // }
 
-        if (elevator.getElevatorBottomLimitSwitch().isTriggered()) {
-            // elevator.stopElevator();
-            elevator.setElevatorEncoderPosition(elevatorPositions.HOME.getPosition());
-        }
+        // if (elevator.getElevatorBottomLimitSwitch().isTriggered()) {
+        //     // elevator.stopElevator();
+        //     elevator.setElevatorEncoderPosition(elevatorPositions.HOME.getPosition());
+        // }
         if (Math.abs(elevator.getElevatorPosition() - this.targetPosition) < thresh) {
             counter++;
         }
