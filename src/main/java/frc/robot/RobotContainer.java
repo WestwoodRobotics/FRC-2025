@@ -63,7 +63,7 @@ import frc.robot.sensors.DIO.LEDController;
 import frc.robot.commands.swerve.*;
 import frc.robot.commands.tusks.tuskJoystickPower;
 import frc.robot.commands.tusks.tuskSetPositionCommand;
-
+import frc.robot.commands.tusks.tuskSetZero;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 
 
@@ -401,11 +401,13 @@ public class RobotContainer {
         // OperatorDPadLeft.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02+0.165, 0));
         // OperatorDPadRight.whileTrue(new GoToFieldPose(m_robotDrive, 11.71, 4.02-0.165, 0));
 
-        OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
-        OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
-       // OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
-        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks)); 
-        //operatorLeftYJoystickTrigger.onTrue(new tuskJoystickPower(m_tusks, m_operatorController)).onFalse(new InstantCommand(()-> m_tusks.lockPosition(), m_tusks));
+       /*  OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); */
+       /*  OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); */
+       OperatorDPadUp.whileTrue(new tuskSetZero(m_tusks));
+       OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
+       OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
+
+       //operatorLeftYJoystickTrigger.onTrue(new tuskJoystickPower(m_tusks, m_operatorController)).onFalse(new InstantCommand(()-> m_tusks.lockPosition(), m_tusks));
         
 
         // OperatorXButton.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.HOME));
@@ -419,7 +421,10 @@ public class RobotContainer {
 
         OperatorXButton.onTrue(new InstantCommand(() -> m_tusks.setRollerPower(0.5), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.stopRoller(), m_tusks));
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);
-        OperatorAButton.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.GROUND));
+/*         OperatorAButton.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.GROUND));
+ */        
+        OperatorAButton.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); 
+        OperatorBButton.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
         OperatorYButton.onTrue(new InstantCommand(() -> m_tusks.setRollerPower(-0.75), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.stopRoller(), m_tusks));
         
 
