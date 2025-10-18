@@ -1,12 +1,10 @@
 package frc.robot.commands.outtake;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.sensors.DIO.LEDController;
 import frc.robot.subsystems.outtake.Outtake;
 
-public class OuttakeBeamBreakCommand extends Command {
+public class OuttakePIDBeamBreakCommand extends Command {
   
   private enum CoralState {
     WAITING_FOR_FRONT_CORAL,            // Haven't seen the coral yet; spin forward
@@ -16,42 +14,21 @@ public class OuttakeBeamBreakCommand extends Command {
   }
 
   private final Outtake outtake;
-
-  private double power;
-  private double enumStartVal;
+  private final PIDController outtakePIDController;
+  private final double targetRpm;
   private CoralState state;
-  private LEDController leds;
-  private Timer timer;
-  private double debounceCounter;
 
-  public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double eumStartVal, double power) {
+  public OuttakePIDBeamBreakCommand(Outtake outtake, double targetRpm) {
     this.outtake = outtake;
-    this.power = power;
-    this.enumStartVal = enumStartVal;
-
-    this.leds = leds;
-    addRequirements(outtake);
-  }
-
-  public OuttakeBeamBreakCommand(Outtake outtake,  LEDController leds, double power) {
-    this.outtake = outtake;
-    this.power = power;
-    this.leds = leds;
-    this.enumStartVal=-1;
-    debounceCounter = 0;
-
+    this.outtakePIDController = outtake.getOuttakePIDController();
+    this.targetRpm = targetRpm;
     addRequirements(outtake);
   }
 
   @Override
   public void initialize() {
-    this.timer = new Timer();
-    if(enumStartVal > 0){
-      state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
-    }
     state = CoralState.WAITING_FOR_FRONT_CORAL;
-    debounceCounter = 0;
-
+    outtakePIDController.setSetpoint(targetRpm);
   }
 
   @Override
@@ -59,37 +36,26 @@ public class OuttakeBeamBreakCommand extends Command {
     switch (state) {
       case WAITING_FOR_FRONT_CORAL:
         // Spin forward until the beam breaks (we detect coral)
-        outtake.setOuttakeSpeed(power);
-        leds.blinkin.set(0.91);//violet
+        outtake.setOuttakeSpeed(outtakePIDController.calculate(outtake.getOuttakeRPM()));
         if (outtake.isCoralDetected()) {
-          debounceCounter++;
-        }
-        if (debounceCounter >= 2) {
           // The front of the coral just passed
-          debounceCounter = 0;
           state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
         }
         break;
 
       case WAITING_FOR_NO_CORAL_AFTER_FRONT:
         // Still spin forward until coral has fully passed -> beam unbroken
-        if(enumStartVal > 0 && !outtake.isCoralDetected()){
-          state = CoralState.DONE;
-          return;
-        }
-        outtake.setOuttakeSpeed(0.3*power);
-        
-        
+        outtake.setOuttakeSpeed(outtakePIDController.calculate(outtake.getOuttakeRPM()));
         if (outtake.isCoralNotDetected()) {
           // Entire coral just passed the sensor; reverse direction
+          outtakePIDController.setSetpoint(-targetRpm);
           state = CoralState.WAITING_FOR_BACK_CORAL;
         }
         break;
 
       case WAITING_FOR_BACK_CORAL:
         // Spin in reverse until the beam breaks again (back of coral)
-        outtake.setOuttakeSpeed(-0.4*power);
-        leds.blinkin.set(0.87); //blue
+        outtake.setOuttakeSpeed(outtakePIDController.calculate(outtake.getOuttakeRPM()));
         if (outtake.isCoralDetected()) {
           // We just detected the back of the coral
           outtake.setOuttakeSpeed(0);
@@ -100,25 +66,12 @@ public class OuttakeBeamBreakCommand extends Command {
       case DONE:
         // No more action needed
         outtake.setOuttakeSpeed(0);
-        leds.blinkin.set(0.77); //green
-        if (!timer.isRunning()){
-          timer.restart();
-        }
         break;
     }
   }
 
   @Override
-  public boolean isFinished(){
-    if (enumStartVal<0){
-      return state == CoralState.DONE;
-    }
-    return state == CoralState.DONE && timer.get() > 0.5;
-
-  }
-  @Override
   public void end(boolean interrupted) {
     outtake.setOuttakeSpeed(0);
   }
 }
-

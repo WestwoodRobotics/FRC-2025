@@ -8,29 +8,22 @@ import frc.robot.Constants;
 
 public class elevatorSetPositionWithLimitSwitch extends Command {
     private final double targetPosition;
-    private  elevatorPositions targetPoseEnum;
     private final Elevator elevator;
-    private static final double thresh = 0.5;
     private final double tolerance = 0.5;
     private boolean finished = false;
     private Timer timer;
-    private double counter;
     
     public elevatorSetPositionWithLimitSwitch(Elevator elevator, elevatorPositions position) {
-        this.targetPoseEnum = position;
         this.targetPosition = position.getPosition();
         timer = new Timer();
         this.elevator = elevator;
         addRequirements(elevator);
-        this.counter = 0;
     }
     
     public elevatorSetPositionWithLimitSwitch(Elevator elevator, double position) {
         this.targetPosition = position;
-        
         this.elevator = elevator;
         addRequirements(elevator);
-        this.counter = 0;
     }
     
     @Override
@@ -38,7 +31,6 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
         elevator.setElevatorPosition(targetPosition);
         timer.reset();
         timer.start();
-        counter = 0;
     }
     
     @Override
@@ -53,26 +45,16 @@ public class elevatorSetPositionWithLimitSwitch extends Command {
             // elevator.stopElevator();
             elevator.setElevatorEncoderPosition(elevatorPositions.HOME.getPosition());
         }
-        if (Math.abs(elevator.getElevatorPosition() - this.targetPosition) < thresh) {
-            counter++;
-        }
     }
     
     @Override
     public boolean isFinished() {
-        return counter >= 10;
+        return timer.hasElapsed(2);
     }
     
     @Override
     public void end(boolean interrupted) {
         // elevator.setElevatorSpeed(0);
-        if (interrupted){
-            elevator.setElevatorPositionEnum(elevatorPositions.INTERRUPTED);
-        }   
-        else{
-            elevator.setElevatorPositionEnum(targetPoseEnum);
-        }
-
     }
 }
 

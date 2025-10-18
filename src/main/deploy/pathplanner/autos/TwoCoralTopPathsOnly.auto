@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartToScore1Top"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToScorePoseLeft"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score1ToHumanZoneTop"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanZoneToScore2Top"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToScorePoseLeft"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

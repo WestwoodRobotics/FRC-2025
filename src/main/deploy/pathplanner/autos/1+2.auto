@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartToScore1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score1ToHumanZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanZoneToScore2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

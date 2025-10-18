@@ -1,6 +1,5 @@
 package frc.robot.subsystems.outtake;
 
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -15,13 +14,13 @@ import frc.robot.misc.CANdiBeamBreak;
 import com.ctre.phoenix6.hardware.CANdi;
 
 public class Outtake extends SubsystemBase {
-    private SparkFlex outtakeMotor;
+    private SparkMax outtakeMotor;
     private CANdiBeamBreak coralDetector;
     private PIDController outtakePIDController;
     
     public Outtake() {
 
-        outtakeMotor = new SparkFlex(PortConstants.outtakeMotorPort, MotorType.kBrushless);
+        outtakeMotor = new SparkMax(PortConstants.outtakeMotorPort, MotorType.kBrushless);
         outtakePIDController = new PIDController(OuttakeConstants.kP, OuttakeConstants.kI, OuttakeConstants.kD);
         coralDetector = new CANdiBeamBreak(PortConstants.kCANdiPort);   
 
