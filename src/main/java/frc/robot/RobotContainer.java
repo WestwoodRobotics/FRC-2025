@@ -403,8 +403,8 @@ public class RobotContainer {
 
         OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
         OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
-       // OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
-        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.2), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks)); 
+        OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
+        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks)); 
         //operatorLeftYJoystickTrigger.onTrue(new tuskJoystickPower(m_tusks, m_operatorController)).onFalse(new InstantCommand(()-> m_tusks.lockPosition(), m_tusks));
         
 

@@ -7,20 +7,39 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+
 import frc.robot.Constants.TuskConstants;
+import frc.robot.subsystems.utils.elevator.elevatorPositions;
 import frc.robot.subsystems.utils.tusks.tuskPositions;
 
 public class Tusks extends SubsystemBase{
 
     private SparkFlex tuskRollerMotor;
     private SparkMax tuskPivotMotor;
+
+    private TrapezoidProfile profile;
+    private Timer pivotProfileTimer;
     
     private PIDController tuskPivotPIDController;
     private PIDController tuskRollerPIDController;
     private PIDController tuskPivotSubsystemPIDController;
-    private tuskPositions currentState;
+
+    private double pivotEncoderOffset = 0;
+
+    private State startState;
+    private State currentState;
+    private tuskPositions currentPosition;
+
+    private double tuskPosSetPoint;
+    private double tuskPivotPower;
+    private boolean tuskManual;
+
     private boolean isHoldPose;
     private boolean isHoldPoseUpdated;
+
     private double rollerHoldPose;
     private double targetPower;
 
@@ -41,8 +60,16 @@ public class Tusks extends SubsystemBase{
 
         holdPose = 0;
         
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(75, 75));
+        pivotProfileTimer = new Timer();
 
-        currentState = tuskPositions.HOME;
+        tuskPosSetPoint = 0;
+        tuskPivotPower = 0;
+        tuskManual = true;
+        currentPosition = tuskPositions.HOME;
+
+        currentState = new State(tuskPositions.HOME.getPosition(), 0);
+        startState = new State(tuskPositions.HOME.getPosition(), 0);
 
     }
 
@@ -56,10 +83,28 @@ public class Tusks extends SubsystemBase{
     }
 
     public void setPivotPower(double power){
-        isHoldPose = false;
-        isHoldPoseUpdated = false;
-        tuskPivotMotor.set(power);
-        currentState = tuskPositions.INTERRUPTED;
+        // isHoldPose = false;
+        // isHoldPoseUpdated = false;
+        // tuskPivotMotor.set(power);
+        // currentState = tuskPositions.INTERRUPTED;
+        tuskPivotPower = power;
+        tuskManual = true;
+        currentPosition = tuskPositions.INTERRUPTED;
+    }
+
+    public void setPivotPosition(double position){
+        if(tuskManual){
+            startState = new State(tuskPivotMotor.getEncoder().getPosition(), tuskPivotMotor.getEncoder().getVelocity()/60);
+        } else {
+            startState = new State(currentState.position, currentState.velocity);
+        }
+        tuskPosSetPoint = position;
+        tuskManual = false;
+        pivotProfileTimer.restart();
+    }
+    
+    public void setPivotPosition(tuskPositions position) {
+        setPivotPosition(position.getPosition());
     }
 
     public void stopRoller(){
@@ -68,30 +113,17 @@ public class Tusks extends SubsystemBase{
     }
 
     public void stopPivot(){
-        tuskPivotMotor.set(0);
-        lockPosition();
+        tuskPivotPower = 0;
+        tuskManual = true;
+        //lockPosition();
     }
 
-    public void stopAll(){
-        stopRoller();
-        stopPivot();
-        lockPosition();
-    }
-
-    public PIDController getPIDController(){
-        return tuskPivotPIDController;
-    }
-
-    public double getPivotPosition(){
-        return tuskPivotMotor.getEncoder().getPosition();
-    }
+    // public void stopAll(){
+    //     stopRoller();
+    //     stopPivot();
+    //     lockPosition();
+    // }
     
-    public void setTargetPosition(double position) {
-        isHoldPose = true;
-        isHoldPoseUpdated = true;
-        tuskPivotPIDController.setSetpoint(position);
-    }
-
 
 
     @Override
@@ -104,25 +136,41 @@ public class Tusks extends SubsystemBase{
     NET(TuskConstants.kNetPosition),
     HOME(TuskConstants.kHomePosition),
     INTERRUPTED(TuskConstants.kInterruptedPosition); */
-        if (currentState == tuskPositions.HOME){
+
+        if(tuskManual){
+            tuskPivotMotor.set(tuskPivotPower);
+        } else {
+            currentState = profile.calculate(
+                pivotProfileTimer.get(),
+                startState,
+                new State(tuskPosSetPoint, 0)
+            );
+            SmartDashboard.putNumber("Tusk Pivot current", getPivotPosition());
+            SmartDashboard.putNumber("Tusk Pivot calc", currentState.position);
+            SmartDashboard.putNumber("Tusk Pivot vel", tuskPivotMotor.getEncoder().getVelocity() / 60);
+            SmartDashboard.putNumber("Tusk Pivot vel calc", currentState.velocity);
+            tuskPivotMotor.set(tuskPivotPIDController.calculate(tuskPivotMotor.getEncoder().getPosition(), currentState.position));
+        }
+
+        if (currentPosition == tuskPositions.HOME){
             SmartDashboard.putString("Tusk Position", "HOME");
-        } else if (currentState == tuskPositions.L3){
+        } else if (currentPosition == tuskPositions.L3){
             SmartDashboard.putString("Tusk Position", "L3");
-        } else if (currentState == tuskPositions.L4){
+        } else if (currentPosition == tuskPositions.L4){
             SmartDashboard.putString("Tusk Position", "L4");
-        } else if (currentState == tuskPositions.PROCESSOR){
+        } else if (currentPosition == tuskPositions.PROCESSOR){
             SmartDashboard.putString("Tusk Position", "PROCESSOR");
-        } else if (currentState == tuskPositions.GROUND){
+        } else if (currentPosition == tuskPositions.GROUND){
             SmartDashboard.putString("Tusk Position", "GROUND");
-        } else if (currentState == tuskPositions.INTERRUPTED){
+        } else if (currentPosition == tuskPositions.INTERRUPTED){
             SmartDashboard.putString("Tusk Position", "INTERRUPTED");
         }
 
-        if (!isHoldPoseUpdated){
-            holdPose = tuskPivotMotor.getEncoder().getPosition();
-            tuskPivotPIDController.setSetpoint(holdPose);
-            isHoldPoseUpdated = true;
-        }
+        // if (!isHoldPoseUpdated){
+        //     holdPose = tuskPivotMotor.getEncoder().getPosition();
+        //     tuskPivotPIDController.setSetpoint(holdPose);
+        //     isHoldPoseUpdated = true;
+        // }
 
         if(!isRollerHoldUpdated){
             rollerHoldPose = tuskRollerMotor.getEncoder().getPosition();
@@ -130,9 +178,9 @@ public class Tusks extends SubsystemBase{
             isRollerHoldUpdated = true;
         }
 
-        if (isHoldPose && isHoldPoseUpdated){
-            tuskPivotMotor.set(tuskPivotPIDController.calculate(tuskPivotMotor.getEncoder().getPosition()));
-        }
+        // if (isHoldPose && isHoldPoseUpdated){
+        //     tuskPivotMotor.set(tuskPivotPIDController.calculate(tuskPivotMotor.getEncoder().getPosition()));
+        // }
 
         if (isRollerHold && isRollerHoldUpdated){
             //tuskRollerMotor.set(tuskRollerPIDController.calculate(tuskRollerMotor.getEncoder().getPosition()));
@@ -142,9 +190,9 @@ public class Tusks extends SubsystemBase{
 
 
 
-        SmartDashboard.putBoolean("isHoldPose", isHoldPoseUpdated);
-        SmartDashboard.putBoolean("isHoldPoseUpdated", isHoldPoseUpdated);
-        SmartDashboard.putNumber("holdPose", holdPose);
+        // SmartDashboard.putBoolean("isHoldPose", isHoldPoseUpdated);
+        // SmartDashboard.putBoolean("isHoldPoseUpdated", isHoldPoseUpdated);
+        // SmartDashboard.putNumber("holdPose", holdPose);
         SmartDashboard.putNumber("Tusk Pivot Encoder", tuskPivotMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Tusk Roller Encoder",tuskRollerMotor.getEncoder().getPosition());
         
@@ -152,35 +200,63 @@ public class Tusks extends SubsystemBase{
 
     }
 
-    public tuskPositions getCurrentState(){
-        return currentState;
+    public PIDController getPivotPIDController(){
+        return tuskPivotPIDController;
     }
 
-    public void setCurrentState(tuskPositions state){
-        currentState = state;
+    public double getPivotPosition(){
+        return tuskPivotMotor.getEncoder().getPosition() + pivotEncoderOffset;
     }
 
-    public boolean getHoldPoseMode(){
-        return isHoldPose;
+    public double getPivotCurrent(){
+        return tuskPivotMotor.getOutputCurrent();
     }
 
-    public void lockPosition() {
-        isHoldPoseUpdated = false;
-        isHoldPose = true;
+    public void setPivotEncoderOffset(double offset){
+        pivotEncoderOffset = offset;
     }
+
+    public void setPivotEncoderPosition(double position){
+        pivotEncoderOffset = position - tuskPivotMotor.getEncoder().getPosition();
+    }
+
+    public void setPivotPostionEnum(tuskPositions position){
+        currentPosition = position;
+    }
+
+    public tuskPositions getPivotPositionEnum(){
+        return currentPosition;
+    }
+
+    // public tuskPositions getCurrentState(){
+    //     return currentState;
+    // }
+
+    // public void setCurrentState(tuskPositions state){
+    //     currentState = state;
+    // }
+
+    // public boolean getHoldPoseMode(){
+    //     return isHoldPose;
+    // }
+
+    // public void lockPosition() {
+    //     isHoldPoseUpdated = false;
+    //     isHoldPose = true;
+    // }
 
     public void lockRollerPosition() {
         isRollerHoldUpdated = false;
         isRollerHold = true;
     }
 
-    public void toggleHoldPoseMode(){
-        isHoldPose = !isHoldPose;
-    }
+    // public void toggleHoldPoseMode(){
+    //     isHoldPose = !isHoldPose;
+    // }
 
-    public void setHoldPoseMode(boolean holdPose){
-        isHoldPose = holdPose;
-    }
+    // public void setHoldPoseMode(boolean holdPose){
+    //     isHoldPose = holdPose;
+    // }
 
     public void setRollerHoldPoseMode(boolean holdPose){
         isRollerHold = holdPose;
@@ -192,9 +268,9 @@ public class Tusks extends SubsystemBase{
         tuskRollerMotor.getEncoder().setPosition(position);
     }
 
-    public void resetTusksPivot(){
-        tuskPivotMotor.getEncoder().setPosition(0);
-    }
+    // public void resetTusksPivot(){
+    //     tuskPivotMotor.getEncoder().setPosition(0);
+    // }
 
 
     

@@ -48,8 +48,8 @@ public class Elevator extends SubsystemBase {
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500, 700));
 
-        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(25, 35));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
+        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(25, 35));
 
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(80, 80));
 

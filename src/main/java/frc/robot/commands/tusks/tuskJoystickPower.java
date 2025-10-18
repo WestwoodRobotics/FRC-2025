@@ -22,7 +22,7 @@ public class tuskJoystickPower extends Command{
     }
 
     public void end(boolean interrupted){
-        tusks.lockPosition();
+        
     }
     
 }
