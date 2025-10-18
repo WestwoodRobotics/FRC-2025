@@ -26,7 +26,7 @@ public class tuskHoldPositionCommand extends Command {
         holdPosition = tusks.getPivotPosition();
         pidController.reset();
         pidController.setSetpoint(holdPosition);
-        tusks.setHoldPoseMode(false);
+        //tusks.setHoldPoseMode(false);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class tuskHoldPositionCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        tusks.setHoldPoseMode(true);
+        //tusks.setHoldPoseMode(true);
         return false; // continue holding indefinitely
     }
 

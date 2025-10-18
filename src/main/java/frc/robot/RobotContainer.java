@@ -63,7 +63,6 @@ import frc.robot.sensors.DIO.LEDController;
 import frc.robot.commands.swerve.*;
 import frc.robot.commands.tusks.tuskJoystickPower;
 import frc.robot.commands.tusks.tuskSetPositionCommand;
-import frc.robot.commands.tusks.tuskSetZero;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 
 
@@ -403,9 +402,9 @@ public class RobotContainer {
 
        /*  OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); */
        /*  OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); */
-       OperatorDPadUp.whileTrue(new tuskSetZero(m_tusks));
-       OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
-       OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.lockPosition(), m_tusks));
+       OperatorDPadUp.whileTrue(new InstantCommand(() -> m_tusks.setPivotEncoderPosition(0)));
+       OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks));
+       OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks));
 
        //operatorLeftYJoystickTrigger.onTrue(new tuskJoystickPower(m_tusks, m_operatorController)).onFalse(new InstantCommand(()-> m_tusks.lockPosition(), m_tusks));
         
@@ -417,7 +416,7 @@ public class RobotContainer {
         DriverDPadDown.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.BARGE).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
         DriverDPadLeft.whileTrue(new setZero(m_elevator));
 
-        operatorLeftJoystickButton.onTrue(new InstantCommand((() -> m_tusks.setPivotPower(0.1)), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.resetTusksPivot()).alongWith(new InstantCommand(() -> m_tusks.lockPosition())));
+        //operatorLeftJoystickButton.onTrue(new InstantCommand((() -> m_tusks.setPivotPower(0.1)), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.resetTusksPivot()).alongWith(new InstantCommand(() -> m_tusks.lockPosition())));
 
         OperatorXButton.onTrue(new InstantCommand(() -> m_tusks.setRollerPower(0.5), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.stopRoller(), m_tusks));
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);

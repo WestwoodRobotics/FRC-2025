@@ -102,7 +102,7 @@ public class Tusks extends SubsystemBase{
         tuskManual = false;
         pivotProfileTimer.restart();
     }
-    
+
     public void setPivotPosition(tuskPositions position) {
         setPivotPosition(position.getPosition());
     }
@@ -152,19 +152,19 @@ public class Tusks extends SubsystemBase{
             tuskPivotMotor.set(tuskPivotPIDController.calculate(tuskPivotMotor.getEncoder().getPosition(), currentState.position));
         }
 
-        if (currentPosition == tuskPositions.HOME){
-            SmartDashboard.putString("Tusk Position", "HOME");
-        } else if (currentPosition == tuskPositions.L3){
-            SmartDashboard.putString("Tusk Position", "L3");
-        } else if (currentPosition == tuskPositions.L4){
-            SmartDashboard.putString("Tusk Position", "L4");
-        } else if (currentPosition == tuskPositions.PROCESSOR){
-            SmartDashboard.putString("Tusk Position", "PROCESSOR");
-        } else if (currentPosition == tuskPositions.GROUND){
-            SmartDashboard.putString("Tusk Position", "GROUND");
-        } else if (currentPosition == tuskPositions.INTERRUPTED){
-            SmartDashboard.putString("Tusk Position", "INTERRUPTED");
-        }
+        // if (currentPosition == tuskPositions.HOME){
+        //     SmartDashboard.putString("Tusk Position", "HOME");
+        // } else if (currentPosition == tuskPositions.L3){
+        //     SmartDashboard.putString("Tusk Position", "L3");
+        // } else if (currentPosition == tuskPositions.L4){
+        //     SmartDashboard.putString("Tusk Position", "L4");
+        // } else if (currentPosition == tuskPositions.PROCESSOR){
+        //     SmartDashboard.putString("Tusk Position", "PROCESSOR");
+        // } else if (currentPosition == tuskPositions.GROUND){
+        //     SmartDashboard.putString("Tusk Position", "GROUND");
+        // } else if (currentPosition == tuskPositions.INTERRUPTED){
+        //     SmartDashboard.putString("Tusk Position", "INTERRUPTED");
+        // }
 
         // if (!isHoldPoseUpdated){
         //     holdPose = tuskPivotMotor.getEncoder().getPosition();
