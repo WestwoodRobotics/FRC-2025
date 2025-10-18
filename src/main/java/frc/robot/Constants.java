@@ -101,7 +101,7 @@ public final class Constants {
     public static final int kElevatorMotor2Port = 34;
     public static final int kIntakeMotorSidePort = 33; //TODO: Change this value
     public static final int kIntakeMotorTopPort = 57;
-    public static final int outtakeMotorPort = 59;
+    public static final int outtakeMotorPort = 22;
     public static final int kCANdiPort = 20;
     
 

@@ -47,9 +47,15 @@ public class Elevator extends SubsystemBase {
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500, 700));
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
+
+        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(25, 35));
+
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(80, 80));
+
         autoProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500,500));
+
+
         elevatorPosSetpoint = 0;
         elevatorPower = 0;
         elevatorProfileTimer = new Timer();
