@@ -63,6 +63,7 @@ import frc.robot.sensors.DIO.LEDController;
 import frc.robot.commands.swerve.*;
 import frc.robot.commands.tusks.tuskJoystickPower;
 import frc.robot.commands.tusks.tuskSetPositionCommand;
+import frc.robot.commands.tusks.tusksHoldCommand;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
 
 
@@ -356,13 +357,13 @@ public class RobotContainer {
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.stopRoller(), m_tusks)));
 
-        OperatorRightBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks));
-        OperatorLeftBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks));
+        OperatorRightBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
+        OperatorLeftBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
 
         OperatorYButton.onTrue(new InstantCommand(() -> m_tusks.setPivotEncoderPosition(0)));
 
-        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.25), m_tusks));
-        OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.25), m_tusks));
+        OperatorDPadRight.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.25), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
+        OperatorDPadLeft.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.25), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
         OperatorDPadDown.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.GROUND));
         OperatorDPadUp.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.HOME));
 
