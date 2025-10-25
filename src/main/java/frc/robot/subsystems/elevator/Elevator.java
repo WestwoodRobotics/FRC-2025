@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.elevator.elevatorPositions;
-import frc.robot.sensors.DIO.LimitSwitch;
+/* import frc.robot.sensors.DIO.LimitSwitch; */
 
 public class Elevator extends SubsystemBase {
 
@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
     private double elevatorEncoderOffset = 0;
     private elevatorPositions currentPosition;
     //private LimitSwitch elevatorTopLimitSwitch = new LimitSwitch(0);
-    private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
+    // private LimitSwitch elevatorBottomLimitSwitch = new LimitSwitch(0);
     private TrapezoidProfile profile;
     private double elevatorPosSetpoint;
     private double elevatorPower;
@@ -47,9 +47,15 @@ public class Elevator extends SubsystemBase {
         elevatorMotor2.configure(Configs.Elevator.elevator2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorPIDController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500, 700));
+
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 350));
+        //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(25, 35));
+
         //profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(80, 80));
+
         autoProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(500,500));
+
+
         elevatorPosSetpoint = 0;
         elevatorPower = 0;
         elevatorProfileTimer = new Timer();
@@ -170,9 +176,9 @@ public class Elevator extends SubsystemBase {
     //     return elevatorTopLimitSwitch;
     // }
     
-    public LimitSwitch getElevatorBottomLimitSwitch() {
-        return elevatorBottomLimitSwitch;
-    }
+    // public LimitSwitch getElevatorBottomLimitSwitch() {
+    //     return elevatorBottomLimitSwitch;
+    // }
 
     public void setElevatorPositionEnum(elevatorPositions setPosition){
         currentPosition = setPosition;

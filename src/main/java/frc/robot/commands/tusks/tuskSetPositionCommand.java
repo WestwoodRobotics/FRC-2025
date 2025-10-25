@@ -1,5 +1,6 @@
 package frc.robot.commands.tusks;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.tusks.Tusks;
@@ -7,39 +8,64 @@ import frc.robot.subsystems.utils.tusks.tuskPositions;
 
 public class tuskSetPositionCommand extends Command{
 
-    private PIDController tuskPIDController;
-    private tuskPositions target_position;
-    private tuskPositions current_position;
-    private Tusks tusks;
+    private final double targetPosition;
+    private  tuskPositions targetPoseEnum;
+    private final Tusks tusks;
+    private static final double thresh = 0.5;
+    private final double tolerance = 0.5;
+    private boolean finished = false;
+    private Timer timer;
+    private double counter;
+
     
 
     public tuskSetPositionCommand(Tusks tusks, tuskPositions target_position){
+        this.targetPoseEnum = target_position;
+        this.targetPosition = target_position.getPosition();
+        timer = new Timer();
         this.tusks = tusks;
-        this.target_position = target_position;
         addRequirements(tusks);
+        this.counter = 0;
+    }
+
+    public tuskSetPositionCommand(Tusks tusks, double target_position) {
+        this.targetPosition = target_position;
+        
+        this.tusks = tusks;
+        addRequirements(tusks);
+        this.counter = 0;
     }
 
     @Override
     public void initialize(){
 
-        this.tuskPIDController = tusks.getPIDController();
-        this.tuskPIDController.setTolerance(0.3);
-        tusks.setTargetPosition(target_position.getPosition());
+        tusks.setPivotPosition(targetPosition);
+        timer.reset();
+        timer.start();
+        counter = 0;
+    }
+
+    @Override
+    public void execute(){
+        if (Math.abs(tusks.getPivotPosition() - this.targetPosition) < thresh){
+            counter++;
+        }
     }
 
     @Override
     public boolean isFinished(){
-        return tuskPIDController.atSetpoint();
+        return counter >= 10;
     }
 
     @Override
     public void end(boolean interrupted){
-        tusks.stopPivot();
-        if (!interrupted){
-            tusks.setCurrentState(target_position);
-        } else {
-            tusks.setCurrentState(tuskPositions.INTERRUPTED);
+        if (interrupted){
+            tusks.setPivotPostionEnum(tuskPositions.INTERRUPTED);
         }
+        else {
+            tusks.setPivotPostionEnum(targetPoseEnum);
+        }
+        
     }
 
     
