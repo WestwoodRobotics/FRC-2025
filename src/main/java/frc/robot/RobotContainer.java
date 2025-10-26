@@ -189,7 +189,7 @@ public class RobotContainer {
     m_tusks = new Tusks();
     m_outtake = new Outtake();
     ledController = new LEDController(m_cameras);
-    ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator, m_tusks, ledController);
+    ODCommandFactory = new ODCommandFactory(m_intake, m_outtake, m_elevator, m_tusks, ledController, m_driverController);
 
     // Configure default commands 
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
@@ -333,7 +333,7 @@ public class RobotContainer {
         driverLeftTrigger
         .onTrue(
             (new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.5), m_intake)
-            .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
+            .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, m_driverController, 1, -0.4)
             )).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.5), m_tusks)))
         .onFalse(ODCommandFactory.stopIntake()); 
 

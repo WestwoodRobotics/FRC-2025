@@ -2,6 +2,8 @@ package frc.robot.commands.outtake;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.sensors.DIO.LEDController;
 import frc.robot.subsystems.outtake.Outtake;
@@ -25,10 +27,13 @@ public class OuttakeBeamBreakCommand extends Command {
   private double debounceCounter;
   private boolean isElevator;
 
-  public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, double eumStartVal, double power) {
+  private XboxController controller;
+
+  public OuttakeBeamBreakCommand(Outtake outtake, LEDController leds, XboxController controller, double eumStartVal, double power) {
     this.outtake = outtake;
     this.power = power;
     this.enumStartVal = enumStartVal;
+    this.controller = controller;
 
     this.leds = leds;
     addRequirements(outtake);
@@ -82,6 +87,7 @@ public class OuttakeBeamBreakCommand extends Command {
         if (debounceCounter >= 2) {
           // The front of the coral just passed
           debounceCounter = 0;
+          controller.setRumble(RumbleType.kBothRumble, 1.0);
           state = CoralState.WAITING_FOR_NO_CORAL_AFTER_FRONT;
         }
         break;
@@ -133,6 +139,7 @@ public class OuttakeBeamBreakCommand extends Command {
   }
   @Override
   public void end(boolean interrupted) {
+    controller.setRumble(RumbleType.kBothRumble, 0);
     outtake.setOuttakeSpeed(0);
   }
 }
