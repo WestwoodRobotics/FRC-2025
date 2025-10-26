@@ -50,12 +50,6 @@
         {
           "type": "named",
           "data": {
-            "name": "GoToElevatorHome"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "StopIntakeAndOuttake"
           }
         }

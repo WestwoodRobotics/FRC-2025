@@ -4,6 +4,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -38,20 +39,22 @@ public class ODCommandFactory {
     private final Elevator m_elevator;
     private final Tusks m_tusks;
     private final LEDController ledController;
+    private XboxController controller;
 
 
-    public ODCommandFactory(Intake m_intake, Outtake m_outtake, Elevator m_elevator, Tusks m_tusks, LEDController ledController){
+    public ODCommandFactory(Intake m_intake, Outtake m_outtake, Elevator m_elevator, Tusks m_tusks, LEDController ledController, XboxController controller){
         this.m_intake = m_intake;
         this.m_outtake = m_outtake;
         this.m_elevator = m_elevator;
         this.m_tusks = m_tusks;
         this.ledController = ledController;
+        this.controller = controller;
     }
 
     public Command IntakeToOuttakeBeamBreakCommand(){
 
         return new InstantCommand(() -> m_intake.setBothPowers(0.5, 0.75), m_intake)
-        .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, 1, -0.4)
+        .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, controller, 1, -0.4)
         );
 
     }
