@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,8 @@ public class Tusks extends SubsystemBase{
     private PIDController tuskPivotPIDController;
     private PIDController tuskRollerPIDController;
     private PIDController tuskPivotSubsystemPIDController;
+
+    private ArmFeedforward tuskPivotFF;
 
     private double pivotEncoderOffset = 0;
 
@@ -53,6 +56,7 @@ public class Tusks extends SubsystemBase{
         tuskPivotMotor = new SparkMax(TuskConstants.kTuskPivotMotorId, MotorType.kBrushless);
         tuskPivotPIDController = new PIDController(TuskConstants.kPivotP, TuskConstants.kPivotI, TuskConstants.kPivotD);
         tuskRollerPIDController = new PIDController(TuskConstants.kRollerP, TuskConstants.kRollerI, TuskConstants.kRollerD);
+        tuskPivotFF = new ArmFeedforward(TuskConstants.kPivotS, TuskConstants.kPivotG, TuskConstants.kPivotV);
         isHoldPose = true;
         isHoldPoseUpdated = false;
         isRollerHold = true;
@@ -149,7 +153,7 @@ public class Tusks extends SubsystemBase{
             SmartDashboard.putNumber("Tusk Pivot calc", currentState.position);
             SmartDashboard.putNumber("Tusk Pivot vel", tuskPivotMotor.getEncoder().getVelocity() / 60);
             SmartDashboard.putNumber("Tusk Pivot vel calc", currentState.velocity);
-            tuskPivotMotor.set(tuskPivotPIDController.calculate(tuskPivotMotor.getEncoder().getPosition(), currentState.position));
+            tuskPivotMotor.set(tuskPivotPIDController.calculate(tuskPivotMotor.getEncoder().getPosition(), currentState.position) + tuskPivotFF.calculate(tuskPivotMotor.getEncoder().getPosition(), tuskPivotMotor.getEncoder().getVelocity() / 60));
         }
 
         // if (currentPosition == tuskPositions.HOME){

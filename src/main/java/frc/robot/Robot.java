@@ -84,6 +84,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    ODCommandFactory.holdTuskPivot().schedule();
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -111,6 +112,7 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     ODCommandFactory.stopIntake().schedule();
+    ODCommandFactory.holdTuskPivot().schedule();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

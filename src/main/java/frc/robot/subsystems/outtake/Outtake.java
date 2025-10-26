@@ -28,7 +28,7 @@ public class Outtake extends SubsystemBase {
     }
 
     public void setOuttakeSpeed(double speed) {
-        outtakeMotor.set(speed);
+        outtakeMotor.set(-speed);
     }
 
     public double getOuttakeRPM() {

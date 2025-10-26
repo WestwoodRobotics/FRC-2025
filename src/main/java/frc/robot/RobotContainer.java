@@ -18,6 +18,7 @@ import Archives.commands.outtake.OuttakeCurrentTimeCommand;
 import Archives.commands.outtake.OuttakePIDCommand;
 import Archives.commands.outtake.OuttakePIDCurrentTimeCommand;
 import Archives.commands.tusks.tuskHoldPositionCommand;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -430,8 +431,8 @@ public class RobotContainer {
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);
 /*         OperatorAButton.onTrue(new tuskSetPositionCommand(m_tusks, tuskPositions.GROUND));
  */        
-        OperatorAButton.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); 
-        OperatorBButton.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
+        OperatorBButton.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(-0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator)); 
+        OperatorAButton.onTrue(new InstantCommand(() -> m_elevator.setElevatorSpeed(0.25), m_elevator)).onFalse(new elevatorHoldCommand(m_elevator));
         
 
 

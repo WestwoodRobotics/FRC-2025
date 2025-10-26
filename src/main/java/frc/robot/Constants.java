@@ -323,7 +323,7 @@ public final class Constants {
     public static final int kTuskRollerMotorId = 38;
 
 
-    public static final double kGroundPosition = -13.5;
+    public static final double kGroundPosition = -2.9;
     public static final double kL3Position = -9;
     public static final double kL4Position = -8.75;
     public static final double kProcessorPosition = -9.1;
@@ -337,9 +337,14 @@ public final class Constants {
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
-    public static final double kPivotP = 0.035;
-    public static final double kPivotI = 0.00008;
-    public static final double kPivotD = 0.0;
+    public static final double kPivotP = 0.095;
+    public static final double kPivotI = 0.0000;
+    public static final double kPivotD = 0.002;
+
+    public static final double kPivotG = 0.0;
+    public static final double kPivotV = 0.0;
+    public static final double kPivotS = 0.0;
+    public static final double kPivotA = 0.0;
   }
 
 

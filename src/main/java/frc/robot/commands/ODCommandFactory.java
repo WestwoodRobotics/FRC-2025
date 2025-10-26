@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.outtake.OuttakeBeamBreakCommand;
+import frc.robot.commands.tusks.tuskSetPositionCommand;
+import frc.robot.commands.tusks.tusksHoldCommand;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -77,6 +79,10 @@ public class ODCommandFactory {
             new InstantCommand(() -> m_tusks.stopRoller(), m_tusks),
             new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)
         );
+    }
+
+    public Command holdTuskPivot () {
+        return new tuskSetPositionCommand(m_tusks, tuskPositions.HOME);
     }
     
 
