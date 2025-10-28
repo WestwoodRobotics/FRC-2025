@@ -5,6 +5,7 @@ import frc.robot.Constants.TuskConstants;
 public enum tuskPositions {
 
     GROUND(TuskConstants.kGroundPosition),
+    AUTON(TuskConstants.kAuton),
     L3(TuskConstants.kL3Position),
     L4(TuskConstants.kL4Position),
     PROCESSOR(TuskConstants.kProcessorPosition),

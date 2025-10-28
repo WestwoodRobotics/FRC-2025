@@ -5,28 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Mobility Push"
+            "name": "GoToScorePoseRightSlow"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToScorePoseRightSlow"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToElevatorL4First"
-                }
-              }
-            ]
+            "name": "GoToElevatorL4"
           }
         },
         {

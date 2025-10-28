@@ -209,10 +209,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", ODCommandFactory.IntakeToOuttakeBeamBreakCommand());
     NamedCommands.registerCommand("ScoreCoral", ODCommandFactory.scoreCoral());
     NamedCommands.registerCommand("StopIntakeAndOuttake", ODCommandFactory.stopIntake());
+    //NamedCommands.registerCommand("TuskMove", new tuskSetPositionCommand(m_tusks, tuskPositions.AUTON));
     
 
 
-    // Build autonomous chooser
+// Build autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
   
     // Initialize controller buttons
@@ -334,12 +335,12 @@ public class RobotContainer {
         .onTrue(
             (new InstantCommand(() -> m_intake.setBothPowers(0.25, 0.5), m_intake)
             .andThen(new OuttakeBeamBreakCommand(m_outtake, ledController, m_driverController, 1, -0.4)
-            )).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.5), m_tusks)))
+            )).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(0.8), m_tusks)))
         .onFalse(ODCommandFactory.stopIntake()); 
 
         //score
         driverRightTrigger
-        .onTrue(new elevatorPowerSetRespectLevel(m_elevator, m_outtake).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.65), m_tusks)))
+        .onTrue(new elevatorPowerSetRespectLevel(m_elevator, m_outtake).alongWith(new InstantCommand(() -> m_tusks.setRollerPower(-0.5), m_tusks)))
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.stopRoller(), m_tusks)));
 
@@ -358,8 +359,8 @@ public class RobotContainer {
         .onFalse(new InstantCommand(()-> m_intake.stopIntake(), m_intake)
         .andThen(new InstantCommand(() -> m_outtake.setOuttakeSpeed(0), m_outtake)).alongWith(new InstantCommand(()-> m_tusks.stopRoller(), m_tusks)));
 
-        OperatorRightBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
-        OperatorLeftBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
+        OperatorLeftBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(-0.8), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
+        OperatorRightBumper.onTrue(new InstantCommand(() -> m_tusks.setPivotPower(0.8), m_tusks)).onFalse(new tusksHoldCommand(m_tusks));
 
         OperatorYButton.onTrue(new InstantCommand(() -> m_tusks.setPivotEncoderPosition(0)));
 
@@ -423,9 +424,8 @@ public class RobotContainer {
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);
         DriverDPadUp.onTrue(new GoToNearestScoringPoseCommand(m_robotDrive, m_layout, ReefAlignSide.ALGAE_SCORE)).onFalse(new InstantCommand(() -> m_robotDrive.drive(0, 0, 0, false), m_robotDrive));
         DriverDPadDown.onTrue(new elevatorSetPositionWithLimitSwitch(m_elevator, elevatorPositions.BARGE).alongWith(new OuttakeUntilBeamRestored(m_outtake, -0.2)));
-        DriverDPadLeft.whileTrue(new setZero(m_elevator));
 
-        //operatorLeftJoystickButton.onTrue(new InstantCommand((() -> m_tusks.setPivotPower(0.1)), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.resetTusksPivot()).alongWith(new InstantCommand(() -> m_tusks.lockPosition())));
+        operatorLeftJoystickButton.whileTrue(new setZero(m_elevator));
 
         OperatorXButton.onTrue(new InstantCommand(() -> m_tusks.setRollerPower(0.5), m_tusks)).onFalse(new InstantCommand(() -> m_tusks.stopRoller(), m_tusks));
         bindElevatorCommands(OperatorBButton, elevatorPositions.HOME);

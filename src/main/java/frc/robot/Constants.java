@@ -260,11 +260,11 @@ public final class Constants {
 
     //NEW POSES
     public static final double kElevatorHomePosition = 0;
-    public static final double kElevatorL2Position = -13.125; // (-21.875/15)*9
-    public static final double kElevatorL3Position = -28.125; // (-46.875/15)*9
-    public static final double kElevatorL35Position = -48.15; // (-80.25/15)*9
-    public static final double kElevatorL4Position = -53.9; // (-90.25/15)*9
-    public static final double kElevatorBargePosition = -50.283062; // (-93.5/15)*9
+    public static final double kElevatorL2Position = -14.125; // (-21.875/15)*9
+    public static final double kElevatorL3Position = -29.125; // (-46.875/15)*9
+    public static final double kElevatorL35Position = -49.15; // (-80.25/15)*9
+    public static final double kElevatorL4Position = -53.1; // (-90.25/15)*9
+    public static final double kElevatorBargePosition = -51.283062; // (-93.5/15)*9
 
 
 
@@ -324,6 +324,7 @@ public final class Constants {
 
 
     public static final double kGroundPosition = -2.9;
+    public static final double kAuton = -0.3;
     public static final double kL3Position = -9;
     public static final double kL4Position = -8.75;
     public static final double kProcessorPosition = -9.1;
@@ -337,13 +338,13 @@ public final class Constants {
     public static final double kRollerI = 0;
     public static final double kRollerD = 0;
 
-    public static final double kPivotP = 0.095;
-    public static final double kPivotI = 0.0000;
+    public static final double kPivotP = 0.05;
+    public static final double kPivotI = 0.0;
     public static final double kPivotD = 0.002;
 
-    public static final double kPivotG = 0.0;
-    public static final double kPivotV = 0.0;
-    public static final double kPivotS = 0.0;
+    public static final double kPivotG = 0.055;
+    public static final double kPivotV = 0.005;
+    public static final double kPivotS = 0.01;
     public static final double kPivotA = 0.0;
   }
 

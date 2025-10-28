@@ -11,7 +11,7 @@ public class tuskSetPositionCommand extends Command{
     private final double targetPosition;
     private  tuskPositions targetPoseEnum;
     private final Tusks tusks;
-    private static final double thresh = 0.5;
+    private static final double thresh = 0.2;
     private final double tolerance = 0.5;
     private boolean finished = false;
     private Timer timer;
